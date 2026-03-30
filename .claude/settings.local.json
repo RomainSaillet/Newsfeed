@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(pip3 install:*)",
+      "Bash(python3 veille.py)",
+      "Bash(open \"/Users/romainsaillet/Documents/Veille Edito/output/index.html\")",
+      "Bash(curl -s --max-time 10 \"https://www.google.fr/alerts/feeds/14662107373171854684/5638817258983396205\")",
+      "Bash(chmod +x \"/Users/romainsaillet/Documents/Veille Edito/run_veille.sh\")"
+    ]
+  }
+}

@@ -1,0 +1,85 @@
+{
+  "categories": {
+    "Stratégie Éditoriale": {
+      "color": "#2563EB",
+      "icon": "📋",
+      "feeds": [
+        {"name": "Stratégies (Google Alertes)", "url": "https://www.google.fr/alerts/feeds/14662107373171854684/5638817258983396205"},
+        {"name": "CB News",              "url": "https://www.cbnews.fr/rss.xml"},
+        {"name": "Adweek",               "url": "https://www.adweek.com/feed/"},
+        {"name": "PR Week",              "url": "https://www.prweek.co.uk/rss"},
+        {"name": "Digiday",              "url": "https://digiday.com/feed/"},
+        {"name": "Dans Ta Pub",          "url": "https://www.danstapub.com/feed/"},
+        {"name": "J'ai un pote dans la", "url": "https://jai-un-pote-dans-la.com/feed/"},
+        {"name": "Creapills",            "url": "https://creapills.com/feed/"}
+      ]
+    },
+    "Médias & Journalisme": {
+      "color": "#0891B2",
+      "icon": "🗞️",
+      "feeds": [
+        {"name": "Nieman Lab",          "url": "https://www.niemanlab.org/feed/"},
+        {"name": "CJR",                 "url": "https://www.cjr.org/feed"},
+        {"name": "Shorenstein Center",  "url": "https://shorensteincenter.org/feed/"},
+        {"name": "Reuters Institute",   "url": "https://reutersinstitute.politics.ox.ac.uk/rss.xml"},
+        {"name": "WAN-IFRA",            "url": "https://wan-ifra.org/feed/"},
+        {"name": "Press Gazette",       "url": "https://pressgazette.co.uk/feed/"}
+      ]
+    },
+    "Contenus Vidéo": {
+      "color": "#DC2626",
+      "icon": "🎬",
+      "feeds": [
+        {"name": "No Film School",  "url": "https://nofilmschool.com/rss.xml"},
+        {"name": "Videomaker",      "url": "https://www.videomaker.com/feed/"}
+      ]
+    },
+    "Podcast": {
+      "color": "#7C3AED",
+      "icon": "🎙️",
+      "feeds": [
+        {"name": "Podnews",           "url": "https://podnews.net/rss"},
+        {"name": "Sounds Profitable", "url": "https://soundsprofitable.com/feed/"}
+      ]
+    },
+    "Photographie": {
+      "color": "#059669",
+      "icon": "📷",
+      "feeds": [
+        {"name": "PetaPixel",   "url": "https://petapixel.com/feed/"},
+        {"name": "Fstoppers",   "url": "https://fstoppers.com/feed"}
+      ]
+    },
+    "Social Media": {
+      "color": "#D97706",
+      "icon": "📱",
+      "feeds": [
+        {"name": "Social Media Examiner", "url": "https://www.socialmediaexaminer.com/feed/"},
+        {"name": "Hootsuite Blog",         "url": "https://blog.hootsuite.com/feed/"},
+        {"name": "Buffer Blog",            "url": "https://buffer.com/resources/rss/"}
+      ]
+    },
+    "Médias Asiatiques": {
+      "color": "#BE185D",
+      "icon": "🌏",
+      "feeds": [
+        {"name": "36Kr",  "url": "https://36kr.com/feed"}
+      ]
+    },
+    "Contenus Offline": {
+      "color": "#78716C",
+      "icon": "📰",
+      "feeds": [
+        {"name": "Publishing Perspectives", "url": "https://publishingperspectives.com/feed/"},
+        {"name": "FIPP",                    "url": "https://www.fipp.com/feed/"}
+      ]
+    }
+  },
+  "settings": {
+    "max_articles_per_feed": 5,
+    "max_age_hours": 48,
+    "language_output": "fr",
+    "min_articles_for_cluster": 2,
+    "top_stories_count": 5
+  }
+}
