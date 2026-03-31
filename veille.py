@@ -207,6 +207,23 @@ def fetch_all_feeds(config: dict, cache: dict) -> tuple[list[Article], list[Arti
             log.info(f"  {feed_cfg['name']}: {n_new} nouveaux, {n_cached} en cache")
 
     log.info(f"\nTotal : {len(new_articles)} nouveaux | {len(cached_articles)} depuis le cache")
+
+    # Enrichir les nouveaux articles sans image via og:image
+    without = [a for a in new_articles if not a.image_url and a.url]
+    if without:
+        log.info(f"  Recherche og:image pour {len(without)} articles sans photo...")
+        headers = {"User-Agent": "Mozilla/5.0 (compatible; VeilleEdito/1.0)"}
+        for a in without:
+            try:
+                r = requests.get(a.url, headers=headers, timeout=8, allow_redirects=True)
+                m = re.search(r'<meta[^>]+property=["\']og:image["\'][^>]+content=["\']([^"\']+)["\']', r.text)
+                if not m:
+                    m = re.search(r'<meta[^>]+content=["\']([^"\']+)["\'][^>]+property=["\']og:image["\']', r.text)
+                if m and m.group(1).startswith("http"):
+                    a.image_url = m.group(1)
+            except Exception:
+                pass
+
     return new_articles, cached_articles
 
 
