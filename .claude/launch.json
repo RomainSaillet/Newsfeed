@@ -1,0 +1,17 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "Veille Éditoriale (script principal)",
+      "runtimeExecutable": "python3",
+      "runtimeArgs": ["/Users/romainsaillet/Documents/Veille Edito/veille.py"],
+      "port": null
+    },
+    {
+      "name": "Dashboard Preview (serveur local)",
+      "runtimeExecutable": "python3",
+      "runtimeArgs": ["-m", "http.server", "8080", "--directory", "/Users/romainsaillet/Documents/Veille Edito/output"],
+      "port": 8080
+    }
+  ]
+}
