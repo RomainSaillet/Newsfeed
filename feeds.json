@@ -57,7 +57,9 @@
         {"name": "HubSpot Marketing",        "url": "https://blog.hubspot.com/marketing/rss.xml"},
         {"name": "Content Marketing Inst.",  "url": "https://contentmarketinginstitute.com/feed/"},
         {"name": "Journal du Web",           "url": "https://www.journalduweb.org/feed/"},
-        {"name": "Webmarketing-com",         "url": "https://www.webmarketing-com.com/feed"}
+        {"name": "Webmarketing-com",         "url": "https://www.webmarketing-com.com/feed"},
+        {"name": "Convince & Convert",       "url": "https://www.convinceandconvert.com/feed/"},
+        {"name": "QuickSprout",              "url": "https://www.quicksprout.com/blog/feed/"}
       ]
     },
     "Vidéo": {
