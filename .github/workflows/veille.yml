@@ -34,14 +34,6 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt
 
-      - name: Restaurer le cache articles
-        uses: actions/cache@v4
-        with:
-          path: cache/
-          key: articles-cache-${{ github.run_id }}
-          restore-keys: |
-            articles-cache-
-
       - name: Lancer la veille
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
