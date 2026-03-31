@@ -32,7 +32,8 @@
         {"name": "Le Blog du Communicant",   "url": "https://www.leblogducommunicant2-0.com/feed/"},
         {"name": "Brian Solis",              "url": "https://briansolis.com/feed/"},
         {"name": "36Kr (36氪)",              "url": "https://36kr.com/feed"},
-        {"name": "Woshipm (人人都是产品经理)", "url": "https://www.woshipm.com/feed"}
+        {"name": "Woshipm (人人都是产品经理)", "url": "https://www.woshipm.com/feed"},
+        {"name": "Simon Sinek (YT)",         "url": "https://www.youtube.com/feeds/videos.xml?channel_id=UCPmfPl-BsCd3wmE8i45LAoA"}
       ]
     },
     "Marketing Digital & SEO": {
@@ -61,7 +62,12 @@
         {"name": "Journal du Web",           "url": "https://www.journalduweb.org/feed/"},
         {"name": "Webmarketing-com",         "url": "https://www.webmarketing-com.com/feed"},
         {"name": "Convince & Convert",       "url": "https://www.convinceandconvert.com/feed/"},
-        {"name": "QuickSprout",              "url": "https://www.quicksprout.com/blog/feed/"}
+        {"name": "QuickSprout",              "url": "https://www.quicksprout.com/blog/feed/"},
+        {"name": "GaryVee (YT)",             "url": "https://www.youtube.com/feeds/videos.xml?channel_id=UCctXZhXmG-kf3tlIXgVZUlw"},
+        {"name": "Tom Bilyeu (YT)",          "url": "https://www.youtube.com/feeds/videos.xml?channel_id=UCnYMOamNKLGVlJgRUbamveA"},
+        {"name": "Marie Forleo (YT)",        "url": "https://www.youtube.com/feeds/videos.xml?channel_id=UCuoxrRDDgk3UUnxR4tlkJYQ"},
+        {"name": "Ali Abdaal (YT)",          "url": "https://www.youtube.com/feeds/videos.xml?channel_id=UCoOae5nYA7VqaXzerajD0lg"},
+        {"name": "HubSpot Marketing (YT)",   "url": "https://www.youtube.com/feeds/videos.xml?channel_id=UCVeuau7DLrg7zlAjxxDbdww"}
       ]
     },
     "Vidéo": {
@@ -69,11 +75,15 @@
       "icon": "▶",
       "gradient": "linear-gradient(135deg, #1a1a1a 0%, #2d1515 50%, #4a0000 100%)",
       "feeds": [
-        {"name": "No Film School",  "url": "https://nofilmschool.com/rss.xml"},
-        {"name": "Videomaker",      "url": "https://www.videomaker.com/feed/"},
-        {"name": "PetaPixel",       "url": "https://petapixel.com/feed/"},
-        {"name": "Fstoppers",       "url": "https://fstoppers.com/feed"},
-        {"name": "Tubics",          "url": "https://www.tubics.com/blog/rss"}
+        {"name": "No Film School",      "url": "https://nofilmschool.com/rss.xml"},
+        {"name": "Videomaker",          "url": "https://www.videomaker.com/feed/"},
+        {"name": "PetaPixel",           "url": "https://petapixel.com/feed/"},
+        {"name": "Fstoppers",           "url": "https://fstoppers.com/feed"},
+        {"name": "Tubics",              "url": "https://www.tubics.com/blog/rss"},
+        {"name": "Colin and Samir (YT)","url": "https://www.youtube.com/feeds/videos.xml?channel_id=UCamLstJyCa-t5gfZegxsFMw"},
+        {"name": "MKBHD (YT)",          "url": "https://www.youtube.com/feeds/videos.xml?channel_id=UCBJycsmduvYEL83R_U4JriQ"},
+        {"name": "Think Media (YT)",    "url": "https://www.youtube.com/feeds/videos.xml?channel_id=UCKegeYEy0lJxpkjWRthaRMw"},
+        {"name": "Video Creators (YT)", "url": "https://www.youtube.com/feeds/videos.xml?channel_id=UCcB3bcWy0_QK7uPQvTD0LwQ"}
       ]
     },
     "Podcast": {
@@ -81,9 +91,12 @@
       "icon": "◉",
       "gradient": "linear-gradient(135deg, #1a0a2e 0%, #2d1b4e 50%, #3d1f6e 100%)",
       "feeds": [
-        {"name": "Podnews",           "url": "https://podnews.net/rss"},
-        {"name": "Sounds Profitable", "url": "https://soundsprofitable.com/feed/"},
-        {"name": "Podcast Insights",  "url": "https://www.podcastinsights.com/feed/"}
+        {"name": "Podnews",                  "url": "https://podnews.net/rss"},
+        {"name": "Sounds Profitable",        "url": "https://soundsprofitable.com/feed/"},
+        {"name": "Podcast Insights",         "url": "https://www.podcastinsights.com/feed/"},
+        {"name": "The 505 Podcast (YT)",     "url": "https://www.youtube.com/feeds/videos.xml?channel_id=UCBKHd9rl7PjWrmM4jN-ug4Q"},
+        {"name": "Creator Support Pod (YT)", "url": "https://www.youtube.com/feeds/videos.xml?channel_id=UCwayCyXbToTPxYJUBcEx74g"},
+        {"name": "Lewis Howes (YT)",         "url": "https://www.youtube.com/feeds/videos.xml?channel_id=UCKsP3v2JeT2hWI_HzkxWiMA"}
       ]
     },
     "Social Media": {
