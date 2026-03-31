@@ -5,6 +5,8 @@ on:
     - cron: "3 6 * * *"   # 7h heure de Paris (hiver) / 8h (été)
     - cron: "3 13 * * *"  # 14h heure de Paris (hiver) / 15h (été)
   workflow_dispatch:        # bouton "Run" manuel dans GitHub
+  push:
+    branches: [main]        # redéploie à chaque push
 
 jobs:
   veille:
@@ -48,13 +50,12 @@ jobs:
           git config user.email "veille@noreply.github.com"
           git add output/index.html cache/articles.json || true
           git diff --cached --quiet || git commit -m "🗞️ Veille — $(date +'%d/%m/%Y %H:%M')"
-          git push
+          git push || true
 
-      - name: Déployer sur GitHub Pages
-        uses: actions/deploy-pages@v4
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
         with:
-          artifact_name: github-pages
-        continue-on-error: true
+          path: output/
 
   deploy:
     needs: veille
@@ -66,16 +67,6 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-        with:
-          ref: main
-
-      - name: Upload Pages artifact
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: output/
-
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
