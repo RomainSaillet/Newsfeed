@@ -68,6 +68,7 @@ class Cluster:
     theme_fr: str
     articles: list = field(default_factory=list)
     summary_fr: str = ""
+    hero_summary: str = ""
     contradictions: str = ""
     importance_score: float = 0.0
     category: str = ""
@@ -104,7 +105,7 @@ def article_from_cache(d: dict) -> Article:
 
 # ─── RSS fetching ────────────────────────────────────────────────────────────
 
-def fetch_feed(feed_config: dict, category: str, max_age_hours: int) -> list[Article]:
+def fetch_feed(feed_config: dict, max_age_hours: int) -> list[Article]:
     url    = feed_config["url"]
     source = feed_config["name"]
 
@@ -176,7 +177,7 @@ def fetch_feed(feed_config: dict, category: str, max_age_hours: int) -> list[Art
                 title=entry.get("title", "(sans titre)"),
                 url=entry.get("link", ""),
                 source=source,
-                category=category,
+                category="",          # sera classifié par Claude selon le contenu
                 published=pub_date.isoformat(),
                 summary=raw_summary,
                 image_url=image_url,
@@ -189,25 +190,23 @@ def fetch_feed(feed_config: dict, category: str, max_age_hours: int) -> list[Art
 
 def fetch_all_feeds(config: dict, cache: dict) -> tuple[list[Article], list[Article]]:
     """Retourne (nouveaux articles, articles du cache)."""
-    settings   = config["settings"]
+    settings        = config["settings"]
     new_articles    = []
     cached_articles = []
 
-    for category, cat_data in config["categories"].items():
-        log.info(f"\n[{category}]")
-        for feed_cfg in cat_data["feeds"]:
-            fetched = fetch_feed(feed_cfg, category, settings["max_age_hours"])
-            fetched = fetched[: settings["max_articles_per_feed"]]
+    for feed_cfg in config["feeds"]:
+        fetched = fetch_feed(feed_cfg, settings["max_age_hours"])
+        fetched = fetched[: settings["max_articles_per_feed"]]
 
-            n_new = n_cached = 0
-            for a in fetched:
-                if a.id in cache:
-                    cached_articles.append(article_from_cache(cache[a.id]))
-                    n_cached += 1
-                else:
-                    new_articles.append(a)
-                    n_new += 1
-            log.info(f"  {feed_cfg['name']}: {n_new} nouveaux, {n_cached} en cache")
+        n_new = n_cached = 0
+        for a in fetched:
+            if a.id in cache:
+                cached_articles.append(article_from_cache(cache[a.id]))
+                n_cached += 1
+            else:
+                new_articles.append(a)
+                n_new += 1
+        log.info(f"  {feed_cfg['name']}: {n_new} nouveaux, {n_cached} en cache")
 
     log.info(f"\nTotal : {len(new_articles)} nouveaux | {len(cached_articles)} depuis le cache")
 
@@ -268,127 +267,227 @@ def _call(client: anthropic.Anthropic, model: str, prompt: str, max_tokens: int)
 
 # ─── Claude AI processing ────────────────────────────────────────────────────
 
-def _translate_batch(client: anthropic.Anthropic, batch: list[Article]) -> None:
-    """Traduit un lot de max 20 articles (anglais, français, chinois → français)."""
+def _score_and_classify_batch(client: anthropic.Anthropic, batch: list[Article],
+                               categories: list[str]) -> None:
+    """Haiku — score + classifie chaque article par son CONTENU (pas sa source)."""
+    lines = [f"[{i}] {a.title[:180]}" for i, a in enumerate(batch)]
+    cats  = ", ".join(categories)
+    prompt = f"""Editorial intelligence. {len(batch)} articles (any language).
+For each, based on content:
+1. Score 1-10 for a French editorial director
+2. Best category from: {cats}
+
+{chr(10).join(lines)}
+
+JSON only: [{{"i":0,"s":7,"c":"Vidéo"}}]"""
+    try:
+        raw  = _call(client, MODEL_CHEAP, prompt, max_tokens=1000)
+        data = json.loads(_clean_json(raw))
+        for item in data:
+            idx = item.get("i", -1)
+            if 0 <= idx < len(batch):
+                batch[idx].importance_score = float(item.get("s", 5))
+                cat = item.get("c", "")
+                if cat in categories:
+                    batch[idx].category = cat
+    except Exception as e:
+        log.error(f"Score/classify batch: {e}")
+        for a in batch:
+            a.importance_score = 5.0
+
+
+def score_and_classify(client: anthropic.Anthropic, articles: list[Article],
+                        categories: list[str]) -> None:
+    """Haiku — score + classification par contenu (sans traduction)."""
+    if not articles:
+        return
+    for start in range(0, len(articles), 30):
+        _score_and_classify_batch(client, articles[start:start + 30], categories)
+
+
+def _translate_solo_batch(client: anthropic.Anthropic, batch: list[Article]) -> None:
+    """Haiku — traduit titre + résumé pour les articles en cluster solo."""
     lines = [
-        f"[{i}] {a.title}\n    {a.summary[:200] if a.summary else ''}"
+        f"[{i}] {a.title}\n    {a.summary[:300] if a.summary else ''}"
         for i, a in enumerate(batch)
     ]
-    prompt = f"""Veille éditoriale. {len(batch)} articles (anglais, français, chinois).
-Traduis TOUT en français, y compris le contenu chinois.
+    prompt = f"""Traduis en français ces {len(batch)} articles (anglais, chinois, etc.).
 
 {chr(10).join(lines)}
 
 Pour chaque [N] :
 - "i": N
-- "t": titre en français (percutant, naturel)
+- "t": titre français percutant et naturel
 - "r": résumé 2-3 phrases en français, informatif
-- "s": score 1-10 (valeur stratégique pour un directeur de contenu)
 
-JSON uniquement, tableau.
-[{{"i":0,"t":"...","r":"...","s":7}}]"""
+JSON uniquement : [{{"i":0,"t":"...","r":"..."}}]"""
     try:
-        raw  = _call(client, MODEL_CHEAP, prompt, max_tokens=4000)
+        raw  = _call(client, MODEL_CHEAP, prompt, max_tokens=3000)
         data = json.loads(_clean_json(raw))
         for item in data:
             idx = item.get("i", -1)
             if 0 <= idx < len(batch):
                 batch[idx].translated_title   = item.get("t", batch[idx].title)
-                batch[idx].translated_summary = item.get("r", batch[idx].summary)
-                batch[idx].importance_score   = float(item.get("s", 5))
+                batch[idx].translated_summary = item.get("r", batch[idx].summary or "")
     except Exception as e:
-        log.error(f"Traduction batch: {e}")
+        log.error(f"Traduction solo batch: {e}")
         for a in batch:
             a.translated_title   = a.title
-            a.translated_summary = a.summary
-            a.importance_score   = 5.0
+            a.translated_summary = a.summary or ""
 
 
-def translate_and_score(client: anthropic.Anthropic, articles: list[Article]) -> None:
-    """Haiku — traduit par lots de 20 pour éviter la troncature JSON."""
-    if not articles:
+def translate_solo_articles(client: anthropic.Anthropic, articles: list[Article]) -> None:
+    """Traduit uniquement les articles des clusters solo non encore traduits (ou mal traduits)."""
+    to_do = [a for a in articles if not a.translated_title or a.translated_title == a.title]
+    if not to_do:
         return
-    for start in range(0, len(articles), 20):
-        _translate_batch(client, articles[start:start + 20])
+    log.info(f"Haiku — traduction de {len(to_do)} articles solo...")
+    for start in range(0, len(to_do), 20):
+        _translate_solo_batch(client, to_do[start:start + 20])
 
 
-def cluster_articles(client: anthropic.Anthropic, articles: list[Article]) -> list[dict]:
-    """Haiku — regroupe les articles par thème."""
-    if not articles:
-        return []
-
-    lines = [f"[{i}] {a.translated_title} ({a.category})" for i, a in enumerate(articles)]
-
-    prompt = f"""Expert en stratégie éditoriale. {len(articles)} articles :
+def _cluster_batch(client: anthropic.Anthropic, batch: list[Article], offset: int) -> list[dict]:
+    """Haiku — clustering d'un batch de 50 articles max (indices globaux)."""
+    lines = [f"[{offset+i}] {a.title[:160]}" for i, a in enumerate(batch)]
+    prompt = f"""Expert en stratégie éditoriale. {len(batch)} articles (anglais, français, chinois) :
 
 {chr(10).join(lines)}
 
-Regroupe par THÈME éditorial (un même sujet couvert par plusieurs sources = 1 cluster).
-Articles sans lien = cluster de 1.
+Regroupe par THÈME éditorial (même sujet = 1 cluster, toutes langues confondues).
+Articles sans lien clair = cluster de 1.
+"tf" = titre français accrocheur. Indices globaux (commencent à {offset}).
 
 JSON uniquement :
-[{{"tf":"Titre français accrocheur","te":"english theme","idx":[0,3],"imp":8}}]"""
-
+[{{"tf":"Titre français","te":"english theme","idx":[{offset}],"imp":8}}]"""
     try:
-        raw = _call(client, MODEL_CHEAP, prompt, max_tokens=3000)
+        raw = _call(client, MODEL_CHEAP, prompt, max_tokens=4000)
         return json.loads(_clean_json(raw))
     except Exception as e:
-        log.error(f"Clustering Haiku: {e}")
-        return [{"tf": a.translated_title, "te": a.category, "idx": [i], "imp": a.importance_score}
-                for i, a in enumerate(articles)]
+        log.error(f"Clustering batch offset={offset}: {e}")
+        return [{"tf": a.title, "te": "", "idx": [offset+i], "imp": a.importance_score}
+                for i, a in enumerate(batch)]
 
 
-def summarize_cluster(client: anthropic.Anthropic, cluster_theme: str, articles: list[Article]) -> tuple[str, str]:
-    """Sonnet — résumé éditorial + détection contradictions pour les clusters multi-sources."""
+def cluster_articles(client: anthropic.Anthropic, articles: list[Article]) -> list[dict]:
+    """Haiku — clustering par batches de 50, puis fusion des thèmes communs."""
+    if not articles:
+        return []
+    BATCH = 50
+    if len(articles) <= BATCH:
+        return _cluster_batch(client, articles, 0)
+
+    # Phase 1 : clusters par batch
+    all_raw = []
+    for start in range(0, len(articles), BATCH):
+        all_raw.extend(_cluster_batch(client, articles[start:start + BATCH], start))
+
+    # Phase 2 : fusion des thèmes redondants entre batches
+    themes = [f"[{i}] {c['tf']}" for i, c in enumerate(all_raw)]
+    prompt = f"""Expert éditorial. {len(all_raw)} thèmes — fusionne les doublons, garde les distincts.
+Conserve TOUS les indices dans "idx".
+
+{chr(10).join(themes)}
+
+JSON uniquement :
+[{{"tf":"Titre français","te":"english theme","idx":[0,3],"imp":8}}]"""
+    try:
+        raw    = _call(client, MODEL_CHEAP, prompt, max_tokens=8000)
+        merged = json.loads(_clean_json(raw))
+        final  = []
+        for m in merged:
+            real_idx = []
+            for ri in m.get("idx", []):
+                if 0 <= ri < len(all_raw):
+                    real_idx.extend(all_raw[ri].get("idx", []))
+            if real_idx:
+                final.append({**m, "idx": real_idx})
+        return final if final else all_raw
+    except Exception as e:
+        log.error(f"Fusion clustering: {e}")
+        return all_raw
+
+
+def summarize_cluster(client: anthropic.Anthropic, cluster_theme: str,
+                      articles: list[Article]) -> tuple[str, str]:
+    """Haiku — résumé éditorial + contradictions (sources en langue originale → français)."""
     sources = "\n".join(
-        f"- [{a.source}] {a.translated_title} : {a.translated_summary}"
+        f"- [{a.source}] {a.title} : {a.summary[:400] if a.summary else ''}"
         for a in articles
     )
-
     prompt = f"""Rédacteur senior, média stratégie de contenu.
+Sources en langue originale (anglais, français, chinois) — rédige TOUJOURS en français.
 
 Thème : {cluster_theme}
 
 Sources :
 {sources}
 
-Rédige :
-1. Brève synthétique 3-4 phrases, ton magazine professionnel francophone.
-2. Points de vue divergents / contradictions entre sources (vide si aucune).
+Rédige EN FRANÇAIS :
+1. Synthèse 3-4 phrases, ton magazine professionnel.
+2. Points de vue divergents / contradictions (vide si aucun).
 
 JSON : {{"resume":"...","contradictions":"..."}}"""
-
     try:
-        raw    = _call(client, MODEL_QUALITY, prompt, max_tokens=800)
+        raw    = _call(client, MODEL_CHEAP, prompt, max_tokens=800)
         result = json.loads(_clean_json(raw))
         return result.get("resume", ""), result.get("contradictions", "")
     except Exception as e:
-        log.warning(f"Résumé Sonnet '{cluster_theme}': {e}")
-        return articles[0].translated_summary if articles else "", ""
+        log.warning(f"Résumé '{cluster_theme}': {e}")
+        return (articles[0].translated_summary or articles[0].summary) if articles else "", ""
+
+
+def summarize_hero_cluster(client: anthropic.Anthropic, cluster_theme: str,
+                            articles: list[Article]) -> str:
+    """Sonnet — analyse longue ~1500 signes pour le hero (sources originales → français)."""
+    sources = "\n".join(
+        f"- [{a.source}] {a.title} : {a.summary[:500] if a.summary else ''}"
+        for a in articles
+    )
+    prompt = f"""Rédacteur senior, grand média francophone.
+Sources en langue originale — rédige EN FRANÇAIS uniquement.
+
+Thème : {cluster_theme}
+
+Sources :
+{sources}
+
+Rédige une analyse de 1400 à 1500 signes : synthèse des sources, contexte, enjeux, perspectives.
+Ton magazine professionnel, fluide. Texte uniquement, sans titre ni JSON."""
+    try:
+        return _call(client, MODEL_QUALITY, prompt, max_tokens=700).strip()
+    except Exception as e:
+        log.warning(f"Hero summary '{cluster_theme}': {e}")
+        return ""
 
 
 def process_with_claude(new_articles: list[Article], cached_articles: list[Article],
-                        config: dict) -> tuple[list[Cluster], list[Article]]:
-    client   = anthropic.Anthropic(api_key=os.environ["ANTHROPIC_API_KEY"])
-    settings = config["settings"]
+                        config: dict) -> tuple[list[Cluster], list[Cluster]]:
+    client     = anthropic.Anthropic(api_key=os.environ["ANTHROPIC_API_KEY"])
+    settings   = config["settings"]
+    categories = list(config["categories"].keys())
 
-    # 1. Haiku : traduire uniquement les nouveaux articles
+    # 1. Haiku : score + classification par contenu (pas de traduction)
     if new_articles:
-        log.info(f"\nHaiku — traduction de {len(new_articles)} nouveaux articles...")
-        translate_and_score(client, new_articles)
+        log.info(f"\nHaiku — scoring/classification de {len(new_articles)} nouveaux articles...")
+        score_and_classify(client, new_articles, categories)
+
+    # Appliquer une catégorie par défaut aux articles du cache sans catégorie valide
+    for a in cached_articles:
+        if a.category not in categories:
+            a.category = categories[0]
 
     all_articles = new_articles + cached_articles
-
     if not all_articles:
         return [], []
 
-    # 2. Haiku : clustering sur tous les articles
+    # 2. Haiku : clustering multilingue par batches
     log.info(f"Haiku — clustering de {len(all_articles)} articles...")
     clusters_raw = cluster_articles(client, all_articles)
 
-    # 3. Sonnet : résumés pour clusters multi-sources uniquement
-    log.info("Sonnet — résumés des clusters multi-sources...")
-    clusters = []
+    # 3. Construction des clusters + résumés Sonnet
+    log.info("Haiku — résumés des clusters multi-sources...")
+    clusters     = []
+    solo_articles = []
 
     for cr in clusters_raw:
         indices = cr.get("idx", [])
@@ -396,8 +495,9 @@ def process_with_claude(new_articles: list[Article], cached_articles: list[Artic
         if not arts:
             continue
 
-        cat_count = Counter(a.category for a in arts)
-        dominant  = cat_count.most_common(1)[0][0]
+        # Catégorie dominante parmi les articles du cluster
+        cat_count = Counter(a.category for a in arts if a.category)
+        dominant  = cat_count.most_common(1)[0][0] if cat_count else categories[0]
 
         cluster = Cluster(
             theme=cr.get("te", ""),
@@ -408,20 +508,35 @@ def process_with_claude(new_articles: list[Article], cached_articles: list[Artic
         )
 
         if len(arts) >= settings["min_articles_for_cluster"]:
+            # Multi-sources : résumé Sonnet en français depuis les originaux
             cluster.summary_fr, cluster.contradictions = summarize_cluster(
                 client, cluster.theme_fr, arts
             )
         else:
-            cluster.summary_fr = arts[0].translated_summary if arts else ""
+            # Solo : traduction différée
+            solo_articles.extend(arts)
 
         clusters.append(cluster)
 
+    # 4. Haiku : traduction sélective des articles solo non encore traduits
+    translate_solo_articles(client, solo_articles)
+    for cluster in clusters:
+        if not cluster.summary_fr and cluster.articles:
+            a = cluster.articles[0]
+            # theme_fr vient du clustering (déjà en français) — on ne l'écrase pas
+            cluster.summary_fr = a.translated_summary or a.summary or ""
+
     clusters.sort(key=lambda c: c.importance_score, reverse=True)
 
-    top_n       = settings["top_stories_count"]
-    top_articles = sorted(all_articles, key=lambda a: a.importance_score, reverse=True)[:top_n]
+    # 5. Top clusters pour le hero + résumés longs
+    top_n        = settings.get("top_stories_count", 10)
+    top_clusters = clusters[:top_n]
+    hero_count   = min(5, len(top_clusters))
+    log.info(f"Sonnet — résumés hero pour {hero_count} top clusters...")
+    for cluster in top_clusters[:hero_count]:
+        cluster.hero_summary = summarize_hero_cluster(client, cluster.theme_fr, cluster.articles)
 
-    return clusters, top_articles
+    return clusters, top_clusters
 
 
 # ─── Cost report ─────────────────────────────────────────────────────────────
@@ -762,26 +877,47 @@ HTML_TEMPLATE = """<!DOCTYPE html>
   </div>
 </nav>
 
-{% if top_articles %}
+{% if top_clusters %}
 <div class="hero">
   <div class="hero-inner">
     <div class="hero-label">À la une</div>
     <div class="hero-grid">
-      {% for a in top_articles[:5] %}
-      <a class="hero-card {% if loop.first %}hero-card--featured{% else %}hero-card--small{% endif %}"
-         href="{{ a.url }}" target="_blank" rel="noopener">
-        {% if a.image_url %}
-        <div class="hero-card-bg" style="background-image:url('{{ a.image_url }}')"></div>
-        {% endif %}
-        <div class="hero-card-overlay"></div>
-        <div class="hero-card-body">
-          <div class="hero-card-eyebrow">
-            {{ a.source }}
-            <span class="hero-card-score">{{ a.importance_score | int }}/10</span>
+      {% for cluster in top_clusters[:5] %}
+      {% set best_img = namespace(url='') %}
+      {% for a in cluster.articles %}{% if a.image_url and not best_img.url %}{% set best_img.url = a.image_url %}{% endif %}{% endfor %}
+      <div class="hero-flip-wrap {% if loop.first %}hero-card--featured{% else %}hero-card--small{% endif %}" onclick="flipHeroCard(this)">
+        <div class="hero-flip-inner">
+          <!-- FRONT -->
+          <div class="hero-card-front">
+            {% if best_img.url %}
+            <div class="hero-card-bg" style="background-image:url('{{ best_img.url }}')"></div>
+            {% endif %}
+            <div class="hero-card-overlay"></div>
+            <div class="hero-card-body">
+              <div class="hero-card-eyebrow">
+                {% if cluster.articles | length == 1 %}{{ cluster.articles[0].source }}{% else %}{{ cluster.articles | length }} sources{% endif %}
+                <span class="hero-card-score">{{ cluster.importance_score | int }}/10</span>
+              </div>
+              <div class="hero-card-title">{{ cluster.theme_fr }}</div>
+              <div class="hero-flip-hint">Appuyer pour résumé &#8594;</div>
+            </div>
           </div>
-          <div class="hero-card-title">{{ a.translated_title }}</div>
+          <!-- BACK -->
+          <div class="hero-card-back">
+            <div class="hero-back-header">Analyse</div>
+            <div class="hero-back-title">{{ cluster.theme_fr }}</div>
+            <div class="hero-back-summary">{{ cluster.hero_summary if cluster.hero_summary else cluster.summary_fr }}</div>
+            <div class="hero-back-sources">
+              {% for a in cluster.articles %}
+              <span class="source-chip"><a href="{{ a.url }}" target="_blank" rel="noopener" onclick="event.stopPropagation()">{{ a.source }}</a></span>
+              {% endfor %}
+            </div>
+            <a class="hero-back-cta" href="{{ cluster.articles[0].url }}" target="_blank" rel="noopener" onclick="event.stopPropagation()">
+              Lire l'article complet &#8599;
+            </a>
+          </div>
         </div>
-      </a>
+      </div>
       {% endfor %}
     </div>
   </div>
@@ -872,6 +1008,12 @@ function flipCard(el) {
   }
   el.classList.toggle('flipped');
 }
+function flipHeroCard(el) {
+  document.querySelectorAll('.hero-flip-wrap.flipped').forEach(function(c) {
+    if (c !== el) c.classList.remove('flipped');
+  });
+  el.classList.toggle('flipped');
+}
 function scrollRow(id, dir) {
   var row = document.getElementById('row-' + id);
   if (!row) return;
@@ -904,7 +1046,7 @@ def _slugify(s: str) -> str:
     return re.sub(r"[^a-z0-9\-]", "", out)
 
 
-def generate_html(clusters: list[Cluster], top_articles: list[Article], config: dict) -> str:
+def generate_html(clusters: list[Cluster], top_clusters: list[Cluster], config: dict) -> str:
     categories_with_clusters = {}
     top_n = config.get("settings", {}).get("top_stories_count", 10)
     for cat_name, cat_data in config["categories"].items():
@@ -931,7 +1073,7 @@ def generate_html(clusters: list[Cluster], top_articles: list[Article], config: 
 
     html = tmpl.render(
         categories_with_clusters=categories_with_clusters,
-        top_articles=top_articles,
+        top_clusters=top_clusters,
         generated_at=datetime.now().strftime("%d/%m/%Y à %Hh%M"),
         total_articles=sum(len(c.articles) for c in clusters),
     )
@@ -973,7 +1115,7 @@ def main():
 
     # Traitement IA
     log.info(f"\nTraitement IA...")
-    clusters, top_articles = process_with_claude(new_articles, cached_articles, config)
+    clusters, top_clusters = process_with_claude(new_articles, cached_articles, config)
 
     # Mettre à jour le cache avec les nouveaux articles traduits
     for a in new_articles:
@@ -983,9 +1125,9 @@ def main():
 
     # Générer le dashboard
     log.info("\nGénération du dashboard...")
-    output_path = generate_html(clusters, top_articles, config)
+    output_path = generate_html(clusters, top_clusters, config)
 
-    log.info(f"\n✓ {len(clusters)} clusters | {len(top_articles)} top stories")
+    log.info(f"\n✓ {len(clusters)} clusters | {len(top_clusters)} top clusters")
     log.info(f"  Ouvre : {output_path}")
 
     print_cost_report()
