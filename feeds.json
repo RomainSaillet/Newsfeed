@@ -109,7 +109,7 @@
     {"name": "Creator Support Pod (YT)",  "url": "https://www.youtube.com/feeds/videos.xml?channel_id=UCwayCyXbToTPxYJUBcEx74g"},
     {"name": "Lewis Howes (YT)",          "url": "https://www.youtube.com/feeds/videos.xml?channel_id=UCKsP3v2JeT2hWI_HzkxWiMA"},
     {"name": "MIT Technology Review",     "url": "https://www.technologyreview.com/feed/"},
-    {"name": "The Verge AI",              "url": "https://www.theverge.com/ai-artificial-intelligence/rss/index.xml"},
+    {"name": "The Verge AI",              "url": "https://www.theverge.com/rss/ai/index.xml"},
     {"name": "VentureBeat AI",            "url": "https://venturebeat.com/category/ai/feed/"},
     {"name": "AI News",                   "url": "https://artificialintelligence-news.com/feed/"},
     {"name": "Hugging Face Blog",         "url": "https://huggingface.co/blog/feed.xml"},
