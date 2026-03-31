@@ -1,8 +1,9 @@
 {
   "categories": {
     "Stratégie Éditoriale": {
-      "color": "#2563EB",
-      "icon": "📋",
+      "color": "#0071e3",
+      "icon": "✦",
+      "gradient": "linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)",
       "feeds": [
         {"name": "Stratégies (Google Alertes)", "url": "https://www.google.fr/alerts/feeds/14662107373171854684/5638817258983396205"},
         {"name": "CB News",              "url": "https://www.cbnews.fr/rss.xml"},
@@ -11,67 +12,46 @@
         {"name": "Digiday",              "url": "https://digiday.com/feed/"},
         {"name": "Dans Ta Pub",          "url": "https://www.danstapub.com/feed/"},
         {"name": "J'ai un pote dans la", "url": "https://jai-un-pote-dans-la.com/feed/"},
-        {"name": "Creapills",            "url": "https://creapills.com/feed/"}
+        {"name": "Creapills",            "url": "https://creapills.com/feed/"},
+        {"name": "Nieman Lab",           "url": "https://www.niemanlab.org/feed/"},
+        {"name": "CJR",                  "url": "https://www.cjr.org/feed"},
+        {"name": "Shorenstein Center",   "url": "https://shorensteincenter.org/feed/"},
+        {"name": "Reuters Institute",    "url": "https://reutersinstitute.politics.ox.ac.uk/rss.xml"},
+        {"name": "WAN-IFRA",             "url": "https://wan-ifra.org/feed/"},
+        {"name": "Press Gazette",        "url": "https://pressgazette.co.uk/feed/"},
+        {"name": "36Kr",                 "url": "https://36kr.com/feed"},
+        {"name": "Publishing Perspectives", "url": "https://publishingperspectives.com/feed/"},
+        {"name": "FIPP",                 "url": "https://www.fipp.com/feed/"}
       ]
     },
-    "Médias & Journalisme": {
-      "color": "#0891B2",
-      "icon": "🗞️",
-      "feeds": [
-        {"name": "Nieman Lab",          "url": "https://www.niemanlab.org/feed/"},
-        {"name": "CJR",                 "url": "https://www.cjr.org/feed"},
-        {"name": "Shorenstein Center",  "url": "https://shorensteincenter.org/feed/"},
-        {"name": "Reuters Institute",   "url": "https://reutersinstitute.politics.ox.ac.uk/rss.xml"},
-        {"name": "WAN-IFRA",            "url": "https://wan-ifra.org/feed/"},
-        {"name": "Press Gazette",       "url": "https://pressgazette.co.uk/feed/"}
-      ]
-    },
-    "Contenus Vidéo": {
-      "color": "#DC2626",
-      "icon": "🎬",
+    "Vidéo": {
+      "color": "#ff3b30",
+      "icon": "▶",
+      "gradient": "linear-gradient(135deg, #1a1a1a 0%, #2d1515 50%, #4a0000 100%)",
       "feeds": [
         {"name": "No Film School",  "url": "https://nofilmschool.com/rss.xml"},
-        {"name": "Videomaker",      "url": "https://www.videomaker.com/feed/"}
+        {"name": "Videomaker",      "url": "https://www.videomaker.com/feed/"},
+        {"name": "PetaPixel",       "url": "https://petapixel.com/feed/"},
+        {"name": "Fstoppers",       "url": "https://fstoppers.com/feed"}
       ]
     },
     "Podcast": {
-      "color": "#7C3AED",
-      "icon": "🎙️",
+      "color": "#bf5af2",
+      "icon": "◉",
+      "gradient": "linear-gradient(135deg, #1a0a2e 0%, #2d1b4e 50%, #3d1f6e 100%)",
       "feeds": [
         {"name": "Podnews",           "url": "https://podnews.net/rss"},
         {"name": "Sounds Profitable", "url": "https://soundsprofitable.com/feed/"}
       ]
     },
-    "Photographie": {
-      "color": "#059669",
-      "icon": "📷",
-      "feeds": [
-        {"name": "PetaPixel",   "url": "https://petapixel.com/feed/"},
-        {"name": "Fstoppers",   "url": "https://fstoppers.com/feed"}
-      ]
-    },
     "Social Media": {
-      "color": "#D97706",
-      "icon": "📱",
+      "color": "#30d158",
+      "icon": "◈",
+      "gradient": "linear-gradient(135deg, #0a1a0f 0%, #0d2b16 50%, #0f3d1e 100%)",
       "feeds": [
         {"name": "Social Media Examiner", "url": "https://www.socialmediaexaminer.com/feed/"},
         {"name": "Hootsuite Blog",         "url": "https://blog.hootsuite.com/feed/"},
         {"name": "Buffer Blog",            "url": "https://buffer.com/resources/rss/"}
-      ]
-    },
-    "Médias Asiatiques": {
-      "color": "#BE185D",
-      "icon": "🌏",
-      "feeds": [
-        {"name": "36Kr",  "url": "https://36kr.com/feed"}
-      ]
-    },
-    "Contenus Offline": {
-      "color": "#78716C",
-      "icon": "📰",
-      "feeds": [
-        {"name": "Publishing Perspectives", "url": "https://publishingperspectives.com/feed/"},
-        {"name": "FIPP",                    "url": "https://www.fipp.com/feed/"}
       ]
     }
   },

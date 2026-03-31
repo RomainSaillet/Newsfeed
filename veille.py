@@ -140,8 +140,31 @@ def fetch_feed(feed_config: dict, category: str, max_age_hours: int) -> list[Art
             raw_summary = re.sub(r"<[^>]+>", "", raw_summary).strip()
 
             image_url = ""
+            # 1. media:content
             if hasattr(entry, "media_content") and entry.media_content:
-                image_url = entry.media_content[0].get("url", "")
+                for mc in entry.media_content:
+                    if mc.get("url") and (mc.get("medium") == "image" or mc.get("type", "").startswith("image") or mc.get("medium") == ""):
+                        image_url = mc.get("url", "")
+                        break
+            # 2. media:thumbnail
+            if not image_url and hasattr(entry, "media_thumbnail") and entry.media_thumbnail:
+                image_url = entry.media_thumbnail[0].get("url", "")
+            # 3. enclosures
+            if not image_url and hasattr(entry, "enclosures"):
+                for enc in entry.enclosures:
+                    if enc.get("type", "").startswith("image"):
+                        image_url = enc.get("url", enc.get("href", ""))
+                        break
+            # 4. img tag in HTML content
+            if not image_url:
+                html_src = ""
+                if hasattr(entry, "content") and entry.content:
+                    html_src = entry.content[0].get("value", "")
+                elif hasattr(entry, "summary"):
+                    html_src = entry.summary or ""
+                m = re.search(r'<img[^>]+src=["\']([^"\']+)["\']', html_src)
+                if m and m.group(1).startswith("http"):
+                    image_url = m.group(1)
 
             article_id = hashlib.md5(entry.link.encode()).hexdigest()[:12]
 
@@ -388,121 +411,265 @@ HTML_TEMPLATE = """<!DOCTYPE html>
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Veille Éditoriale — {{ generated_at }}</title>
+  <title>Veille Éditoriale</title>
   <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
     :root {
-      --bg: #0f172a;
-      --surface: #1e293b;
-      --surface2: #2d3f55;
-      --border: #334155;
-      --text: #e2e8f0;
-      --text-muted: #94a3b8;
-      --accent: #38bdf8;
-      --yellow: #fbbf24;
+      --bg:      #f5f5f7;
+      --card:    #ffffff;
+      --text:    #1d1d1f;
+      --text-2:  #6e6e73;
+      --text-3:  #86868b;
+      --border:  rgba(0,0,0,0.08);
+      --accent:  #0071e3;
+      --radius:  16px;
+      --font:    -apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", Arial, sans-serif;
     }
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: 'Georgia', serif; background: var(--bg); color: var(--text); min-height: 100vh; }
 
-    header { background: var(--surface); border-bottom: 2px solid var(--accent); padding: 1rem 2rem; }
-    .header-top { display: flex; justify-content: space-between; align-items: baseline; }
-    .site-title { font-size: 1.6rem; font-weight: bold; letter-spacing: .05em; color: var(--accent); font-family: Arial, sans-serif; }
-    .update-time { font-size: .8rem; color: var(--text-muted); font-family: monospace; }
+    body {
+      font-family: var(--font);
+      background: var(--bg);
+      color: var(--text);
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
 
-    .breaking-bar { background: var(--surface2); border-left: 4px solid var(--accent); padding: .8rem 1.5rem; margin: 1.5rem 2rem; border-radius: 0 8px 8px 0; }
-    .breaking-label { font-size: .7rem; font-weight: bold; letter-spacing: .15em; color: var(--accent); font-family: monospace; margin-bottom: .6rem; }
-    .top-stories { display: flex; gap: .8rem; flex-wrap: wrap; }
-    .top-story-pill { background: var(--surface); border: 1px solid var(--border); border-radius: 20px; padding: .35rem .9rem; font-size: .83rem; display: flex; align-items: center; gap: .4rem; transition: border-color .2s; }
-    .top-story-pill:hover { border-color: var(--accent); }
-    .top-story-pill a { color: var(--text); text-decoration: none; }
-    .importance-badge { background: var(--accent); color: var(--bg); border-radius: 10px; padding: 0 .4rem; font-size: .68rem; font-weight: bold; font-family: monospace; }
+    /* ── Header ── */
+    header {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(255,255,255,0.85);
+      backdrop-filter: saturate(180%) blur(20px);
+      -webkit-backdrop-filter: saturate(180%) blur(20px);
+      border-bottom: 1px solid var(--border);
+    }
+    .header-inner {
+      max-width: 1280px; margin: 0 auto; padding: 0 2rem;
+      height: 52px; display: flex; align-items: center; justify-content: space-between;
+    }
+    .logo { font-size: 1rem; font-weight: 600; letter-spacing: -0.01em; color: var(--text); }
+    .header-date { font-size: 0.75rem; color: var(--text-3); }
 
-    main { max-width: 1400px; margin: 0 auto; padding: 2rem; }
+    /* ── Nav ── */
+    nav {
+      background: rgba(255,255,255,0.85);
+      backdrop-filter: saturate(180%) blur(20px);
+      -webkit-backdrop-filter: saturate(180%) blur(20px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-inner {
+      max-width: 1280px; margin: 0 auto; padding: 0 2rem;
+      display: flex; overflow-x: auto; scrollbar-width: none;
+    }
+    .nav-inner::-webkit-scrollbar { display: none; }
+    .nav-tab {
+      padding: 0.75rem 1.2rem; font-size: 0.82rem; font-weight: 500;
+      color: var(--text-2); text-decoration: none;
+      border-bottom: 2px solid transparent; white-space: nowrap;
+      transition: color 0.15s, border-color 0.15s;
+    }
+    .nav-tab:hover { color: var(--text); }
+    .nav-tab.active { color: var(--accent); border-bottom-color: var(--accent); }
 
-    .category-section { margin-bottom: 3rem; }
-    .category-header { display: flex; align-items: center; gap: .8rem; margin-bottom: 1.2rem; padding-bottom: .6rem; border-bottom: 2px solid var(--border); }
-    .category-icon { font-size: 1.4rem; }
-    .category-name { font-size: 1.2rem; font-weight: bold; font-family: Arial, sans-serif; }
-    .category-count { font-size: .75rem; color: var(--text-muted); font-family: monospace; margin-left: auto; }
+    /* ── Ticker ── */
+    .ticker { background: #1d1d1f; }
+    .ticker-inner {
+      max-width: 1280px; margin: 0 auto; padding: 0.65rem 2rem;
+      display: flex; align-items: center; gap: 1.5rem;
+    }
+    .ticker-label {
+      font-size: 0.62rem; font-weight: 700; letter-spacing: 0.12em;
+      text-transform: uppercase; color: rgba(255,255,255,0.35); white-space: nowrap;
+    }
+    .ticker-scroll { display: flex; overflow-x: auto; scrollbar-width: none; }
+    .ticker-scroll::-webkit-scrollbar { display: none; }
+    .ticker-item {
+      display: flex; align-items: center; gap: 0.5rem;
+      padding: 0 1rem; border-right: 1px solid rgba(255,255,255,0.08); white-space: nowrap;
+    }
+    .ticker-item:last-child { border-right: none; }
+    .ticker-item a { font-size: 0.78rem; color: rgba(255,255,255,0.75); text-decoration: none; }
+    .ticker-item a:hover { color: white; }
+    .ticker-score { font-size: 0.62rem; font-weight: 600; color: rgba(255,255,255,0.3); }
 
-    .clusters-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(370px, 1fr)); gap: 1.2rem; }
-    .cluster-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 1.2rem; display: flex; flex-direction: column; gap: .8rem; }
-    .cluster-card.multi { border-left: 3px solid; }
-    .cluster-theme { font-size: 1.05rem; font-weight: bold; font-family: Arial, sans-serif; line-height: 1.3; }
-    .cluster-summary { font-size: .88rem; color: var(--text-muted); line-height: 1.65; }
-    .cluster-contradictions { background: rgba(251,191,36,.1); border: 1px solid rgba(251,191,36,.4); border-radius: 6px; padding: .7rem; font-size: .82rem; color: var(--yellow); line-height: 1.5; }
-    .contradictions-label { font-weight: bold; font-size: .68rem; letter-spacing: .1em; text-transform: uppercase; margin-bottom: .3rem; }
-    .cluster-sources { display: flex; flex-wrap: wrap; gap: .4rem; margin-top: auto; }
-    .source-tag { font-size: .72rem; background: var(--surface2); border-radius: 4px; padding: .15rem .5rem; color: var(--text-muted); font-family: monospace; }
-    .source-tag a { color: inherit; text-decoration: none; }
-    .source-tag a:hover { color: var(--accent); }
-    .cluster-meta { display: flex; align-items: center; justify-content: space-between; font-size: .72rem; color: var(--text-muted); font-family: monospace; }
-    .importance-bar { display: flex; gap: 2px; }
-    .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--border); }
-    .dot.on { background: var(--accent); }
-    .cache-badge { font-size: .65rem; color: var(--text-muted); opacity: .6; }
+    /* ── Main ── */
+    main { max-width: 1280px; margin: 0 auto; padding: 3rem 2rem 5rem; }
 
-    footer { text-align: center; padding: 2rem; color: var(--text-muted); font-size: .8rem; border-top: 1px solid var(--border); margin-top: 2rem; }
+    /* ── Section ── */
+    .section { margin-bottom: 4.5rem; }
+    .section-header {
+      display: flex; align-items: baseline; justify-content: space-between;
+      margin-bottom: 1.5rem;
+    }
+    .section-title { font-size: 1.4rem; font-weight: 700; letter-spacing: -0.03em; }
+    .section-count { font-size: 0.75rem; color: var(--text-3); }
 
-    @media (max-width: 640px) { main { padding: 1rem; } .clusters-grid { grid-template-columns: 1fr; } .breaking-bar { margin: 1rem; } }
+    /* ── Grid ── */
+    .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.25rem;
+    }
+    .card-featured { grid-column: span 2; }
+    .card-featured .card-img-wrap { aspect-ratio: 16/8; }
+    .card-featured .card-title { font-size: 1.3rem; -webkit-line-clamp: 2; }
+    .card-featured .card-summary { -webkit-line-clamp: 4; }
+
+    /* ── Card ── */
+    .card {
+      background: var(--card); border-radius: var(--radius);
+      overflow: hidden; display: flex; flex-direction: column;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .card:hover { transform: translateY(-3px); box-shadow: 0 12px 40px rgba(0,0,0,0.11); }
+
+    .card-img-wrap {
+      width: 100%; aspect-ratio: 16/9; overflow: hidden; flex-shrink: 0; position: relative;
+    }
+    .card-img {
+      width: 100%; height: 100%; object-fit: cover;
+      transition: transform 0.4s ease;
+    }
+    .card:hover .card-img { transform: scale(1.04); }
+    .card-placeholder {
+      width: 100%; height: 100%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 2.2rem; opacity: 0.5;
+    }
+
+    .card-body {
+      padding: 1.1rem 1.25rem 1.35rem;
+      flex: 1; display: flex; flex-direction: column; gap: 0.4rem;
+    }
+    .card-eyebrow {
+      font-size: 0.68rem; font-weight: 600;
+      letter-spacing: 0.05em; text-transform: uppercase; color: var(--accent);
+    }
+    .card-title {
+      font-size: 1rem; font-weight: 600; line-height: 1.35;
+      letter-spacing: -0.015em; color: var(--text);
+      display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;
+    }
+    .card-summary {
+      font-size: 0.82rem; color: var(--text-2); line-height: 1.6; margin-top: 0.1rem;
+      display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;
+    }
+    .card-sources {
+      display: flex; flex-wrap: wrap; gap: 0.3rem; margin-top: auto; padding-top: 0.85rem;
+    }
+    .source-chip {
+      font-size: 0.68rem; font-weight: 500; background: var(--bg);
+      border-radius: 20px; padding: 0.2rem 0.65rem; color: var(--text-2);
+    }
+    .source-chip a { color: inherit; text-decoration: none; }
+    .source-chip a:hover { color: var(--accent); }
+
+    .contradiction {
+      margin-top: 0.75rem; background: #fff8ed;
+      border-left: 2px solid #f5a623; border-radius: 0 8px 8px 0;
+      padding: 0.55rem 0.75rem;
+    }
+    .contradiction-label {
+      font-size: 0.6rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.08em; color: #c17f00; margin-bottom: 0.2rem;
+    }
+    .contradiction-text { font-size: 0.78rem; color: #7a5200; line-height: 1.5; }
+
+    /* ── Footer ── */
+    footer {
+      border-top: 1px solid var(--border); padding: 2.5rem 2rem;
+      text-align: center; color: var(--text-3); font-size: 0.75rem;
+      max-width: 1280px; margin: 0 auto;
+    }
+
+    @media (max-width: 960px) {
+      .cards-grid { grid-template-columns: repeat(2, 1fr); }
+      .card-featured { grid-column: span 2; }
+    }
+    @media (max-width: 600px) {
+      .cards-grid { grid-template-columns: 1fr; }
+      .card-featured { grid-column: span 1; }
+      main { padding: 2rem 1rem; }
+      .header-inner, .nav-inner, .ticker-inner { padding: 0 1rem; }
+    }
   </style>
 </head>
 <body>
 
 <header>
-  <div class="header-top">
-    <span class="site-title">VEILLE ÉDITORIALE</span>
-    <span class="update-time">Mis à jour le {{ generated_at }}</span>
+  <div class="header-inner">
+    <span class="logo">Veille Éditoriale</span>
+    <span class="header-date">{{ generated_at }}</span>
   </div>
 </header>
 
-{% if top_articles %}
-<div class="breaking-bar">
-  <div class="breaking-label">★ SUJETS DU MOMENT</div>
-  <div class="top-stories">
-    {% for a in top_articles %}
-    <div class="top-story-pill">
-      <span class="importance-badge">{{ a.importance_score | int }}/10</span>
-      <a href="{{ a.url }}" target="_blank" rel="noopener">{{ a.translated_title | truncate(68) }}</a>
-    </div>
+<nav>
+  <div class="nav-inner">
+    <a href="#top" class="nav-tab active">Tout</a>
+    {% for category in categories_with_clusters.keys() %}
+    <a href="#{{ category | slugify }}" class="nav-tab">{{ category }}</a>
     {% endfor %}
+  </div>
+</nav>
+
+{% if top_articles %}
+<div class="ticker">
+  <div class="ticker-inner">
+    <span class="ticker-label">À la une</span>
+    <div class="ticker-scroll">
+      {% for a in top_articles %}
+      <div class="ticker-item">
+        <span class="ticker-score">{{ a.importance_score | int }}/10</span>
+        <a href="{{ a.url }}" target="_blank" rel="noopener">{{ a.translated_title | truncate(65) }}</a>
+      </div>
+      {% endfor %}
+    </div>
   </div>
 </div>
 {% endif %}
 
-<main>
+<main id="top">
 {% for category, cat_data in categories_with_clusters.items() %}
 {% if cat_data.clusters %}
-<section class="category-section">
-  <div class="category-header">
-    <span class="category-icon">{{ cat_data.icon }}</span>
-    <span class="category-name" style="color:{{ cat_data.color }}">{{ category }}</span>
-    <span class="category-count">{{ cat_data.clusters | length }} sujet(s)</span>
+<section class="section" id="{{ category | slugify }}">
+  <div class="section-header">
+    <h2 class="section-title">{{ category }}</h2>
+    <span class="section-count">{{ cat_data.clusters | length }} sujet{% if cat_data.clusters | length > 1 %}s{% endif %}</span>
   </div>
-  <div class="clusters-grid">
+  <div class="cards-grid">
     {% for cluster in cat_data.clusters %}
-    <div class="cluster-card {% if cluster.articles | length > 1 %}multi{% endif %}"
-         style="{% if cluster.articles | length > 1 %}border-left-color:{{ cat_data.color }}{% endif %}">
-      <div class="cluster-meta">
-        <span>{{ cluster.articles | length }} source(s)</span>
-        <div class="importance-bar">
-          {% for i in range(10) %}<div class="dot {% if i < cluster.importance_score %}on{% endif %}"></div>{% endfor %}
+    {% set best_img = namespace(url='') %}
+    {% for a in cluster.articles %}{% if a.image_url and not best_img.url %}{% set best_img.url = a.image_url %}{% endif %}{% endfor %}
+    <div class="card {% if loop.first %}card-featured{% endif %}">
+      <div class="card-img-wrap">
+        {% if best_img.url %}
+        <img class="card-img" src="{{ best_img.url }}" alt="" loading="lazy"
+             onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+        <div class="card-placeholder" style="background:{{ cat_data.gradient }};display:none">{{ cat_data.icon }}</div>
+        {% else %}
+        <div class="card-placeholder" style="background:{{ cat_data.gradient }}">{{ cat_data.icon }}</div>
+        {% endif %}
+      </div>
+      <div class="card-body">
+        <div class="card-eyebrow">
+          {% if cluster.articles | length == 1 %}{{ cluster.articles[0].source }}{% else %}{{ cluster.articles | length }} sources{% endif %}
+          &nbsp;·&nbsp;{{ cluster.articles[0].published | timeago }}
         </div>
-      </div>
-      <div class="cluster-theme">{{ cluster.theme_fr }}</div>
-      {% if cluster.summary_fr %}<div class="cluster-summary">{{ cluster.summary_fr }}</div>{% endif %}
-      {% if cluster.contradictions %}
-      <div class="cluster-contradictions">
-        <div class="contradictions-label">⚡ Points de vue divergents</div>
-        {{ cluster.contradictions }}
-      </div>
-      {% endif %}
-      <div class="cluster-sources">
-        {% for a in cluster.articles %}
-        <span class="source-tag">
-          <a href="{{ a.url }}" target="_blank" rel="noopener">{{ a.source }}</a>
-          {% if a.from_cache %}<span class="cache-badge">↩</span>{% endif %}
-        </span>
-        {% endfor %}
+        <h3 class="card-title">{{ cluster.theme_fr }}</h3>
+        {% if cluster.summary_fr %}<p class="card-summary">{{ cluster.summary_fr }}</p>{% endif %}
+        {% if cluster.articles | length > 1 %}
+        <div class="card-sources">
+          {% for a in cluster.articles %}
+          <span class="source-chip"><a href="{{ a.url }}" target="_blank" rel="noopener">{{ a.source }}</a></span>
+          {% endfor %}
+        </div>
+        {% endif %}
+        {% if cluster.contradictions %}
+        <div class="contradiction">
+          <div class="contradiction-label">Points de vue divergents</div>
+          <p class="contradiction-text">{{ cluster.contradictions }}</p>
+        </div>
+        {% endif %}
       </div>
     </div>
     {% endfor %}
@@ -512,12 +679,31 @@ HTML_TEMPLATE = """<!DOCTYPE html>
 {% endfor %}
 </main>
 
-<footer>
-  Veille Éditoriale · {{ total_articles }} articles · {{ generated_at }}
-</footer>
+<footer>Veille Éditoriale &mdash; {{ total_articles }} articles analysés &mdash; {{ generated_at }}</footer>
 
 </body>
 </html>"""
+
+
+def _timeago(iso_str: str) -> str:
+    try:
+        pub  = datetime.fromisoformat(iso_str)
+        diff = datetime.now(timezone.utc) - pub
+        h    = int(diff.total_seconds() / 3600)
+        if h < 1:   return "à l'instant"
+        if h < 24:  return f"il y a {h}h"
+        if h < 48:  return "hier"
+        return f"il y a {h // 24}j"
+    except Exception:
+        return ""
+
+
+def _slugify(s: str) -> str:
+    replacements = {"é":"e","è":"e","ê":"e","ë":"e","à":"a","â":"a","î":"i","ï":"i","ô":"o","ù":"u","û":"u","ç":"c"," ":"-"}
+    out = s.lower()
+    for k, v in replacements.items():
+        out = out.replace(k, v)
+    return re.sub(r"[^a-z0-9\-]", "", out)
 
 
 def generate_html(clusters: list[Cluster], top_articles: list[Article], config: dict) -> str:
@@ -526,15 +712,21 @@ def generate_html(clusters: list[Cluster], top_articles: list[Article], config: 
         cat_clusters = [c for c in clusters if c.category == cat_name]
         if cat_clusters:
             categories_with_clusters[cat_name] = {
-                "clusters": cat_clusters,
-                "color":    cat_data["color"],
-                "icon":     cat_data["icon"],
+                "clusters":  cat_clusters,
+                "color":     cat_data["color"],
+                "icon":      cat_data["icon"],
+                "gradient":  cat_data.get("gradient", "linear-gradient(135deg,#1a1a2e,#16213e)"),
             }
     uncategorized = [c for c in clusters if c.category not in config["categories"]]
     if uncategorized:
-        categories_with_clusters["Autres"] = {"clusters": uncategorized, "color": "#6b7280", "icon": "📌"}
+        categories_with_clusters["Autres"] = {
+            "clusters": uncategorized, "color": "#6b7280", "icon": "📌",
+            "gradient": "linear-gradient(135deg,#2d2d2d,#1a1a1a)",
+        }
 
-    env  = Environment(autoescape=select_autoescape(["html"]))
+    env = Environment(autoescape=select_autoescape(["html"]))
+    env.filters["timeago"] = _timeago
+    env.filters["slugify"] = _slugify
     tmpl = env.from_string(HTML_TEMPLATE)
 
     html = tmpl.render(

@@ -3,714 +3,732 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Veille Éditoriale — 31/03/2026 à 07h41</title>
+  <title>Veille Éditoriale</title>
   <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
     :root {
-      --bg: #0f172a;
-      --surface: #1e293b;
-      --surface2: #2d3f55;
-      --border: #334155;
-      --text: #e2e8f0;
-      --text-muted: #94a3b8;
-      --accent: #38bdf8;
-      --yellow: #fbbf24;
+      --bg:      #f5f5f7;
+      --card:    #ffffff;
+      --text:    #1d1d1f;
+      --text-2:  #6e6e73;
+      --text-3:  #86868b;
+      --border:  rgba(0,0,0,0.08);
+      --accent:  #0071e3;
+      --radius:  16px;
+      --font:    -apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", Arial, sans-serif;
     }
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: 'Georgia', serif; background: var(--bg); color: var(--text); min-height: 100vh; }
 
-    header { background: var(--surface); border-bottom: 2px solid var(--accent); padding: 1rem 2rem; }
-    .header-top { display: flex; justify-content: space-between; align-items: baseline; }
-    .site-title { font-size: 1.6rem; font-weight: bold; letter-spacing: .05em; color: var(--accent); font-family: Arial, sans-serif; }
-    .update-time { font-size: .8rem; color: var(--text-muted); font-family: monospace; }
+    body {
+      font-family: var(--font);
+      background: var(--bg);
+      color: var(--text);
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
 
-    .breaking-bar { background: var(--surface2); border-left: 4px solid var(--accent); padding: .8rem 1.5rem; margin: 1.5rem 2rem; border-radius: 0 8px 8px 0; }
-    .breaking-label { font-size: .7rem; font-weight: bold; letter-spacing: .15em; color: var(--accent); font-family: monospace; margin-bottom: .6rem; }
-    .top-stories { display: flex; gap: .8rem; flex-wrap: wrap; }
-    .top-story-pill { background: var(--surface); border: 1px solid var(--border); border-radius: 20px; padding: .35rem .9rem; font-size: .83rem; display: flex; align-items: center; gap: .4rem; transition: border-color .2s; }
-    .top-story-pill:hover { border-color: var(--accent); }
-    .top-story-pill a { color: var(--text); text-decoration: none; }
-    .importance-badge { background: var(--accent); color: var(--bg); border-radius: 10px; padding: 0 .4rem; font-size: .68rem; font-weight: bold; font-family: monospace; }
+    /* ── Header ── */
+    header {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(255,255,255,0.85);
+      backdrop-filter: saturate(180%) blur(20px);
+      -webkit-backdrop-filter: saturate(180%) blur(20px);
+      border-bottom: 1px solid var(--border);
+    }
+    .header-inner {
+      max-width: 1280px; margin: 0 auto; padding: 0 2rem;
+      height: 52px; display: flex; align-items: center; justify-content: space-between;
+    }
+    .logo { font-size: 1rem; font-weight: 600; letter-spacing: -0.01em; color: var(--text); }
+    .header-date { font-size: 0.75rem; color: var(--text-3); }
 
-    main { max-width: 1400px; margin: 0 auto; padding: 2rem; }
+    /* ── Nav ── */
+    nav {
+      background: rgba(255,255,255,0.85);
+      backdrop-filter: saturate(180%) blur(20px);
+      -webkit-backdrop-filter: saturate(180%) blur(20px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-inner {
+      max-width: 1280px; margin: 0 auto; padding: 0 2rem;
+      display: flex; overflow-x: auto; scrollbar-width: none;
+    }
+    .nav-inner::-webkit-scrollbar { display: none; }
+    .nav-tab {
+      padding: 0.75rem 1.2rem; font-size: 0.82rem; font-weight: 500;
+      color: var(--text-2); text-decoration: none;
+      border-bottom: 2px solid transparent; white-space: nowrap;
+      transition: color 0.15s, border-color 0.15s;
+    }
+    .nav-tab:hover { color: var(--text); }
+    .nav-tab.active { color: var(--accent); border-bottom-color: var(--accent); }
 
-    .category-section { margin-bottom: 3rem; }
-    .category-header { display: flex; align-items: center; gap: .8rem; margin-bottom: 1.2rem; padding-bottom: .6rem; border-bottom: 2px solid var(--border); }
-    .category-icon { font-size: 1.4rem; }
-    .category-name { font-size: 1.2rem; font-weight: bold; font-family: Arial, sans-serif; }
-    .category-count { font-size: .75rem; color: var(--text-muted); font-family: monospace; margin-left: auto; }
+    /* ── Ticker ── */
+    .ticker { background: #1d1d1f; }
+    .ticker-inner {
+      max-width: 1280px; margin: 0 auto; padding: 0.65rem 2rem;
+      display: flex; align-items: center; gap: 1.5rem;
+    }
+    .ticker-label {
+      font-size: 0.62rem; font-weight: 700; letter-spacing: 0.12em;
+      text-transform: uppercase; color: rgba(255,255,255,0.35); white-space: nowrap;
+    }
+    .ticker-scroll { display: flex; overflow-x: auto; scrollbar-width: none; }
+    .ticker-scroll::-webkit-scrollbar { display: none; }
+    .ticker-item {
+      display: flex; align-items: center; gap: 0.5rem;
+      padding: 0 1rem; border-right: 1px solid rgba(255,255,255,0.08); white-space: nowrap;
+    }
+    .ticker-item:last-child { border-right: none; }
+    .ticker-item a { font-size: 0.78rem; color: rgba(255,255,255,0.75); text-decoration: none; }
+    .ticker-item a:hover { color: white; }
+    .ticker-score { font-size: 0.62rem; font-weight: 600; color: rgba(255,255,255,0.3); }
 
-    .clusters-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(370px, 1fr)); gap: 1.2rem; }
-    .cluster-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 1.2rem; display: flex; flex-direction: column; gap: .8rem; }
-    .cluster-card.multi { border-left: 3px solid; }
-    .cluster-theme { font-size: 1.05rem; font-weight: bold; font-family: Arial, sans-serif; line-height: 1.3; }
-    .cluster-summary { font-size: .88rem; color: var(--text-muted); line-height: 1.65; }
-    .cluster-contradictions { background: rgba(251,191,36,.1); border: 1px solid rgba(251,191,36,.4); border-radius: 6px; padding: .7rem; font-size: .82rem; color: var(--yellow); line-height: 1.5; }
-    .contradictions-label { font-weight: bold; font-size: .68rem; letter-spacing: .1em; text-transform: uppercase; margin-bottom: .3rem; }
-    .cluster-sources { display: flex; flex-wrap: wrap; gap: .4rem; margin-top: auto; }
-    .source-tag { font-size: .72rem; background: var(--surface2); border-radius: 4px; padding: .15rem .5rem; color: var(--text-muted); font-family: monospace; }
-    .source-tag a { color: inherit; text-decoration: none; }
-    .source-tag a:hover { color: var(--accent); }
-    .cluster-meta { display: flex; align-items: center; justify-content: space-between; font-size: .72rem; color: var(--text-muted); font-family: monospace; }
-    .importance-bar { display: flex; gap: 2px; }
-    .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--border); }
-    .dot.on { background: var(--accent); }
-    .cache-badge { font-size: .65rem; color: var(--text-muted); opacity: .6; }
+    /* ── Main ── */
+    main { max-width: 1280px; margin: 0 auto; padding: 3rem 2rem 5rem; }
 
-    footer { text-align: center; padding: 2rem; color: var(--text-muted); font-size: .8rem; border-top: 1px solid var(--border); margin-top: 2rem; }
+    /* ── Section ── */
+    .section { margin-bottom: 4.5rem; }
+    .section-header {
+      display: flex; align-items: baseline; justify-content: space-between;
+      margin-bottom: 1.5rem;
+    }
+    .section-title { font-size: 1.4rem; font-weight: 700; letter-spacing: -0.03em; }
+    .section-count { font-size: 0.75rem; color: var(--text-3); }
 
-    @media (max-width: 640px) { main { padding: 1rem; } .clusters-grid { grid-template-columns: 1fr; } .breaking-bar { margin: 1rem; } }
+    /* ── Grid ── */
+    .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.25rem;
+    }
+    .card-featured { grid-column: span 2; }
+    .card-featured .card-img-wrap { aspect-ratio: 16/8; }
+    .card-featured .card-title { font-size: 1.3rem; -webkit-line-clamp: 2; }
+    .card-featured .card-summary { -webkit-line-clamp: 4; }
+
+    /* ── Card ── */
+    .card {
+      background: var(--card); border-radius: var(--radius);
+      overflow: hidden; display: flex; flex-direction: column;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .card:hover { transform: translateY(-3px); box-shadow: 0 12px 40px rgba(0,0,0,0.11); }
+
+    .card-img-wrap {
+      width: 100%; aspect-ratio: 16/9; overflow: hidden; flex-shrink: 0; position: relative;
+    }
+    .card-img {
+      width: 100%; height: 100%; object-fit: cover;
+      transition: transform 0.4s ease;
+    }
+    .card:hover .card-img { transform: scale(1.04); }
+    .card-placeholder {
+      width: 100%; height: 100%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 2.2rem; opacity: 0.5;
+    }
+
+    .card-body {
+      padding: 1.1rem 1.25rem 1.35rem;
+      flex: 1; display: flex; flex-direction: column; gap: 0.4rem;
+    }
+    .card-eyebrow {
+      font-size: 0.68rem; font-weight: 600;
+      letter-spacing: 0.05em; text-transform: uppercase; color: var(--accent);
+    }
+    .card-title {
+      font-size: 1rem; font-weight: 600; line-height: 1.35;
+      letter-spacing: -0.015em; color: var(--text);
+      display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;
+    }
+    .card-summary {
+      font-size: 0.82rem; color: var(--text-2); line-height: 1.6; margin-top: 0.1rem;
+      display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;
+    }
+    .card-sources {
+      display: flex; flex-wrap: wrap; gap: 0.3rem; margin-top: auto; padding-top: 0.85rem;
+    }
+    .source-chip {
+      font-size: 0.68rem; font-weight: 500; background: var(--bg);
+      border-radius: 20px; padding: 0.2rem 0.65rem; color: var(--text-2);
+    }
+    .source-chip a { color: inherit; text-decoration: none; }
+    .source-chip a:hover { color: var(--accent); }
+
+    .contradiction {
+      margin-top: 0.75rem; background: #fff8ed;
+      border-left: 2px solid #f5a623; border-radius: 0 8px 8px 0;
+      padding: 0.55rem 0.75rem;
+    }
+    .contradiction-label {
+      font-size: 0.6rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.08em; color: #c17f00; margin-bottom: 0.2rem;
+    }
+    .contradiction-text { font-size: 0.78rem; color: #7a5200; line-height: 1.5; }
+
+    /* ── Footer ── */
+    footer {
+      border-top: 1px solid var(--border); padding: 2.5rem 2rem;
+      text-align: center; color: var(--text-3); font-size: 0.75rem;
+      max-width: 1280px; margin: 0 auto;
+    }
+
+    @media (max-width: 960px) {
+      .cards-grid { grid-template-columns: repeat(2, 1fr); }
+      .card-featured { grid-column: span 2; }
+    }
+    @media (max-width: 600px) {
+      .cards-grid { grid-template-columns: 1fr; }
+      .card-featured { grid-column: span 1; }
+      main { padding: 2rem 1rem; }
+      .header-inner, .nav-inner, .ticker-inner { padding: 0 1rem; }
+    }
   </style>
 </head>
 <body>
 
 <header>
-  <div class="header-top">
-    <span class="site-title">VEILLE ÉDITORIALE</span>
-    <span class="update-time">Mis à jour le 31/03/2026 à 07h41</span>
+  <div class="header-inner">
+    <span class="logo">Veille Éditoriale</span>
+    <span class="header-date">31/03/2026 à 11h20</span>
   </div>
 </header>
 
+<nav>
+  <div class="nav-inner">
+    <a href="#top" class="nav-tab active">Tout</a>
+    
+    <a href="#strategie-editoriale" class="nav-tab">Stratégie Éditoriale</a>
+    
+    <a href="#video" class="nav-tab">Vidéo</a>
+    
+    <a href="#podcast" class="nav-tab">Podcast</a>
+    
+    <a href="#social-media" class="nav-tab">Social Media</a>
+    
+    <a href="#autres" class="nav-tab">Autres</a>
+    
+  </div>
+</nav>
 
-<div class="breaking-bar">
-  <div class="breaking-label">★ SUJETS DU MOMENT</div>
-  <div class="top-stories">
-    
-    <div class="top-story-pill">
-      <span class="importance-badge">8/10</span>
-      <a href="https://pressgazette.co.uk/newsletters/guardian-substack-experiment-feast-food-newsletter/" target="_blank" rel="noopener">La première expérience Substack du Guardian : republier sa...</a>
+
+<div class="ticker">
+  <div class="ticker-inner">
+    <span class="ticker-label">À la une</span>
+    <div class="ticker-scroll">
+      
+      <div class="ticker-item">
+        <span class="ticker-score">8/10</span>
+        <a href="https://pressgazette.co.uk/newsletters/guardian-substack-experiment-feast-food-newsletter/" target="_blank" rel="noopener">La première expérience Substack du Guardian : republier sa...</a>
+      </div>
+      
+      <div class="ticker-item">
+        <span class="ticker-score">7/10</span>
+        <a href="https://wan-ifra.org/2026/03/chase-code-of-conduct-contribute-to-safer-digital-spaces-across-europe/" target="_blank" rel="noopener">Code de conduite CHASE : contribuer à des espaces numériques...</a>
+      </div>
+      
+      <div class="ticker-item">
+        <span class="ticker-score">7/10</span>
+        <a href="https://wan-ifra.org/2026/03/c-h-a-s-e-campaign-to-build-safer-digital-spaces-for-women/" target="_blank" rel="noopener">C.H.A.S.E. : campagne contre le discours de haine à caractère...</a>
+      </div>
+      
+      <div class="ticker-item">
+        <span class="ticker-score">6/10</span>
+        <a href="https://buffer.com/resources/social-media-collaboration-tools/" target="_blank" rel="noopener">8 outils collaboratifs essentiels pour les réseaux sociaux —...</a>
+      </div>
+      
+      <div class="ticker-item">
+        <span class="ticker-score">5/10</span>
+        <a href="https://www.cbnews.fr/conseil/collecte-dons-institut-imagine-veut-recruter-agence" target="_blank" rel="noopener">Collecte de dons : l’institut Imagine veut recruter une agence</a>
+      </div>
+      
     </div>
-    
-    <div class="top-story-pill">
-      <span class="importance-badge">7/10</span>
-      <a href="https://wan-ifra.org/2026/03/chase-code-of-conduct-contribute-to-safer-digital-spaces-across-europe/" target="_blank" rel="noopener">Code de conduite CHASE : contribuer à des espaces numériques...</a>
-    </div>
-    
-    <div class="top-story-pill">
-      <span class="importance-badge">7/10</span>
-      <a href="https://wan-ifra.org/2026/03/c-h-a-s-e-campaign-to-build-safer-digital-spaces-for-women/" target="_blank" rel="noopener">C.H.A.S.E. : campagne contre le discours de haine à caractère...</a>
-    </div>
-    
-    <div class="top-story-pill">
-      <span class="importance-badge">6/10</span>
-      <a href="https://buffer.com/resources/social-media-collaboration-tools/" target="_blank" rel="noopener">8 outils collaboratifs essentiels pour les réseaux sociaux —...</a>
-    </div>
-    
-    <div class="top-story-pill">
-      <span class="importance-badge">5/10</span>
-      <a href="https://jai-un-pote-dans-la.com/helvetica-la-police-intemporelle/" target="_blank" rel="noopener">Helvetica, la police intemporelle</a>
-    </div>
-    
   </div>
 </div>
 
 
-<main>
+<main id="top">
 
 
-<section class="category-section">
-  <div class="category-header">
-    <span class="category-icon">📋</span>
-    <span class="category-name" style="color:#2563EB">Stratégie Éditoriale</span>
-    <span class="category-count">27 sujet(s)</span>
+<section class="section" id="strategie-editoriale">
+  <div class="section-header">
+    <h2 class="section-title">Stratégie Éditoriale</h2>
+    <span class="section-count">13 sujets</span>
   </div>
-  <div class="clusters-grid">
+  <div class="cards-grid">
     
-    <div class="cluster-card "
-         style="">
-      <div class="cluster-meta">
-        <span>1 source(s)</span>
-        <div class="importance-bar">
-          <div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot "></div><div class="dot "></div><div class="dot "></div><div class="dot "></div><div class="dot "></div>
-        </div>
-      </div>
-      <div class="cluster-theme">Helvetica, la police intemporelle</div>
-      <div class="cluster-summary">Vous la voyez tous les jours, et pourtant vous ne la regardez pas. Au quotidien, vous la croisez partout : elle vous vend des produits, elle vous guide dans les transports en commun, elle vous avertit d’un danger mortel… mais vous ne la remarquez pas. Elle, c’est Helvetica, la star des polices de caractère. Et [&amp;#8230;]
-L’article Helvetica, la police intemporelle est apparu en premier sur JUPDLC.</div>
-      
-      <div class="cluster-sources">
+    
+    
+    <div class="card card-featured">
+      <div class="card-img-wrap">
         
-        <span class="source-tag">
-          <a href="https://jai-un-pote-dans-la.com/helvetica-la-police-intemporelle/" target="_blank" rel="noopener">J&#39;ai un pote dans la</a>
+        <div class="card-placeholder" style="background:linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)">✦</div>
+        
+      </div>
+      <div class="card-body">
+        <div class="card-eyebrow">
+          6 sources
+          &nbsp;·&nbsp;il y a 22h
+        </div>
+        <h3 class="card-title">IA et transformation créative : de la réécriture publicitaire à la génération de contenu</h3>
+        <p class="card-summary">L&#39;intelligence artificielle reconfigure en profondeur les pratiques créatives et éditoriales, depuis la réécriture publicitaire jusqu&#39;à la production de contenu à grande échelle. Le réalisateur Billy Boman théorise une méthode de collaboration homme-IA pour reformuler des publicités existantes, tandis qu&#39;Oasis s&#39;appuie sur une série TikTok générée par IA pour toucher une audience Gen Z avec des codes culturels ultra-codifiés. Du côté éditorial, The Guardian opte pour une intégration discrète de l&#39;IA au service de l&#39;expérience lecteur, à rebours de l&#39;effet « gadget » des chatbots. Adobe Stock, de son côté, repositionne son offre autour d&#39;un AI Studio qui entend fluidifier l&#39;ensemble du workflow créatif photo et vidéo.</p>
+        
+        <div class="card-sources">
           
-        </span>
+          <span class="source-chip"><a href="https://www.adweek.com/creativity/director-billy-bomans-rules-for-rewriting-ads-with-ai/" target="_blank" rel="noopener">Adweek</a></span>
+          
+          <span class="source-chip"><a href="https://digiday.com/media/why-the-guardians-first-reader-facing-ai-product-isnt-a-chatbot/?utm_campaign=digidaydis&amp;utm_medium=rss&amp;utm_source=general-rss" target="_blank" rel="noopener">Digiday</a></span>
+          
+          <span class="source-chip"><a href="https://www.danstapub.com/oasis-skibidi-tentafruit-tiktok-slop/" target="_blank" rel="noopener">Dans Ta Pub</a></span>
+          
+          <span class="source-chip"><a href="https://www.videomaker.com/uncategorized/how-adobe-stock-ai-studio-solves-the-common-issues-with-stock-media/" target="_blank" rel="noopener">Videomaker</a></span>
+          
+          <span class="source-chip"><a href="https://www.videomaker.com/uncategorized/ai-studio-makes-adobe-stock-more-than-just-a-video-stock-library/" target="_blank" rel="noopener">Videomaker</a></span>
+          
+          <span class="source-chip"><a href="https://www.videomaker.com/uncategorized/adobe-stocks-ai-studio-photo-features-pioneer-a-new-era-for-creative-workflows/" target="_blank" rel="noopener">Videomaker</a></span>
+          
+        </div>
+        
+        
+        <div class="contradiction">
+          <div class="contradiction-label">Points de vue divergents</div>
+          <p class="contradiction-text">Une tension de fond traverse ces sources : d&#39;un côté, The Guardian fait le choix d&#39;une IA invisible, quasi transparente, au service de l&#39;utilisateur sans en afficher la nature — une posture éditoriale fondée sur la confiance et la prudence institutionnelle. De l&#39;autre, Oasis et Billy Boman assument pleinement l&#39;IA comme argument créatif et même comme spectacle, exploitant sa visibilité pour générer de l&#39;engagement. Ces deux logiques révèlent une fracture stratégique : pour les médias d&#39;information, l&#39;IA doit se faire oublier pour rester légitime ; pour les marques et créatifs publicitaires, elle doit se montrer pour exister.</p>
+        </div>
         
       </div>
     </div>
     
-    <div class="cluster-card "
-         style="">
-      <div class="cluster-meta">
-        <span>1 source(s)</span>
-        <div class="importance-bar">
-          <div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot "></div><div class="dot "></div><div class="dot "></div><div class="dot "></div><div class="dot "></div>
-        </div>
-      </div>
-      <div class="cluster-theme">Collecte de dons : l’institut Imagine veut recruter une agence</div>
-      <div class="cluster-summary">Collecte de dons : l’institut Imagine veut recruter une agence
-
-            Collecte de dons : l’institut Imagine veut recruter une agence
-      thierry.wojciak
-&lt;time class=&#34;datetime&#34; datetime=&#34;2026-03-31T05:45:02+0</div>
-      
-      <div class="cluster-sources">
+    
+    
+    <div class="card ">
+      <div class="card-img-wrap">
         
-        <span class="source-tag">
-          <a href="https://www.cbnews.fr/conseil/collecte-dons-institut-imagine-veut-recruter-agence" target="_blank" rel="noopener">CB News</a>
-          <span class="cache-badge">↩</span>
-        </span>
+        <img class="card-img" src="https://jai-un-pote-dans-la.com/wp-content/uploads/2026/03/jupdlc-floa-la-chose-campagne-360.jpg" alt="" loading="lazy"
+             onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+        <div class="card-placeholder" style="background:linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);display:none">✦</div>
+        
+      </div>
+      <div class="card-body">
+        <div class="card-eyebrow">
+          8 sources
+          &nbsp;·&nbsp;il y a 1h
+        </div>
+        <h3 class="card-title">Publicité créative et campagnes marquantes : de l&#39;humour à l&#39;engagement social</h3>
+        <p class="card-summary">La publicité créative traverse une période particulièrement fertile, oscillant entre humour décomplexé et engagement sociétal assumé. D&#39;un côté, des campagnes comme celle de Burger King au Marathon de Gand ou celle de Floa par La Chose misent sur l&#39;autodérision et la connivence émotionnelle pour capter l&#39;attention dans des environnements saturés. De l&#39;autre, des dispositifs plus militants — le détournement du drapeau brésilien par Droga5, la voiture-peau pour alerter sur les coups de soleil au volant, ou la chaussure adidas conçue pour les athlètes trisomiques — démontrent que le choc visuel et la charge symbolique restent des leviers puissants pour porter des causes à forte résonance sociale. Cette dualité confirme une tendance de fond : les marques les plus mémorables sont celles qui choisissent un registre franc et cohérent avec leur territoire, qu&#39;il soit léger ou engagé, plutôt que de tenter de tout concilier.</p>
+        
+        <div class="card-sources">
+          
+          <span class="source-chip"><a href="https://www.danstapub.com/burger-king-marathon-abandon-belgique/" target="_blank" rel="noopener">Dans Ta Pub</a></span>
+          
+          <span class="source-chip"><a href="https://www.danstapub.com/droga5-sos-oceano-affiche-drapeau-bresil/" target="_blank" rel="noopener">Dans Ta Pub</a></span>
+          
+          <span class="source-chip"><a href="https://www.danstapub.com/voiture-peau-sensibiliser-coups-soleil/" target="_blank" rel="noopener">Dans Ta Pub</a></span>
+          
+          <span class="source-chip"><a href="https://jai-un-pote-dans-la.com/floa-la-chose-campagne-360/" target="_blank" rel="noopener">J&#39;ai un pote dans la</a></span>
+          
+          <span class="source-chip"><a href="https://creapills.com/filmstaden-campagne-emotions-cinema-experience-collective-20260331" target="_blank" rel="noopener">Creapills</a></span>
+          
+          <span class="source-chip"><a href="https://creapills.com/adidas-supernova-rise-3-adaptive-chaussure-running-handicap-trisomie-20260330" target="_blank" rel="noopener">Creapills</a></span>
+          
+          <span class="source-chip"><a href="https://creapills.com/voiture-peau-humaine-uv-soleil-campagne-mycar-tbwa-australia-20260330" target="_blank" rel="noopener">Creapills</a></span>
+          
+          <span class="source-chip"><a href="https://creapills.com/crayon-geant-multicolore-350-crayons-fondus-connor-creates-20260330" target="_blank" rel="noopener">Creapills</a></span>
+          
+        </div>
+        
+        
+        <div class="contradiction">
+          <div class="contradiction-label">Points de vue divergents</div>
+          <p class="contradiction-text">Aucune contradiction factuelle directe n&#39;est relevée entre les sources. On notera toutefois une tension de posture implicite : certaines campagnes (Burger King, Floa) célèbrent l&#39;efficacité de l&#39;humour léger et du registre décalé comme stratégie de notoriété suffisante en soi, tandis que d&#39;autres (Droga5, adidas, campagne solaire) suggèrent que seul un ancrage dans un enjeu réel et tangible — biodiversité, inclusion, santé — confère à la créativité une légitimité durable. Ces deux philosophies coexistent sans se contredire explicitement dans les sources, mais elles reflètent des visions distinctes du rôle que la publicité doit jouer au-delà de la visibilité commerciale.</p>
+        </div>
         
       </div>
     </div>
     
-    <div class="cluster-card "
-         style="">
-      <div class="cluster-meta">
-        <span>1 source(s)</span>
-        <div class="importance-bar">
-          <div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot "></div><div class="dot "></div><div class="dot "></div><div class="dot "></div><div class="dot "></div>
-        </div>
-      </div>
-      <div class="cluster-theme">Le « dark traffic » de l’IA, un enjeu urgent pour les marques</div>
-      <div class="cluster-summary">Le « dark traffic » de l’IA, un enjeu urgent pour les marques
-
-            Le « dark traffic » de l’IA, un enjeu urgent pour les marques
-      thierry.wojciak
-&lt;time class=&#34;datetime&#34; datetime=&#34;2026-03-30T18:34:58+02:</div>
-      
-      <div class="cluster-sources">
+    
+    
+    <div class="card ">
+      <div class="card-img-wrap">
         
-        <span class="source-tag">
-          <a href="https://www.cbnews.fr/tribune/dark-traffic-ia-enjeu-urgent-les-marques" target="_blank" rel="noopener">CB News</a>
-          <span class="cache-badge">↩</span>
-        </span>
+        <img class="card-img" src="https://jai-un-pote-dans-la.com/wp-content/uploads/2026/03/jupdlc-seloger-lance-sa-nouvelle-campagne-publicitaire-avec-marcel-copie.jpg" alt="" loading="lazy"
+             onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+        <div class="card-placeholder" style="background:linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);display:none">✦</div>
+        
+      </div>
+      <div class="card-body">
+        <div class="card-eyebrow">
+          6 sources
+          &nbsp;·&nbsp;il y a 6h
+        </div>
+        <h3 class="card-title">Stratégie média : agences, partenariats et restructurations d&#39;influence</h3>
+        <p class="card-summary">Le marché des stratégies médias et de l&#39;influence connaît une semaine dense en mouvements : l&#39;institut Imagine lance un appel d&#39;offres pour structurer sa collecte de dons, tandis que Rent A Car confie sa communication à Bloom &amp; friends et qu&#39;OVHcloud opte pour Angie. Côté restructuration, Heroiks crée Pulse, une entité dédiée à la data et à la business intelligence, signal d&#39;une montée en puissance de la mesure au cœur des dispositifs agences. Sur le front de l&#39;influence, CreatorIQ et Sprinklr annoncent une intégration commune visant à unifier intelligence créateur, gestion sociale et amplification payante sur une seule plateforme — réponse directe à la fragmentation persistante de la mesure creator. SeLoger, de son côté, marque un tournant stratégique en dévoilant une nouvelle campagne signée Marcel (Publicis Groupe), issue d&#39;un appel d&#39;offres mené fin 2025, repositionnant la marque sur l&#39;accompagnement de tous les projets de vie.</p>
+        
+        <div class="card-sources">
+          
+          <span class="source-chip"><a href="https://www.cbnews.fr/conseil/collecte-dons-institut-imagine-veut-recruter-agence" target="_blank" rel="noopener">CB News</a></span>
+          
+          <span class="source-chip"><a href="https://www.cbnews.fr/conseil/rent-se-confie-bloom-friends" target="_blank" rel="noopener">CB News</a></span>
+          
+          <span class="source-chip"><a href="https://www.cbnews.fr/conseil/creation-heroiks-pulse-entite-dediee-aux-etudes-data-business-intelligence" target="_blank" rel="noopener">CB News</a></span>
+          
+          <span class="source-chip"><a href="https://www.cbnews.fr/conseil/ovhcloud-opte-angie" target="_blank" rel="noopener">CB News</a></span>
+          
+          <span class="source-chip"><a href="https://digiday.com/media/creatoriq-and-sprinklr-bet-they-can-solve-creator-measurements-fragmentation-problem/?utm_campaign=digidaydis&amp;utm_medium=rss&amp;utm_source=general-rss" target="_blank" rel="noopener">Digiday</a></span>
+          
+          <span class="source-chip"><a href="https://jai-un-pote-dans-la.com/seloger-lance-sa-nouvelle-campagne-publicitaire-avec-marcel/" target="_blank" rel="noopener">J&#39;ai un pote dans la</a></span>
+          
+        </div>
+        
+        
+        <div class="contradiction">
+          <div class="contradiction-label">Points de vue divergents</div>
+          <p class="contradiction-text">Une tension latente s&#39;observe entre deux logiques : d&#39;un côté, des annonceurs (SeLoger, OVHcloud, Rent A Car) qui consolident leur stratégie en confiant leur communication à des agences uniques et identifiées, privilégiant la cohérence de marque ; de l&#39;autre, l&#39;initiative CreatorIQ x Sprinklr qui mise sur l&#39;agrégation technologique pour répondre à la fragmentation des écosystèmes — suggérant que la simplification ne passe plus nécessairement par l&#39;agence, mais par la plateforme. La création de Heroiks Pulse renforce cette ambivalence : les agences elles-mêmes internalisent la data et la BI pour ne pas céder ce terrain aux pure players technologiques, révélant une compétition sourde entre modèle agence intégrée et modèle stack technologique indépendant.</p>
+        </div>
         
       </div>
     </div>
     
-    <div class="cluster-card "
-         style="">
-      <div class="cluster-meta">
-        <span>1 source(s)</span>
-        <div class="importance-bar">
-          <div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot "></div><div class="dot "></div><div class="dot "></div><div class="dot "></div><div class="dot "></div>
-        </div>
-      </div>
-      <div class="cluster-theme">Rent A Car se confie à Bloom &amp; friends</div>
-      <div class="cluster-summary">Rent A Car se confie à Bloom &amp;amp; friends
-
-            Rent A Car se confie à Bloom &amp;amp; friends
-      thierry.wojciak
-&lt;time class=&#34;datetime&#34; datetime=&#34;2026-03-30T18:34:47+02:00&#34; title=&#34;Lundi 30 mars 2026 - 18:34&#34;</div>
-      
-      <div class="cluster-sources">
+    
+    
+    <div class="card ">
+      <div class="card-img-wrap">
         
-        <span class="source-tag">
-          <a href="https://www.cbnews.fr/conseil/rent-se-confie-bloom-friends" target="_blank" rel="noopener">CB News</a>
-          <span class="cache-badge">↩</span>
-        </span>
+        <div class="card-placeholder" style="background:linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)">✦</div>
+        
+      </div>
+      <div class="card-body">
+        <div class="card-eyebrow">
+          5 sources
+          &nbsp;·&nbsp;il y a 17h
+        </div>
+        <h3 class="card-title">Données, identité et mesure en publicité digitale</h3>
+        <p class="card-summary">L&#39;écosystème publicitaire digital traverse une profonde mutation autour de trois axes convergents : la fiabilité de la mesure, la valeur de l&#39;identité et la visibilité du trafic. Le &#39;dark traffic&#39; généré par les bots IA brouille les analytics des marques, tandis que The Trade Desk réoriente sa rémunération des partenaires identité vers l&#39;incrementalité réelle — signal fort d&#39;une industrie qui sanctionne enfin la mesure de façade. Parallèlement, éditeurs comme Time et plateformes comme CreatorIQ/Sprinklr cherchent à monétiser leurs données propriétaires en construisant des offres différenciantes, qu&#39;il s&#39;agisse d&#39;influencer les réponses génératives ou de consolider la fragmentation du creator marketing. La question centrale n&#39;est plus de collecter la donnée, mais de prouver qu&#39;elle mesure quelque chose de réel.</p>
+        
+        <div class="card-sources">
+          
+          <span class="source-chip"><a href="https://www.cbnews.fr/tribune/dark-traffic-ia-enjeu-urgent-les-marques" target="_blank" rel="noopener">CB News</a></span>
+          
+          <span class="source-chip"><a href="https://digiday.com/media-buying/the-trade-desk-shakes-up-identity-alliance-payouts-with-a-new-focus-on-incrementality/?utm_campaign=digidaydis&amp;utm_medium=rss&amp;utm_source=general-rss" target="_blank" rel="noopener">Digiday</a></span>
+          
+          <span class="source-chip"><a href="https://digiday.com/media/time-pitches-geo-insights-into-a-new-brand-offering/?utm_campaign=digidaydis&amp;utm_medium=rss&amp;utm_source=general-rss" target="_blank" rel="noopener">Digiday</a></span>
+          
+          <span class="source-chip"><a href="https://digiday.com/media/creatoriq-and-sprinklr-bet-they-can-solve-creator-measurements-fragmentation-problem/?utm_campaign=digidaydis&amp;utm_medium=rss&amp;utm_source=general-rss" target="_blank" rel="noopener">Digiday</a></span>
+          
+          <span class="source-chip"><a href="https://wan-ifra.org/2026/03/survey-the-impact-of-ai-search-and-publishers-response/" target="_blank" rel="noopener">WAN-IFRA</a></span>
+          
+        </div>
+        
+        
+        <div class="contradiction">
+          <div class="contradiction-label">Points de vue divergents</div>
+          <p class="contradiction-text">Une tension structurelle émerge entre la démarche de The Trade Desk — qui durcit les critères de valeur des partenaires identité en exigeant une preuve d&#39;impact incrémental — et celle d&#39;acteurs comme Time, qui monétisent leur influence sur les IA génératives sans que cette influence soit encore mesurable ni standardisée. D&#39;un côté, l&#39;industrie programmatique pousse vers plus de rigueur et d&#39;accountability ; de l&#39;autre, de nouveaux formats (GEO, réponses IA brandées) se vendent précisément dans un espace où la mesure reste inexistante. Le mouvement vers la transparence coexiste ainsi avec l&#39;émergence de nouvelles zones grises, ce qui fragilise la cohérence du discours sectoriel sur la fin des métriques vanity.</p>
+        </div>
         
       </div>
     </div>
     
-    <div class="cluster-card "
-         style="">
-      <div class="cluster-meta">
-        <span>1 source(s)</span>
-        <div class="importance-bar">
-          <div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot "></div><div class="dot "></div><div class="dot "></div><div class="dot "></div><div class="dot "></div>
-        </div>
-      </div>
-      <div class="cluster-theme">Création de Heroiks Pulse, entité dédiée aux études, à la data et à la business intelligence</div>
-      <div class="cluster-summary">Création de Heroiks Pulse, entité dédiée aux études, à la data et à la business intelligence
-
-            Création de Heroiks Pulse, entité dédiée aux études, à la data et à la business intelligence
-      thierry.wojciak
-&lt;span class=&#34;field field--name-created field--type-created field--label-hi</div>
-      
-      <div class="cluster-sources">
+    
+    
+    <div class="card ">
+      <div class="card-img-wrap">
         
-        <span class="source-tag">
-          <a href="https://www.cbnews.fr/conseil/creation-heroiks-pulse-entite-dediee-aux-etudes-data-business-intelligence" target="_blank" rel="noopener">CB News</a>
-          <span class="cache-badge">↩</span>
-        </span>
+        <img class="card-img" src="https://pressgazette.co.uk/wp-content/uploads/sites/7/2026/03/clickout-e1774871765832-524x394.jpg" alt="" loading="lazy"
+             onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+        <div class="card-placeholder" style="background:linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);display:none">✦</div>
+        
+      </div>
+      <div class="card-body">
+        <div class="card-eyebrow">
+          4 sources
+          &nbsp;·&nbsp;il y a 6h
+        </div>
+        <h3 class="card-title">Liberté de presse et responsabilité des plateformes numériques</h3>
+        <p class="card-summary">La responsabilité des plateformes numériques à l&#39;égard de la liberté de presse s&#39;impose désormais comme un enjeu juridique et éditorial majeur. Aux États-Unis, les récentes décisions judiciaires sur l&#39;addiction aux réseaux sociaux marquent un tournant : les plateformes peuvent désormais être jugées non seulement sur leurs contenus, mais sur leur architecture même de conception. Parallèlement, plusieurs affaires illustrent la fragilité croissante de l&#39;information indépendante : la perquisition controversée du FBI au domicile d&#39;une journaliste du Washington Post, le déréférencement arbitraire d&#39;un article de Press Gazette via une fausse plainte pour droits d&#39;auteur, et les alertes des éditeurs britanniques face à une réduction annoncée du plafond de coût des demandes d&#39;accès à l&#39;information publique (FOI). Ces signaux convergents dessinent un écosystème médiatique sous pression, où les mécanismes de transparence et d&#39;investigation se heurtent simultanément aux logiques algorithmiques, institutionnelles et réglementaires.</p>
+        
+        <div class="card-sources">
+          
+          <span class="source-chip"><a href="https://digiday.com/marketing/in-graphic-detail-the-long-road-to-accountability-for-social-media-platforms/?utm_campaign=digidaydis&amp;utm_medium=rss&amp;utm_source=general-rss" target="_blank" rel="noopener">Digiday</a></span>
+          
+          <span class="source-chip"><a href="https://www.cjr.org/the_media_today/was-the-fbi-raid-on-a-washington-post-reporters-home-an-act-of-retribution.php" target="_blank" rel="noopener">CJR</a></span>
+          
+          <span class="source-chip"><a href="https://pressgazette.co.uk/news/parasite-seo-clickout-media-google/" target="_blank" rel="noopener">Press Gazette</a></span>
+          
+          <span class="source-chip"><a href="https://pressgazette.co.uk/media_law/foi-changes-cost-publishers-public-interest/" target="_blank" rel="noopener">Press Gazette</a></span>
+          
+        </div>
+        
+        
+        <div class="contradiction">
+          <div class="contradiction-label">Points de vue divergents</div>
+          <p class="contradiction-text">Une tension notable émerge entre deux logiques opposées de responsabilité. D&#39;un côté, l&#39;arrêt sur l&#39;addiction aux réseaux sociaux (Digiday) suggère un renforcement de l&#39;accountability des plateformes, ouvrant la voie à davantage de régulation en faveur de l&#39;information de qualité. De l&#39;autre, les cas Press Gazette et Washington Post révèlent que ces mêmes plateformes (Google via le système DMCA) et institutions (FBI) peuvent activement entraver la production et la diffusion de l&#39;information d&#39;intérêt public — contredisant l&#39;élan réglementaire supposément protecteur. La régulation progresse donc en théorie pendant que les mécanismes de censure ou d&#39;intimidation opèrent en pratique, illustrant un décalage structurel entre ambition normative et réalité opérationnelle.</p>
+        </div>
         
       </div>
     </div>
     
-    <div class="cluster-card "
-         style="">
-      <div class="cluster-meta">
-        <span>1 source(s)</span>
-        <div class="importance-bar">
-          <div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot "></div><div class="dot "></div><div class="dot "></div><div class="dot "></div><div class="dot "></div>
-        </div>
-      </div>
-      <div class="cluster-theme">OVHcloud opte pour Angie</div>
-      <div class="cluster-summary">OVHcloud opte pour Angie
-
-            OVHcloud opte pour Angie
-      thierry.wojciak
-lun 30/03/2026 - 18:34
-&lt;/spa</div>
-      
-      <div class="cluster-sources">
+    
+    
+    <div class="card ">
+      <div class="card-img-wrap">
         
-        <span class="source-tag">
-          <a href="https://www.cbnews.fr/conseil/ovhcloud-opte-angie" target="_blank" rel="noopener">CB News</a>
-          <span class="cache-badge">↩</span>
-        </span>
+        <img class="card-img" src="https://img.36krcdn.com/hsossms/20260331/v2_4055eeee06944d75be2e0d4a0667aaf3@11416942_oswg147946oswg1024oswg478_img_000?x-oss-process=image/format,jpg/interlace,1" alt="" loading="lazy"
+             onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+        <div class="card-placeholder" style="background:linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);display:none">✦</div>
+        
+      </div>
+      <div class="card-body">
+        <div class="card-eyebrow">
+          5 sources
+          &nbsp;·&nbsp;il y a 1h
+        </div>
+        <h3 class="card-title">Tech asiatique et innovation économique en Chine</h3>
+        <p class="card-summary">L&#39;écosystème technologique chinois traverse une phase d&#39;accélération structurelle portée par plusieurs dynamiques convergentes : Biren Technology affiche une croissance de son chiffre d&#39;affaires multipliée par 16 en trois ans, avec une hausse de 207 % en 2025, confirmant la maturité commerciale des puces de calcul domestiques dans un contexte de tensions géopolitiques qui accélèrent la substitution aux composants étrangers. Parallèlement, de nouveaux segments hardwares émergent — la bague connectée Glow de Dreame (1 499 yuan, monitoring ECG par IA) illustre la montée en gamme des wearables santé — tandis que le secteur des batteries voit la chimie LMFP (lithium manganèse fer phosphate) attirer des financements significatifs, la startup Hengchuang Nano levant plusieurs centaines de millions de yuans pour déployer 130 000 tonnes de capacité annuelle. Ces dynamiques dessinent une économie chinoise de l&#39;innovation qui pivote simultanément sur la souveraineté technologique, la premiumisation consumer et la transition énergétique.</p>
+        
+        <div class="card-sources">
+          
+          <span class="source-chip"><a href="https://36kr.com/p/3746575157658368?f=rss" target="_blank" rel="noopener">36Kr</a></span>
+          
+          <span class="source-chip"><a href="https://36kr.com/p/3746508855869954?f=rss" target="_blank" rel="noopener">36Kr</a></span>
+          
+          <span class="source-chip"><a href="https://36kr.com/p/3746211357655808?f=rss" target="_blank" rel="noopener">36Kr</a></span>
+          
+          <span class="source-chip"><a href="https://36kr.com/p/3746236378202631?f=rss" target="_blank" rel="noopener">36Kr</a></span>
+          
+          <span class="source-chip"><a href="https://36kr.com/p/3743753252061189?f=rss" target="_blank" rel="noopener">36Kr</a></span>
+          
+        </div>
+        
+        
+        <div class="contradiction">
+          <div class="contradiction-label">Points de vue divergents</div>
+          <p class="contradiction-text">Une tension sous-jacente ressort entre deux lectures du marché des semi-conducteurs domestiques : la performance spectaculaire de Biren Technology (marge brute à 53,8 %) pourrait suggérer un secteur en pleine consolidation profitable, mais le contexte narratif évoque une demande dopée par des facteurs conjoncturels exceptionnels (agents IA, pression géopolitique), ce qui soulève la question de la soutenabilité de cette croissance une fois ces catalyseurs normalisés. Par ailleurs, dans le segment du stockage d&#39;énergie, le témoignage de Xingyuan Chu (Star Storage) décrit un marché saturé, à marges comprimées et en guerre des prix — ce qui contraste avec l&#39;optimisme affiché par Hengchuang Nano et ses investisseurs sur le potentiel du LMFP, signalant une divergence d&#39;appréciation entre acteurs amont (matériaux) et aval (intégrateurs produit) de la même chaîne de valeur.</p>
+        </div>
         
       </div>
     </div>
     
-    <div class="cluster-card "
-         style="">
-      <div class="cluster-meta">
-        <span>1 source(s)</span>
-        <div class="importance-bar">
-          <div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot "></div><div class="dot "></div><div class="dot "></div><div class="dot "></div><div class="dot "></div>
-        </div>
-      </div>
-      <div class="cluster-theme">Virtual Vanguard Recap: Jim Lecinski</div>
-      <div class="cluster-summary">Our industry is in a critical phase of AI transformation that’s less about tools and more about intent, sequencing, and discipline. There’s not yet a tried-and-true playbook for AI applications [&amp;hellip;]</div>
-      
-      <div class="cluster-sources">
+    
+    
+    <div class="card ">
+      <div class="card-img-wrap">
         
-        <span class="source-tag">
-          <a href="https://www.adweek.com/brand-marketing/virtual-vanguard-recap-jim-lecinski/" target="_blank" rel="noopener">Adweek</a>
-          <span class="cache-badge">↩</span>
-        </span>
+        <img class="card-img" src="https://pressgazette.co.uk/wp-content/uploads/sites/7/2026/03/adamcailler-scaled.jpg" alt="" loading="lazy"
+             onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+        <div class="card-placeholder" style="background:linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);display:none">✦</div>
+        
+      </div>
+      <div class="card-body">
+        <div class="card-eyebrow">
+          3 sources
+          &nbsp;·&nbsp;il y a 19h
+        </div>
+        <h3 class="card-title">Médias informatiques : audience TV et dynamiques concurrentielles</h3>
+        <p class="card-summary">Le paysage des médias d&#39;information télévisés confirme ses dynamiques concurrentielles des deux côtés de l&#39;Atlantique : aux États-Unis, Fox News conserve sa domination sur le câble, tandis que MSNBC progresse en prime time et en journée continue. En France, BFMTV reprend la tête des chaînes info en mars avec 3,5% de part d&#39;audience, portée par l&#39;actualité internationale et les élections municipales, reléguant CNews et LCI à égalité à 3,2%. Parallèlement, le cas du Daily Star illustre une mutation structurelle de la distribution des contenus : le tabloïd britannique génère désormais sur MSN un trafic parfois supérieur à celui de son propre site, grâce à une intégration poussée avec les flux de l&#39;agrégateur Microsoft. Ces trois dynamiques convergent vers un même constat : la fidélisation des audiences reste volatile et de plus en plus dépendante des événements conjoncturels et des plateformes tierces de distribution.</p>
+        
+        <div class="card-sources">
+          
+          <span class="source-chip"><a href="https://www.adweek.com/tvnewser/week-of-march-16-2026-cable-news-ratings/" target="_blank" rel="noopener">Adweek</a></span>
+          
+          <span class="source-chip"><a href="https://jai-un-pote-dans-la.com/bfmtv-repasse-en-tete-des-chaines-info-en-mars-devant-cnews/" target="_blank" rel="noopener">J&#39;ai un pote dans la</a></span>
+          
+          <span class="source-chip"><a href="https://pressgazette.co.uk/publishers/digital-journalism/how-daily-star-became-a-hit-on-ai-powered-nun-msn/" target="_blank" rel="noopener">Press Gazette</a></span>
+          
+        </div>
+        
+        
+        <div class="contradiction">
+          <div class="contradiction-label">Points de vue divergents</div>
+          <p class="contradiction-text">Aucune contradiction directe n&#39;est identifiable entre les sources, qui couvrent des marchés géographiques distincts (États-Unis, France, Royaume-Uni) et des formats médiatiques différents (TV câble, chaînes info hertziennes, presse numérique). On notera toutefois une tension de fond : là où les audiences TV se mesurent encore à l&#39;aune des parts de marché linéaires traditionnelles, le cas Daily Star/MSN illustre que ces métriques classiques deviennent partiellement obsolètes face aux logiques d&#39;agrégation algorithmique, soulevant une question de comparabilité des indicateurs de performance entre médias.</p>
+        </div>
         
       </div>
     </div>
     
-    <div class="cluster-card "
-         style="">
-      <div class="cluster-meta">
-        <span>1 source(s)</span>
-        <div class="importance-bar">
-          <div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot "></div><div class="dot "></div><div class="dot "></div><div class="dot "></div><div class="dot "></div>
-        </div>
-      </div>
-      <div class="cluster-theme">Week of March 16 Cable News Ratings: MS NOW Grows in Primetime and Total Day</div>
-      <div class="cluster-summary">Fox News was still the most-watched cable news network.</div>
-      
-      <div class="cluster-sources">
+    
+    
+    <div class="card ">
+      <div class="card-img-wrap">
         
-        <span class="source-tag">
-          <a href="https://www.adweek.com/tvnewser/week-of-march-16-2026-cable-news-ratings/" target="_blank" rel="noopener">Adweek</a>
-          <span class="cache-badge">↩</span>
-        </span>
+        <div class="card-placeholder" style="background:linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)">✦</div>
+        
+      </div>
+      <div class="card-body">
+        <div class="card-eyebrow">
+          2 sources
+          &nbsp;·&nbsp;il y a 15h
+        </div>
+        <h3 class="card-title">Édition innovante : newsletters, Substack et nouvelles stratégies de diffusion</h3>
+        <p class="card-summary">Le Guardian franchit une nouvelle étape dans sa stratégie de distribution en expérimentant Substack avec la republication de sa newsletter gastronomique hebdomadaire, Feast. L&#39;objectif affiché est d&#39;atteindre de nouvelles audiences en exploitant l&#39;écosystème et la base d&#39;abonnés propres à la plateforme. Cette approche de cross-posting, prudente et mesurée, est pensée comme un test grandeur nature : un succès probant ouvrirait la voie à la création de contenus exclusifs sur Substack et à l&#39;extension du dispositif à d&#39;autres newsletters du titre. Le Guardian s&#39;inscrit ainsi dans une tendance de fond où les grands médias cessent de considérer les plateformes tierces comme des concurrentes pour les envisager comme des leviers d&#39;acquisition complémentaires.</p>
+        
+        <div class="card-sources">
+          
+          <span class="source-chip"><a href="https://www.niemanlab.org/2026/03/the-guardian-experiments-with-republishing-its-food-newsletter-on-substack/" target="_blank" rel="noopener">Nieman Lab</a></span>
+          
+          <span class="source-chip"><a href="https://pressgazette.co.uk/newsletters/guardian-substack-experiment-feast-food-newsletter/" target="_blank" rel="noopener">Press Gazette</a></span>
+          
+        </div>
+        
+        
+        <div class="contradiction">
+          <div class="contradiction-label">Points de vue divergents</div>
+          <p class="contradiction-text">Les deux sources sont substantiellement concordantes sur les faits et l&#39;intention stratégique. On notera toutefois une légère différence de cadrage : Nieman Lab insiste sur le caractère conditionnel et expérimental du dispositif, soulignant que l&#39;évolution vers des contenus exclusifs reste subordonnée aux résultats, tandis que Press Gazette présente l&#39;initiative de façon légèrement plus affirmative, la qualifiant d&#39;emblée d&#39;« approche novatrice de distribution » — ce qui atténue implicitement la dimension test et incertaine de la démarche.</p>
+        </div>
         
       </div>
     </div>
     
-    <div class="cluster-card "
-         style="">
-      <div class="cluster-meta">
-        <span>1 source(s)</span>
-        <div class="importance-bar">
-          <div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot "></div><div class="dot "></div><div class="dot "></div><div class="dot "></div><div class="dot "></div>
-        </div>
-      </div>
-      <div class="cluster-theme">EXCLUSIVE: Leaked Pitchdeck Reveals Amazon&amp;#8217;s Pitch to Get Advertisers on Rufus</div>
-      <div class="cluster-summary">The retail giant positions Rufus as a “virtual product expert” that can surface sponsored recommendations to shoppers within conversational interactions.</div>
-      
-      <div class="cluster-sources">
+    
+    
+    <div class="card ">
+      <div class="card-img-wrap">
         
-        <span class="source-tag">
-          <a href="https://www.adweek.com/media/exclusive-leaked-pitchdeck-reveals-amazons-pitch-to-get-advertisers-on-rufus/" target="_blank" rel="noopener">Adweek</a>
-          <span class="cache-badge">↩</span>
-        </span>
+        <div class="card-placeholder" style="background:linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)">✦</div>
+        
+      </div>
+      <div class="card-body">
+        <div class="card-eyebrow">
+          2 sources
+          &nbsp;·&nbsp;il y a 20h
+        </div>
+        <h3 class="card-title">Économie de l&#39;IA : business models et intégration publicitaire</h3>
+        <p class="card-summary">L&#39;économie de l&#39;IA redessine en profondeur les modèles publicitaires, comme en témoigne la stratégie d&#39;Amazon qui positionne son assistant Rufus comme un &#39;expert produit virtuel&#39; capable d&#39;intégrer des recommandations sponsorisées au cœur des interactions conversationnelles avec les acheteurs. En parallèle, le secteur du contenu se restructure autour de la valeur des droits intellectuels, à l&#39;image de l&#39;accord Netflix-Warner Music qui interroge la monétisation de la propriété artistique à l&#39;ère des plateformes. Ces deux dynamiques convergent vers une même réalité : la publicité migre vers des environnements contextuels et immersifs, où la frontière entre contenu éditorial, expérience utilisateur et message commercial s&#39;efface progressivement. Pour les marques, l&#39;enjeu est désormais de s&#39;imposer dans des écosystèmes algorithmiques qui contrôlent à la fois la distribution, la recommandation et la relation avec l&#39;audience.</p>
+        
+        <div class="card-sources">
+          
+          <span class="source-chip"><a href="https://www.adweek.com/media/exclusive-leaked-pitchdeck-reveals-amazons-pitch-to-get-advertisers-on-rufus/" target="_blank" rel="noopener">Adweek</a></span>
+          
+          <span class="source-chip"><a href="https://www.adweek.com/creativity/what-the-netflix-warner-music-deal-really-means-for-artists-and-brands/" target="_blank" rel="noopener">Adweek</a></span>
+          
+        </div>
+        
+        
+        <div class="contradiction">
+          <div class="contradiction-label">Points de vue divergents</div>
+          <p class="contradiction-text">Les deux sources reflètent des tensions latentes sur la question du contrôle et de la valeur. D&#39;un côté, Amazon centralise la relation acheteur-marque au sein d&#39;un assistant propriétaire, réduisant potentiellement la visibilité organique des annonceurs au profit d&#39;un modèle pay-to-play conversationnel. De l&#39;autre, le deal Netflix-Warner Music suggère que les détenteurs de droits (artistes, labels) cherchent à reprendre la main sur la valorisation de leurs actifs face aux plateformes. Ces deux mouvements sont contradictoires dans leur logique : là où Amazon renforce le pouvoir de l&#39;intermédiaire technologique sur la chaîne publicitaire, l&#39;accord Warner signale une résistance des créateurs de contenu à cette intermédiation croissante — une tension qui structurera probablement les négociations commerciales dans l&#39;ensemble de l&#39;industrie médiatique.</p>
+        </div>
         
       </div>
     </div>
     
-    <div class="cluster-card "
-         style="">
-      <div class="cluster-meta">
-        <span>1 source(s)</span>
-        <div class="importance-bar">
-          <div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot "></div><div class="dot "></div><div class="dot "></div><div class="dot "></div><div class="dot "></div>
-        </div>
-      </div>
-      <div class="cluster-theme">What the Netflix–Warner Music Deal Really Means for Artists and Brands</div>
-      <div class="cluster-summary">What does the Netflix-Warner Music deal signal about the future of artists and music IP, and should brands be taking notice?</div>
-      
-      <div class="cluster-sources">
+    
+    
+    <div class="card ">
+      <div class="card-img-wrap">
         
-        <span class="source-tag">
-          <a href="https://www.adweek.com/creativity/what-the-netflix-warner-music-deal-really-means-for-artists-and-brands/" target="_blank" rel="noopener">Adweek</a>
-          <span class="cache-badge">↩</span>
-        </span>
+        <img class="card-img" src="https://jai-un-pote-dans-la.com/wp-content/uploads/2026/03/jupdlc-helvetica-la-police-intemporelle-1.jpg" alt="" loading="lazy"
+             onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+        <div class="card-placeholder" style="background:linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);display:none">✦</div>
+        
+      </div>
+      <div class="card-body">
+        <div class="card-eyebrow">
+          2 sources
+          &nbsp;·&nbsp;il y a 23h
+        </div>
+        <h3 class="card-title">Identité de marque : logos, typographie et rebranding</h3>
+        <p class="card-summary">L&#39;identité visuelle d&#39;une marque repose sur des choix typographiques et graphiques qui traversent les époques, à l&#39;image d&#39;Helvetica, police créée en 1957 et omniprésente dans notre quotidien — transports, signalétique, packaging —, au point de se fondre dans le paysage sans que l&#39;œil ne la remarque vraiment. Pourtant, toucher à ces fondations visuelles reste un exercice périlleux, comme le démontre l&#39;Olympique de Marseille, dont le projet de rebranding de son logo suscite déjà une vive controverse auprès des supporters avant même son officialisation. Ce cas illustre une tension fondamentale du branding : entre la nécessité de moderniser une identité et le risque de fracturer le lien émotionnel tissé avec les communautés qui s&#39;y identifient. La question n&#39;est donc pas seulement esthétique, mais profondément stratégique et culturelle.</p>
+        
+        <div class="card-sources">
+          
+          <span class="source-chip"><a href="https://jai-un-pote-dans-la.com/helvetica-la-police-intemporelle/" target="_blank" rel="noopener">J&#39;ai un pote dans la</a></span>
+          
+          <span class="source-chip"><a href="https://creapills.com/om-nouveau-logo-2026-olympique-marseille-ecusson-20260331" target="_blank" rel="noopener">Creapills</a></span>
+          
+        </div>
+        
+        
+        <div class="contradiction">
+          <div class="contradiction-label">Points de vue divergents</div>
+          <p class="contradiction-text">Les deux sources révèlent une tension implicite autour de la valeur de la discrétion visuelle. Helvetica est célébrée précisément parce qu&#39;elle s&#39;efface — sa force tient à son invisibilité et à son universalité acceptée. À l&#39;inverse, le logo de l&#39;OM est un signe fort, chargé d&#39;affect communautaire, où toute modification devient visible et clivante. La première source suggère qu&#39;une identité visuelle réussie est celle que l&#39;on ne remarque plus, tandis que la seconde rappelle que certaines identités de marque sont trop chargées symboliquement pour prétendre à cette neutralité : elles ne peuvent pas s&#39;effacer, elles doivent être défendues.</p>
+        </div>
         
       </div>
     </div>
     
-    <div class="cluster-card "
-         style="">
-      <div class="cluster-meta">
-        <span>1 source(s)</span>
-        <div class="importance-bar">
-          <div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot "></div><div class="dot "></div><div class="dot "></div><div class="dot "></div><div class="dot "></div>
-        </div>
-      </div>
-      <div class="cluster-theme">Director Billy Boman&amp;#8217;s Rules for Rewriting Ads With AI</div>
-      <div class="cluster-summary">After his stunt for Fiverr caused a stir, ADWEEK talks to the director about how AI is changing his work</div>
-      
-      <div class="cluster-sources">
+    
+    
+    <div class="card ">
+      <div class="card-img-wrap">
         
-        <span class="source-tag">
-          <a href="https://www.adweek.com/creativity/director-billy-bomans-rules-for-rewriting-ads-with-ai/" target="_blank" rel="noopener">Adweek</a>
-          <span class="cache-badge">↩</span>
-        </span>
+        <div class="card-placeholder" style="background:linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)">✦</div>
+        
+      </div>
+      <div class="card-body">
+        <div class="card-eyebrow">
+          3 sources
+          &nbsp;·&nbsp;il y a 18h
+        </div>
+        <h3 class="card-title">Médias spécialisés et audience éditoriale</h3>
+        <p class="card-summary">Les médias à but non lucratif confirment leur capacité à capter des audiences significatives en période d&#39;actualité dense : le Colorado Sun a enregistré une hausse de trafic de 53 % en janvier, portée par une offre éditoriale réactive aux événements du moment. Parallèlement, l&#39;édition spécialisée continue de structurer ses propres audiences de niche, comme en témoigne l&#39;annonce de la shortlist du Women&#39;s Prize for Nonfiction 2026, qui valorise des récits globaux ancrés dans des expériences individuelles. Ces dynamiques illustrent une tendance de fond : les audiences éditoriales se construisent aujourd&#39;hui autour de propositions de valeur clairement identifiées, qu&#39;elles soient journalistiques ou littéraires. La veille internationale du secteur, assurée par des agrégateurs spécialisés comme Publishing Perspectives, témoigne d&#39;un écosystème éditorial mondial en mouvement constant.</p>
+        
+        <div class="card-sources">
+          
+          <span class="source-chip"><a href="https://www.niemanlab.org/2026/03/nonprofit-news-outlets-had-a-strong-traffic-month-in-january/" target="_blank" rel="noopener">Nieman Lab</a></span>
+          
+          <span class="source-chip"><a href="https://publishingperspectives.com/2026/03/shortlist-revealed-for-the-2026-womens-prize-for-nonfiction/" target="_blank" rel="noopener">Publishing Perspectives</a></span>
+          
+          <span class="source-chip"><a href="https://publishingperspectives.com/2026/03/around-the-book-world-monday-march-30-2026/" target="_blank" rel="noopener">Publishing Perspectives</a></span>
+          
+        </div>
+        
         
       </div>
     </div>
     
-    <div class="cluster-card "
-         style="">
-      <div class="cluster-meta">
-        <span>1 source(s)</span>
-        <div class="importance-bar">
-          <div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot "></div><div class="dot "></div><div class="dot "></div><div class="dot "></div><div class="dot "></div>
-        </div>
-      </div>
-      <div class="cluster-theme">The Trade Desk shakes up Identity Alliance payouts, with a new focus on incrementality</div>
-      <div class="cluster-summary">The Trade Desk is changing how it pays its &#39;identity partners&#39; in a shakeup potentially worth &#39;tens of millions of dollars&#39; a year.</div>
-      
-      <div class="cluster-sources">
+    
+    
+    <div class="card ">
+      <div class="card-img-wrap">
         
-        <span class="source-tag">
-          <a href="https://digiday.com/media-buying/the-trade-desk-shakes-up-identity-alliance-payouts-with-a-new-focus-on-incrementality/?utm_campaign=digidaydis&amp;utm_medium=rss&amp;utm_source=general-rss" target="_blank" rel="noopener">Digiday</a>
-          <span class="cache-badge">↩</span>
-        </span>
+        <img class="card-img" src="https://cdn.wan-ifra.org/wp-content/uploads/2026/03/12052652/Picture2-scaled.png" alt="" loading="lazy"
+             onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+        <div class="card-placeholder" style="background:linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);display:none">✦</div>
+        
+      </div>
+      <div class="card-body">
+        <div class="card-eyebrow">
+          3 sources
+          &nbsp;·&nbsp;il y a 23h
+        </div>
+        <h3 class="card-title">Industrie du livre : prix littéraires et événements éditoriaux</h3>
+        <p class="card-summary">Les événements professionnels liés à l&#39;industrie de l&#39;imprimé se consolident : WAN-IFRA annonce la co-localisation historique du World Printers Summit et du DistriPress Congress à Rotterdam, marquant une convergence inédite entre production et distribution dans la chaîne d&#39;approvisionnement mondiale des médias. Parallèlement, l&#39;International Color Quality Club (ICQC) modernise ses standards en introduisant un nouveau format d&#39;évaluation &#39;Cuboid&#39; et des règles de concours révisées, témoignant d&#39;une exigence accrue en matière de qualité d&#39;impression. Ces initiatives illustrent une volonté sectorielle de structurer et de professionnaliser davantage les pratiques éditoriales à l&#39;échelle internationale. En marge de ces dynamiques, le parcours atypique de Tony Dokoupil — de mannequin capillaire à présentateur du CBS Evening News — rappelle que le journalisme reste un espace de trajectoires singulières, façonnées autant par la conviction que par l&#39;opportunité.</p>
+        
+        <div class="card-sources">
+          
+          <span class="source-chip"><a href="https://www.cjr.org/feature/whats-up-with-tony-dokoupil-hair-model-cbs-evening-news-anchor-ratings.php" target="_blank" rel="noopener">CJR</a></span>
+          
+          <span class="source-chip"><a href="https://wan-ifra.org/2026/03/print-and-distribution-events-unite-wan-ifra-announces-historic-co-location-of-world-printers-summit-and-distripress-congress-in-rotterdam/" target="_blank" rel="noopener">WAN-IFRA</a></span>
+          
+          <span class="source-chip"><a href="https://wan-ifra.org/2026/03/icqc-2026-2028-introduces-new-cuboid-and-updated-contest-rules/" target="_blank" rel="noopener">WAN-IFRA</a></span>
+          
+        </div>
+        
+        
+        <div class="contradiction">
+          <div class="contradiction-label">Points de vue divergents</div>
+          <p class="contradiction-text">Les sources ne présentent pas de contradictions directes entre elles, mais une tension thématique est perceptible : tandis que WAN-IFRA documente une rationalisation collective et industrielle de l&#39;écosystème de la presse imprimée (mutualisation d&#39;événements, normalisation des standards qualité), le profil de Tony Dokoupil publié par le CJR incarne une logique individuelle et narrative du journalisme, centrée sur la personnalité et le récit de carrière. Ces deux registres — institutionnel/collectif versus personnel/médiatique — coexistent sans se contredire factuellement, mais reflètent des visions divergentes de ce qui fait &#39;l&#39;actualité&#39; dans l&#39;industrie des médias.</p>
+        </div>
         
       </div>
     </div>
     
-    <div class="cluster-card "
-         style="">
-      <div class="cluster-meta">
-        <span>1 source(s)</span>
-        <div class="importance-bar">
-          <div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot "></div><div class="dot "></div><div class="dot "></div><div class="dot "></div><div class="dot "></div>
-        </div>
-      </div>
-      <div class="cluster-theme">Time pitches GEO insights into a new brand offering</div>
-      <div class="cluster-summary">Time is turning its AI insights into a new product, selling branded content to shape how brands are talked about inside AI-generated answers.</div>
-      
-      <div class="cluster-sources">
-        
-        <span class="source-tag">
-          <a href="https://digiday.com/media/time-pitches-geo-insights-into-a-new-brand-offering/?utm_campaign=digidaydis&amp;utm_medium=rss&amp;utm_source=general-rss" target="_blank" rel="noopener">Digiday</a>
-          <span class="cache-badge">↩</span>
-        </span>
-        
-      </div>
-    </div>
     
-    <div class="cluster-card "
-         style="">
-      <div class="cluster-meta">
-        <span>1 source(s)</span>
-        <div class="importance-bar">
-          <div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot "></div><div class="dot "></div><div class="dot "></div><div class="dot "></div><div class="dot "></div>
-        </div>
-      </div>
-      <div class="cluster-theme">In graphic detail: The long road to accountability for social media platforms</div>
-      <div class="cluster-summary">Last week&#39;s social media addiction rulings signal a fundamental shift:  the platforms can now judged, not just on their content, but on how they are built and designed.</div>
-      
-      <div class="cluster-sources">
-        
-        <span class="source-tag">
-          <a href="https://digiday.com/marketing/in-graphic-detail-the-long-road-to-accountability-for-social-media-platforms/?utm_campaign=digidaydis&amp;utm_medium=rss&amp;utm_source=general-rss" target="_blank" rel="noopener">Digiday</a>
-          <span class="cache-badge">↩</span>
-        </span>
-        
-      </div>
-    </div>
     
-    <div class="cluster-card "
-         style="">
-      <div class="cluster-meta">
-        <span>1 source(s)</span>
-        <div class="importance-bar">
-          <div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot "></div><div class="dot "></div><div class="dot "></div><div class="dot "></div><div class="dot "></div>
+    <div class="card ">
+      <div class="card-img-wrap">
+        
+        <div class="card-placeholder" style="background:linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)">✦</div>
+        
+      </div>
+      <div class="card-body">
+        <div class="card-eyebrow">
+          Adweek
+          &nbsp;·&nbsp;il y a 18h
         </div>
-      </div>
-      <div class="cluster-theme">Why The Guardian’s first reader-facing AI product isn’t a chatbot</div>
-      <div class="cluster-summary">The Guardian has begun to roll out its first reader-facing AI product. But it doesn’t really look like an AI product.</div>
-      
-      <div class="cluster-sources">
+        <h3 class="card-title">Équipement photographique spécialisé et rangement créatif</h3>
+        <p class="card-summary">Our industry is in a critical phase of AI transformation that’s less about tools and more about intent, sequencing, and discipline. There’s not yet a tried-and-true playbook for AI applications [&amp;hellip;]</p>
         
-        <span class="source-tag">
-          <a href="https://digiday.com/media/why-the-guardians-first-reader-facing-ai-product-isnt-a-chatbot/?utm_campaign=digidaydis&amp;utm_medium=rss&amp;utm_source=general-rss" target="_blank" rel="noopener">Digiday</a>
-          <span class="cache-badge">↩</span>
-        </span>
-        
-      </div>
-    </div>
-    
-    <div class="cluster-card "
-         style="">
-      <div class="cluster-meta">
-        <span>1 source(s)</span>
-        <div class="importance-bar">
-          <div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot "></div><div class="dot "></div><div class="dot "></div><div class="dot "></div><div class="dot "></div>
-        </div>
-      </div>
-      <div class="cluster-theme">CreatorIQ and Sprinklr bet they can solve creator measurement’s fragmentation problem</div>
-      <div class="cluster-summary">CreatorIQ and Sprinklr are joining forces to bring creator intelligence, social media management, and paid amplification onto a single platform to try and solve a creator marketing problem.</div>
-      
-      <div class="cluster-sources">
-        
-        <span class="source-tag">
-          <a href="https://digiday.com/media/creatoriq-and-sprinklr-bet-they-can-solve-creator-measurements-fragmentation-problem/?utm_campaign=digidaydis&amp;utm_medium=rss&amp;utm_source=general-rss" target="_blank" rel="noopener">Digiday</a>
-          <span class="cache-badge">↩</span>
-        </span>
-        
-      </div>
-    </div>
-    
-    <div class="cluster-card "
-         style="">
-      <div class="cluster-meta">
-        <span>1 source(s)</span>
-        <div class="importance-bar">
-          <div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot "></div><div class="dot "></div><div class="dot "></div><div class="dot "></div><div class="dot "></div>
-        </div>
-      </div>
-      <div class="cluster-theme">Oasis s’invite dans « L’île de la Skibidi Tentafruit », la série IA phénomène de TikTok</div>
-      <div class="cluster-summary">« J’ai entendu Pastequo dire que tu es une tana ! », « Les filles sont jalouses de moi parce que vous voulez tous me doro ». Si ces phrases&amp;#8230;
-L’article Oasis s&amp;rsquo;invite dans « L&amp;rsquo;île de la Skibidi Tentafruit », la série IA phénomène de TikTok est apparu en premier sur Dans Ta Pub.</div>
-      
-      <div class="cluster-sources">
-        
-        <span class="source-tag">
-          <a href="https://www.danstapub.com/oasis-skibidi-tentafruit-tiktok-slop/" target="_blank" rel="noopener">Dans Ta Pub</a>
-          <span class="cache-badge">↩</span>
-        </span>
-        
-      </div>
-    </div>
-    
-    <div class="cluster-card "
-         style="">
-      <div class="cluster-meta">
-        <span>1 source(s)</span>
-        <div class="importance-bar">
-          <div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot "></div><div class="dot "></div><div class="dot "></div><div class="dot "></div><div class="dot "></div>
-        </div>
-      </div>
-      <div class="cluster-theme">Droga5 détourne le drapeau brésilien pour sauver la biodiversité marine</div>
-      <div class="cluster-summary">Le drapeau du Brésil est sans doute l&amp;#8217;un des symboles nationaux les plus reconnaissables au monde, avec son vert luxuriant et son bleu profond évoquant une nature souveraine. Pourtant, que&amp;#8230;
-L’article Droga5 détourne le drapeau brésilien pour sauver la biodiversité marine est apparu en premier sur Dans Ta Pub.</div>
-      
-      <div class="cluster-sources">
-        
-        <span class="source-tag">
-          <a href="https://www.danstapub.com/droga5-sos-oceano-affiche-drapeau-bresil/" target="_blank" rel="noopener">Dans Ta Pub</a>
-          <span class="cache-badge">↩</span>
-        </span>
-        
-      </div>
-    </div>
-    
-    <div class="cluster-card "
-         style="">
-      <div class="cluster-meta">
-        <span>1 source(s)</span>
-        <div class="importance-bar">
-          <div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot "></div><div class="dot "></div><div class="dot "></div><div class="dot "></div><div class="dot "></div>
-        </div>
-      </div>
-      <div class="cluster-theme">Une voiture recouverte de peau pour sensibiliser aux coups de soleil</div>
-      <div class="cluster-summary">On a tous le même réflexe : dès que le thermomètre grimpe, on dégaine la crème solaire pour la plage, la rando ou la piscine. Mais une fois assis derrière&amp;#8230;
-L’article Une voiture recouverte de peau pour sensibiliser aux coups de soleil est apparu en premier sur Dans Ta Pub.</div>
-      
-      <div class="cluster-sources">
-        
-        <span class="source-tag">
-          <a href="https://www.danstapub.com/voiture-peau-sensibiliser-coups-soleil/" target="_blank" rel="noopener">Dans Ta Pub</a>
-          <span class="cache-badge">↩</span>
-        </span>
-        
-      </div>
-    </div>
-    
-    <div class="cluster-card "
-         style="">
-      <div class="cluster-meta">
-        <span>1 source(s)</span>
-        <div class="importance-bar">
-          <div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot "></div><div class="dot "></div><div class="dot "></div><div class="dot "></div><div class="dot "></div>
-        </div>
-      </div>
-      <div class="cluster-theme">SeLoger lance sa nouvelle campagne publicitaire avec Marcel</div>
-      <div class="cluster-summary">Après un appel d’offres mené fin 2025, SeLoger dévoile une nouvelle campagne imaginée par l’agence Marcel (Publicis Groupe). Lancée le 29 mars, cette prise de parole marque un tournant dans la stratégie de communication de la plateforme immobilière, avec une promesse simple : accompagner tous les projets de vie des Français. À travers trois films [&amp;#8230;]
-L’article SeLoger lance sa nouvelle campagne publicitaire avec Marcel est apparu en premier sur JUPDLC.</div>
-      
-      <div class="cluster-sources">
-        
-        <span class="source-tag">
-          <a href="https://jai-un-pote-dans-la.com/seloger-lance-sa-nouvelle-campagne-publicitaire-avec-marcel/" target="_blank" rel="noopener">J&#39;ai un pote dans la</a>
-          <span class="cache-badge">↩</span>
-        </span>
-        
-      </div>
-    </div>
-    
-    <div class="cluster-card "
-         style="">
-      <div class="cluster-meta">
-        <span>1 source(s)</span>
-        <div class="importance-bar">
-          <div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot "></div><div class="dot "></div><div class="dot "></div><div class="dot "></div><div class="dot "></div>
-        </div>
-      </div>
-      <div class="cluster-theme">Livre blanc : Top 3 des meilleures campagnes snapchat 2025</div>
-      <div class="cluster-summary">C&amp;#8217;est une cinquième édition, et on ne s&amp;#8217;en lasse pas. Il faut dire qu&amp;#8217;il s&amp;#8217;en passe, des choses dans l&amp;#8217;univers social media. Comme chaque début d&amp;#8217;année (et c&amp;#8217;est désormais une tradition), J&amp;#8217;ai un pote dans la com, média référent des nouveaux décideurs marketing, s&amp;#8217;est associé à Metricool, l&amp;#8217;outil tout-en-un de gestion des réseaux sociaux et [&amp;#8230;]
-L’article Livre blanc : Top 3 des meilleures campagnes snapchat 2025 est apparu en premier sur JUPDLC.</div>
-      
-      <div class="cluster-sources">
-        
-        <span class="source-tag">
-          <a href="https://jai-un-pote-dans-la.com/livre-blanc-top-3-meilleures-campagnes-snapchat-2025/" target="_blank" rel="noopener">J&#39;ai un pote dans la</a>
-          <span class="cache-badge">↩</span>
-        </span>
-        
-      </div>
-    </div>
-    
-    <div class="cluster-card "
-         style="">
-      <div class="cluster-meta">
-        <span>1 source(s)</span>
-        <div class="importance-bar">
-          <div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot "></div><div class="dot "></div><div class="dot "></div><div class="dot "></div><div class="dot "></div>
-        </div>
-      </div>
-      <div class="cluster-theme">50 ans d’Apple : cinq anecdotes sur la marque à la pomme</div>
-      <div class="cluster-summary">Pomme croquée, &#34;09h41&#34;, George Orwell... Depuis ses débuts dans un garage californien en avril 1976, Apple a marqué le monde de l&#39;informatique et la culture populaire avec des produits adoptés par des millions...
-L’article 50 ans d&amp;#8217;Apple : cinq anecdotes sur la marque à la pomme est apparu en premier sur JUPDLC.</div>
-      
-      <div class="cluster-sources">
-        
-        <span class="source-tag">
-          <a href="https://jai-un-pote-dans-la.com/50-ans-apple-cinq-anecdotes-sur-la-marque-a-la-pomme/" target="_blank" rel="noopener">J&#39;ai un pote dans la</a>
-          <span class="cache-badge">↩</span>
-        </span>
-        
-      </div>
-    </div>
-    
-    <div class="cluster-card "
-         style="">
-      <div class="cluster-meta">
-        <span>1 source(s)</span>
-        <div class="importance-bar">
-          <div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot "></div><div class="dot "></div><div class="dot "></div><div class="dot "></div><div class="dot "></div>
-        </div>
-      </div>
-      <div class="cluster-theme">adidas lance la première chaussure pensée pour les athlètes trisomique</div>
-      <div class="cluster-summary">L&amp;#8217;idée en un clin d’œil Faire du sport devrait être…
-L&#39;article adidas lance la première chaussure pensée pour les athlètes trisomique est apparue en premier sur Creapills</div>
-      
-      <div class="cluster-sources">
-        
-        <span class="source-tag">
-          <a href="https://creapills.com/adidas-supernova-rise-3-adaptive-chaussure-running-handicap-trisomie-20260330" target="_blank" rel="noopener">Creapills</a>
-          <span class="cache-badge">↩</span>
-        </span>
-        
-      </div>
-    </div>
-    
-    <div class="cluster-card "
-         style="">
-      <div class="cluster-meta">
-        <span>1 source(s)</span>
-        <div class="importance-bar">
-          <div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot "></div><div class="dot "></div><div class="dot "></div><div class="dot "></div><div class="dot "></div>
-        </div>
-      </div>
-      <div class="cluster-theme">Une voiture recouverte de « peau humaine » pour alerter sur les dangers du soleil au volant</div>
-      <div class="cluster-summary">L&amp;#8217;idée en un clin d’œil On pense à se protéger du soleil à…
-L&#39;article Une voiture recouverte de « peau humaine » pour alerter sur les dangers du soleil au volant est apparue en premier sur Creapills</div>
-      
-      <div class="cluster-sources">
-        
-        <span class="source-tag">
-          <a href="https://creapills.com/voiture-peau-humaine-uv-soleil-campagne-mycar-tbwa-australia-20260330" target="_blank" rel="noopener">Creapills</a>
-          <span class="cache-badge">↩</span>
-        </span>
-        
-      </div>
-    </div>
-    
-    <div class="cluster-card "
-         style="">
-      <div class="cluster-meta">
-        <span>1 source(s)</span>
-        <div class="importance-bar">
-          <div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot "></div><div class="dot "></div><div class="dot "></div><div class="dot "></div><div class="dot "></div>
-        </div>
-      </div>
-      <div class="cluster-theme">Il fait fondre plus de 350 Crayola pour créer… un crayon géant multicolore</div>
-      <div class="cluster-summary">L&amp;#8217;idée en un clin d’œil Sur YouTube, certains créateurs…
-L&#39;article Il fait fondre plus de 350 Crayola pour créer… un crayon géant multicolore est apparue en premier sur Creapills</div>
-      
-      <div class="cluster-sources">
-        
-        <span class="source-tag">
-          <a href="https://creapills.com/crayon-geant-multicolore-350-crayons-fondus-connor-creates-20260330" target="_blank" rel="noopener">Creapills</a>
-          <span class="cache-badge">↩</span>
-        </span>
-        
-      </div>
-    </div>
-    
-    <div class="cluster-card "
-         style="">
-      <div class="cluster-meta">
-        <span>1 source(s)</span>
-        <div class="importance-bar">
-          <div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot "></div><div class="dot "></div><div class="dot "></div><div class="dot "></div><div class="dot "></div>
-        </div>
-      </div>
-      <div class="cluster-theme">KFC transforme la texture de son poulet frit en collection de vêtements</div>
-      <div class="cluster-summary">L&amp;#8217;idée en un clin d’œil Dans un univers où les marques…
-L&#39;article KFC transforme la texture de son poulet frit en collection de vêtements est apparue en premier sur Creapills</div>
-      
-      <div class="cluster-sources">
-        
-        <span class="source-tag">
-          <a href="https://creapills.com/kfc-collection-vetements-croustillant-wear-your-kfc-crispy-coating-20260330" target="_blank" rel="noopener">Creapills</a>
-          <span class="cache-badge">↩</span>
-        </span>
-        
-      </div>
-    </div>
-    
-    <div class="cluster-card "
-         style="">
-      <div class="cluster-meta">
-        <span>1 source(s)</span>
-        <div class="importance-bar">
-          <div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot "></div><div class="dot "></div><div class="dot "></div><div class="dot "></div><div class="dot "></div>
-        </div>
-      </div>
-      <div class="cluster-theme">Ce bureau est conçu pour travailler avec son chat sans être dérangé (ou presque)</div>
-      <div class="cluster-summary">L&amp;#8217;idée en un clin d’œil Travailler depuis chez soi a ses…
-L&#39;article Ce bureau est conçu pour travailler avec son chat sans être dérangé (ou presque) est apparue en premier sur Creapills</div>
-      
-      <div class="cluster-sources">
-        
-        <span class="source-tag">
-          <a href="https://creapills.com/bureau-chat-bibilab-neko-house-desk-teletravail-design-20260330" target="_blank" rel="noopener">Creapills</a>
-          <span class="cache-badge">↩</span>
-        </span>
         
       </div>
     </div>
@@ -720,182 +738,103 @@ L&#39;article Ce bureau est conçu pour travailler avec son chat sans être dér
 
 
 
-<section class="category-section">
-  <div class="category-header">
-    <span class="category-icon">🗞️</span>
-    <span class="category-name" style="color:#0891B2">Médias &amp; Journalisme</span>
-    <span class="category-count">8 sujet(s)</span>
+<section class="section" id="video">
+  <div class="section-header">
+    <h2 class="section-title">Vidéo</h2>
+    <span class="section-count">2 sujets</span>
   </div>
-  <div class="clusters-grid">
+  <div class="cards-grid">
     
-    <div class="cluster-card "
-         style="">
-      <div class="cluster-meta">
-        <span>1 source(s)</span>
-        <div class="importance-bar">
-          <div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot "></div><div class="dot "></div><div class="dot "></div><div class="dot "></div><div class="dot "></div>
-        </div>
-      </div>
-      <div class="cluster-theme">The Guardian experiments with republishing its food newsletter on Substack</div>
-      <div class="cluster-summary">The Guardian has started cross-posting its weekly food newsletter, &amp;#8220;Feast,&amp;#8221; to Substack, where it hopes to reach new audiences. This is an experiment, according to Press Gazette&amp;#8217;s reporting; if Feast succeeds on Substack, The Guardian may progress to offering unique content on the platform, and republishing other existing newsletters there. Press Gazette reported that the...</div>
-      
-      <div class="cluster-sources">
+    
+    
+    <div class="card card-featured">
+      <div class="card-img-wrap">
         
-        <span class="source-tag">
-          <a href="https://www.niemanlab.org/2026/03/the-guardian-experiments-with-republishing-its-food-newsletter-on-substack/" target="_blank" rel="noopener">Nieman Lab</a>
-          <span class="cache-badge">↩</span>
-        </span>
+        <img class="card-img" src="https://petapixel.com/assets/uploads/2026/03/jeremy-gray-landscape-guide-abol-bridge-autumn-hdr.jpg" alt="" loading="lazy"
+             onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+        <div class="card-placeholder" style="background:linear-gradient(135deg, #1a1a1a 0%, #2d1515 50%, #4a0000 100%);display:none">▶</div>
+        
+      </div>
+      <div class="card-body">
+        <div class="card-eyebrow">
+          11 sources
+          &nbsp;·&nbsp;il y a 8h
+        </div>
+        <h3 class="card-title">Photographie : équipements, techniques et professionnalisme</h3>
+        <p class="card-summary">L&#39;écosystème photographique actuel se caractérise par une double tension entre innovation matérielle et maîtrise technique : Panasonic compacte un zoom 15x dans un format de poche, Vastnaut démocratise la photo outdoor grâce à un exosquelette, tandis que Sony et Nikon affûtent leurs lignes avec des accessoires de studio et un hybride plein format au rapport qualité-prix redoutable. En parallèle, les praticiens sont invités à remettre en question leurs réflexes — que ce soit dans la retouche Lightroom, le choix de la pellicule argentique ou la tentation de blâmer le boîtier avant la vision — pendant que des outils gratuits comme LightCast Suite et des bourses documentaires à 30 000 $ redéfinissent les contours du métier. Le profil du photojournaliste sportif David Jablonski, triathlon de l&#39;image entre écriture, photo et vidéo, illustre la montée en puissance de la polyvalence comme compétence cardinale. Derrière chaque avancée technique se dessine ainsi une exigence accrue de jugement créatif, rappelant que l&#39;équipement reste un moyen, jamais une fin.</p>
+        
+        <div class="card-sources">
+          
+          <span class="source-chip"><a href="https://www.videomaker.com/news/panasonic-shrinks-a-15x-zoom-camera-down-to-pocket-size/" target="_blank" rel="noopener">Videomaker</a></span>
+          
+          <span class="source-chip"><a href="https://petapixel.com/2026/03/30/free-photography-tool-wants-to-be-a-landscape-photographers-best-friend/" target="_blank" rel="noopener">PetaPixel</a></span>
+          
+          <span class="source-chip"><a href="https://petapixel.com/2026/03/30/i-enjoy-being-a-one-man-band-says-triple-threat-sports-journalist/" target="_blank" rel="noopener">PetaPixel</a></span>
+          
+          <span class="source-chip"><a href="https://petapixel.com/2026/03/30/the-vastnaut-one-exoskeleton-expands-outdoor-photographys-horizons/" target="_blank" rel="noopener">PetaPixel</a></span>
+          
+          <span class="source-chip"><a href="https://petapixel.com/2026/03/30/opc-lens-dock-e-offers-wall-mounted-storage-for-e-mount-lenses/" target="_blank" rel="noopener">PetaPixel</a></span>
+          
+          <span class="source-chip"><a href="https://petapixel.com/2026/03/30/photography-fellowship-pays-30000-for-3-months-of-documentary-work/" target="_blank" rel="noopener">PetaPixel</a></span>
+          
+          <span class="source-chip"><a href="https://fstoppers.com/originals/behind-every-choice-compromise-and-creativity-pays-price-900139?utm_source=fstoppers&amp;utm_medium=RSS&amp;utm_campaign=rss_feed_articles" target="_blank" rel="noopener">Fstoppers</a></span>
+          
+          <span class="source-chip"><a href="https://fstoppers.com/education/why-need-better-problem-your-bad-camera-901068?utm_source=fstoppers&amp;utm_medium=RSS&amp;utm_campaign=rss_feed_articles" target="_blank" rel="noopener">Fstoppers</a></span>
+          
+          <span class="source-chip"><a href="https://fstoppers.com/lightroom/10-lightroom-mistakes-are-ruining-your-photos-900338?utm_source=fstoppers&amp;utm_medium=RSS&amp;utm_campaign=rss_feed_articles" target="_blank" rel="noopener">Fstoppers</a></span>
+          
+          <span class="source-chip"><a href="https://fstoppers.com/gear/nikon-z5-ii-real-world-review-best-value-full-frame-camera-right-now-901258?utm_source=fstoppers&amp;utm_medium=RSS&amp;utm_campaign=rss_feed_articles" target="_blank" rel="noopener">Fstoppers</a></span>
+          
+          <span class="source-chip"><a href="https://fstoppers.com/film/best-beginner-film-stocks-color-and-black-and-white-901257?utm_source=fstoppers&amp;utm_medium=RSS&amp;utm_campaign=rss_feed_articles" target="_blank" rel="noopener">Fstoppers</a></span>
+          
+        </div>
+        
+        
+        <div class="contradiction">
+          <div class="contradiction-label">Points de vue divergents</div>
+          <p class="contradiction-text">Une tension notable émerge entre deux postures éditoriales : Fstoppers défend avec insistance l&#39;idée que le matériel est secondaire — &#39;votre mauvais appareil n&#39;est pas toujours le premier responsable&#39; — et que la créativité souffre précisément des compromis liés aux choix d&#39;équipement, tandis que simultanément les sources couvrent avec enthousiasme le lancement du Panasonic LUMIX DC-ZS300, la review élogieuse du Nikon Z5 II présenté comme &#39;meilleure valeur du moment&#39; et un système de rangement mural pour objectifs Sony. Cette contradiction structurelle — prêcher le détachement au matériel tout en alimentant le désir d&#39;acquisition — est caractéristique du média photographique spécialisé, pris entre discours pédagogique et modèle éditorial adossé à la culture du gear.</p>
+        </div>
         
       </div>
     </div>
     
-    <div class="cluster-card "
-         style="">
-      <div class="cluster-meta">
-        <span>1 source(s)</span>
-        <div class="importance-bar">
-          <div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot "></div><div class="dot "></div><div class="dot "></div><div class="dot "></div><div class="dot "></div>
-        </div>
-      </div>
-      <div class="cluster-theme">Nonprofit news outlets had a strong traffic month in January</div>
-      <div class="cluster-summary">&amp;#8220;The news gods provided us with a lot of reporting opportunities — good and bad — that resonated with people.&amp;#8221; That&amp;#8217;s the reason Colorado Sun editor Dana Coffield gives for her nonprofit news site&amp;#8217;s strong traffic performance in January. Traffic was up 53% from the month before, according to estimates from Similarweb, going from 1.24...</div>
-      
-      <div class="cluster-sources">
-        
-        <span class="source-tag">
-          <a href="https://www.niemanlab.org/2026/03/nonprofit-news-outlets-had-a-strong-traffic-month-in-january/" target="_blank" rel="noopener">Nieman Lab</a>
-          <span class="cache-badge">↩</span>
-        </span>
-        
-      </div>
-    </div>
     
-    <div class="cluster-card "
-         style="">
-      <div class="cluster-meta">
-        <span>1 source(s)</span>
-        <div class="importance-bar">
-          <div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot "></div><div class="dot "></div><div class="dot "></div><div class="dot "></div><div class="dot "></div>
-        </div>
-      </div>
-      <div class="cluster-theme">Was the FBI Raid on a Washington Post Reporter’s Home an Act of Retribution?</div>
-      <div class="cluster-summary">Investigators “assisted” Hannah Natanson in applying her right index finger to a Post-owned MacBook Pro, accessing all its data.</div>
-      
-      <div class="cluster-sources">
-        
-        <span class="source-tag">
-          <a href="https://www.cjr.org/the_media_today/was-the-fbi-raid-on-a-washington-post-reporters-home-an-act-of-retribution.php" target="_blank" rel="noopener">CJR</a>
-          <span class="cache-badge">↩</span>
-        </span>
-        
-      </div>
-    </div>
     
-    <div class="cluster-card "
-         style="">
-      <div class="cluster-meta">
-        <span>1 source(s)</span>
-        <div class="importance-bar">
-          <div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot "></div><div class="dot "></div><div class="dot "></div><div class="dot "></div><div class="dot "></div>
+    <div class="card ">
+      <div class="card-img-wrap">
+        
+        <img class="card-img" src="https://nofilmschool.com/media-library/a-still-from-the-cowboys-1972.jpg?id=65414237&amp;width=980" alt="" loading="lazy"
+             onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+        <div class="card-placeholder" style="background:linear-gradient(135deg, #1a1a1a 0%, #2d1515 50%, #4a0000 100%);display:none">▶</div>
+        
+      </div>
+      <div class="card-body">
+        <div class="card-eyebrow">
+          5 sources
+          &nbsp;·&nbsp;il y a 5h
         </div>
-      </div>
-      <div class="cluster-theme">What’s Up with Tony?</div>
-      <div class="cluster-summary">How Tony Dokoupil went from being a hair model to a print journalist to the anchor of CBS Evening News, guided by the principle “We love America.”</div>
-      
-      <div class="cluster-sources">
+        <h3 class="card-title">Cinéma et storytelling : analyses narratives et techniques de réalisation</h3>
+        <p class="card-summary">Le cinéma de genre — western, thriller ou fantasy — construit ses mythes durables autour de répliques emblématiques et de choix narratifs précis, comme le révèlent ces analyses de No Film School. Des westerns de John Wayne aux dialogues labyrinthiques de Tarantino, en passant par la philosophie discrète de Tolkien ou le nihilisme des frères Coen, chaque œuvre dissimule sous sa surface un système de sens cohérent et intentionnel. La technique au service du récit se manifeste jusque dans les contraintes pratiques — les cascades équestres des westerns en sont l&#39;exemple le plus concret — rappelant que l&#39;authenticité visuelle reste indissociable de la profondeur dramaturgique. Ces analyses confirment une tendance forte du journalisme cinématographique contemporain : décrypter l&#39;implicite pour révéler la mécanique invisible qui fait tenir un film ensemble.</p>
         
-        <span class="source-tag">
-          <a href="https://www.cjr.org/feature/whats-up-with-tony-dokoupil-hair-model-cbs-evening-news-anchor-ratings.php" target="_blank" rel="noopener">CJR</a>
-          <span class="cache-badge">↩</span>
-        </span>
-        
-      </div>
-    </div>
-    
-    <div class="cluster-card "
-         style="">
-      <div class="cluster-meta">
-        <span>1 source(s)</span>
-        <div class="importance-bar">
-          <div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot "></div><div class="dot "></div><div class="dot "></div><div class="dot "></div><div class="dot "></div>
+        <div class="card-sources">
+          
+          <span class="source-chip"><a href="https://nofilmschool.com/burnin-daylight-the-cowboys-john-wayne-meaning" target="_blank" rel="noopener">No Film School</a></span>
+          
+          <span class="source-chip"><a href="https://nofilmschool.com/pulp-fiction-foot-massage-argument-analysis" target="_blank" rel="noopener">No Film School</a></span>
+          
+          <span class="source-chip"><a href="https://nofilmschool.com/tricks-to-film-horse-stunts" target="_blank" rel="noopener">No Film School</a></span>
+          
+          <span class="source-chip"><a href="https://nofilmschool.com/gandalf-wizard-never-late-quote-meaning" target="_blank" rel="noopener">No Film School</a></span>
+          
+          <span class="source-chip"><a href="https://nofilmschool.com/real-meaning-no-country-for-old-men-title" target="_blank" rel="noopener">No Film School</a></span>
+          
         </div>
-      </div>
-      <div class="cluster-theme">Print and distribution events unite: WAN-IFRA announces historic co-location of World Printers Summit and DistriPress Congress in Rotterdam</div>
-      <div class="cluster-summary">In a landmark move for the global media supply chain, WAN-IFRA has announced that the World Printers Summit and the DistriPress Congress will for the first time be held concurrently at the same venue.
-The post Print and distribution events unite: WAN-IFRA announces historic co-location of World Printers Summit and DistriPress Congress in Rotterdam appeared first on WAN-IFRA.</div>
-      
-      <div class="cluster-sources">
         
-        <span class="source-tag">
-          <a href="https://wan-ifra.org/2026/03/print-and-distribution-events-unite-wan-ifra-announces-historic-co-location-of-world-printers-summit-and-distripress-congress-in-rotterdam/" target="_blank" rel="noopener">WAN-IFRA</a>
-          <span class="cache-badge">↩</span>
-        </span>
         
-      </div>
-    </div>
-    
-    <div class="cluster-card "
-         style="">
-      <div class="cluster-meta">
-        <span>1 source(s)</span>
-        <div class="importance-bar">
-          <div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot "></div><div class="dot "></div><div class="dot "></div><div class="dot "></div><div class="dot "></div>
+        <div class="contradiction">
+          <div class="contradiction-label">Points de vue divergents</div>
+          <p class="contradiction-text">Aucune contradiction factuelle ou de point de vue n&#39;est identifiable entre les sources. Toutes émanent du même média (No Film School) et partagent une ligne éditoriale homogène centrée sur l&#39;analyse narrative bienveillante et la valorisation du sens caché dans les œuvres de genre. L&#39;absence de sources externes ou contradictoires limite structurellement tout débat critique.</p>
         </div>
-      </div>
-      <div class="cluster-theme">ICQC introduces new Cuboid and updated contest rules</div>
-      <div class="cluster-summary">The International Color Quality Club (ICQC) by WAN-IFRA continues to assess print quality, with changes to measurement, evaluation, and participation.
-The post ICQC introduces new Cuboid and updated contest rules appeared first on WAN-IFRA.</div>
-      
-      <div class="cluster-sources">
-        
-        <span class="source-tag">
-          <a href="https://wan-ifra.org/2026/03/icqc-2026-2028-introduces-new-cuboid-and-updated-contest-rules/" target="_blank" rel="noopener">WAN-IFRA</a>
-          <span class="cache-badge">↩</span>
-        </span>
-        
-      </div>
-    </div>
-    
-    <div class="cluster-card "
-         style="">
-      <div class="cluster-meta">
-        <span>1 source(s)</span>
-        <div class="importance-bar">
-          <div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot "></div><div class="dot "></div><div class="dot "></div><div class="dot "></div><div class="dot "></div>
-        </div>
-      </div>
-      <div class="cluster-theme">Press Gazette exposé of parasite SEO firm removed from Google results</div>
-      <div class="cluster-summary">Story removed from Google index after bogus copyright complaint.
-The post Press Gazette exposé of parasite SEO firm removed from Google results appeared first on Press Gazette.</div>
-      
-      <div class="cluster-sources">
-        
-        <span class="source-tag">
-          <a href="https://pressgazette.co.uk/news/parasite-seo-clickout-media-google/" target="_blank" rel="noopener">Press Gazette</a>
-          <span class="cache-badge">↩</span>
-        </span>
-        
-      </div>
-    </div>
-    
-    <div class="cluster-card "
-         style="">
-      <div class="cluster-meta">
-        <span>1 source(s)</span>
-        <div class="importance-bar">
-          <div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot "></div><div class="dot "></div><div class="dot "></div><div class="dot "></div><div class="dot "></div>
-        </div>
-      </div>
-      <div class="cluster-theme">Publishers warn reduced FOI cost limit would put public-interest information ‘beyond scrutiny’</div>
-      <div class="cluster-summary">Government reportedly exploring reduced cost ceiling for processing FOI requests.
-The post Publishers warn reduced FOI cost limit would put public-interest information &amp;#8216;beyond scrutiny&amp;#8217; appeared first on Press Gazette.</div>
-      
-      <div class="cluster-sources">
-        
-        <span class="source-tag">
-          <a href="https://pressgazette.co.uk/media_law/foi-changes-cost-publishers-public-interest/" target="_blank" rel="noopener">Press Gazette</a>
-          <span class="cache-badge">↩</span>
-        </span>
         
       </div>
     </div>
@@ -905,136 +844,33 @@ The post Publishers warn reduced FOI cost limit would put public-interest inform
 
 
 
-<section class="category-section">
-  <div class="category-header">
-    <span class="category-icon">🎬</span>
-    <span class="category-name" style="color:#DC2626">Contenus Vidéo</span>
-    <span class="category-count">4 sujet(s)</span>
+<section class="section" id="podcast">
+  <div class="section-header">
+    <h2 class="section-title">Podcast</h2>
+    <span class="section-count">1 sujet</span>
   </div>
-  <div class="clusters-grid">
+  <div class="cards-grid">
     
-    <div class="cluster-card "
-         style="">
-      <div class="cluster-meta">
-        <span>1 source(s)</span>
-        <div class="importance-bar">
-          <div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot "></div><div class="dot "></div><div class="dot "></div><div class="dot "></div><div class="dot "></div>
+    
+    
+    <div class="card card-featured">
+      <div class="card-img-wrap">
+        
+        <div class="card-placeholder" style="background:linear-gradient(135deg, #1a0a2e 0%, #2d1b4e 50%, #3d1f6e 100%)">◉</div>
+        
+      </div>
+      <div class="card-body">
+        <div class="card-eyebrow">
+          Podnews
+          &nbsp;·&nbsp;il y a 23h
         </div>
-      </div>
-      <div class="cluster-theme">Panasonic shrinks a 15x zoom camera down to pocket size</div>
-      <div class="cluster-summary">Panasonic has launched a new pocket-sized digital compact camera with an impressive 15x optical zoom, the Panasonic LUMIX DC-ZS300.
-The post Panasonic shrinks a 15x zoom camera down to pocket size appeared first on Videomaker.</div>
-      
-      <div class="cluster-sources">
-        
-        <span class="source-tag">
-          <a href="https://www.videomaker.com/news/panasonic-shrinks-a-15x-zoom-camera-down-to-pocket-size/" target="_blank" rel="noopener">Videomaker</a>
-          <span class="cache-badge">↩</span>
-        </span>
-        
-      </div>
-    </div>
-    
-    <div class="cluster-card "
-         style="">
-      <div class="cluster-meta">
-        <span>1 source(s)</span>
-        <div class="importance-bar">
-          <div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot "></div><div class="dot "></div><div class="dot "></div><div class="dot "></div><div class="dot "></div>
-        </div>
-      </div>
-      <div class="cluster-theme">Protected: How Adobe Stock AI Studio solves the common issues with stock media</div>
-      <div class="cluster-summary">There is no excerpt because this is a protected post.
-The post Protected: How Adobe Stock AI Studio solves the common issues with stock media appeared first on Videomaker.</div>
-      
-      <div class="cluster-sources">
-        
-        <span class="source-tag">
-          <a href="https://www.videomaker.com/uncategorized/how-adobe-stock-ai-studio-solves-the-common-issues-with-stock-media/" target="_blank" rel="noopener">Videomaker</a>
-          <span class="cache-badge">↩</span>
-        </span>
-        
-      </div>
-    </div>
-    
-    <div class="cluster-card "
-         style="">
-      <div class="cluster-meta">
-        <span>1 source(s)</span>
-        <div class="importance-bar">
-          <div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot "></div><div class="dot "></div><div class="dot "></div><div class="dot "></div><div class="dot "></div>
-        </div>
-      </div>
-      <div class="cluster-theme">Protected: AI Studio makes Adobe Stock more than just a video stock library</div>
-      <div class="cluster-summary">There is no excerpt because this is a protected post.
-The post Protected: AI Studio makes Adobe Stock more than just a video stock library appeared first on Videomaker.</div>
-      
-      <div class="cluster-sources">
-        
-        <span class="source-tag">
-          <a href="https://www.videomaker.com/uncategorized/ai-studio-makes-adobe-stock-more-than-just-a-video-stock-library/" target="_blank" rel="noopener">Videomaker</a>
-          <span class="cache-badge">↩</span>
-        </span>
-        
-      </div>
-    </div>
-    
-    <div class="cluster-card "
-         style="">
-      <div class="cluster-meta">
-        <span>1 source(s)</span>
-        <div class="importance-bar">
-          <div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot "></div><div class="dot "></div><div class="dot "></div><div class="dot "></div><div class="dot "></div>
-        </div>
-      </div>
-      <div class="cluster-theme">Protected: Adobe Stock’s AI Studio photo features pioneer a new era for creative workflows</div>
-      <div class="cluster-summary">There is no excerpt because this is a protected post.
-The post Protected: Adobe Stock&amp;#8217;s AI Studio photo features pioneer a new era for creative workflows appeared first on Videomaker.</div>
-      
-      <div class="cluster-sources">
-        
-        <span class="source-tag">
-          <a href="https://www.videomaker.com/uncategorized/adobe-stocks-ai-studio-photo-features-pioneer-a-new-era-for-creative-workflows/" target="_blank" rel="noopener">Videomaker</a>
-          <span class="cache-badge">↩</span>
-        </span>
-        
-      </div>
-    </div>
-    
-  </div>
-</section>
-
-
-
-<section class="category-section">
-  <div class="category-header">
-    <span class="category-icon">🎙️</span>
-    <span class="category-name" style="color:#7C3AED">Podcast</span>
-    <span class="category-count">1 sujet(s)</span>
-  </div>
-  <div class="clusters-grid">
-    
-    <div class="cluster-card "
-         style="">
-      <div class="cluster-meta">
-        <span>1 source(s)</span>
-        <div class="importance-bar">
-          <div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot "></div><div class="dot "></div><div class="dot "></div><div class="dot "></div><div class="dot "></div>
-        </div>
-      </div>
-      <div class="cluster-theme">A new owner for Vox Media’s podcasts?</div>
-      <div class="cluster-summary">Kara Swisher, Prof G and more might have a new owner soon.
+        <h3 class="card-title">Podcasting et contenus audio : modèles éditoriaux et propriété</h3>
+        <p class="card-summary">Kara Swisher, Prof G and more might have a new owner soon.
 
 Sponsored by Riverside. Taking your podcast to video has never been easier. Record in studio quality, edit with AI, and repurpose your episodes — all on one platform with Riverside. No extra tools, no extra steps. Start for free. https://podnews.net/cc/3411
 
-Visit https://podnews.net/update/vox-media-versant-rumour for the story links in full, and to get our daily newsletter.</div>
-      
-      <div class="cluster-sources">
+Visit https://podnews.net/update/vox-media-versant-rumour for the story links in full, and to get our daily newsletter.</p>
         
-        <span class="source-tag">
-          <a href="https://podnews.net/update/vox-media-versant-rumour" target="_blank" rel="noopener">Podnews</a>
-          <span class="cache-badge">↩</span>
-        </span>
         
       </div>
     </div>
@@ -1044,495 +880,48 @@ Visit https://podnews.net/update/vox-media-versant-rumour for the story links in
 
 
 
-<section class="category-section">
-  <div class="category-header">
-    <span class="category-icon">📷</span>
-    <span class="category-name" style="color:#059669">Photographie</span>
-    <span class="category-count">10 sujet(s)</span>
+<section class="section" id="social-media">
+  <div class="section-header">
+    <h2 class="section-title">Social Media</h2>
+    <span class="section-count">1 sujet</span>
   </div>
-  <div class="clusters-grid">
+  <div class="cards-grid">
     
-    <div class="cluster-card "
-         style="">
-      <div class="cluster-meta">
-        <span>1 source(s)</span>
-        <div class="importance-bar">
-          <div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot "></div><div class="dot "></div><div class="dot "></div><div class="dot "></div><div class="dot "></div>
+    
+    
+    <div class="card card-featured">
+      <div class="card-img-wrap">
+        
+        <img class="card-img" src="https://blog.hootsuite.com/wp-content/uploads/2025/04/Screen-Shot-2025-03-28-at-1.46.21-PM-620x346.png" alt="" loading="lazy"
+             onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+        <div class="card-placeholder" style="background:linear-gradient(135deg, #0a1a0f 0%, #0d2b16 50%, #0f3d1e 100%);display:none">◈</div>
+        
+      </div>
+      <div class="card-body">
+        <div class="card-eyebrow">
+          4 sources
+          &nbsp;·&nbsp;il y a 14h
         </div>
-      </div>
-      <div class="cluster-theme">Free Photography Tool Wants to Be a Landscape Photographer’s Best Friend</div>
-      <div class="cluster-summary">Photographer and university student Megan Tucker created a browser-based photography conditions forecaster, LightCast Suite, to help fellow photographers decide when it&#39;s worth heading out with their camera gear.
-[&lt;a href=&#34;https://petapixe</div>
-      
-      <div class="cluster-sources">
+        <h3 class="card-title">Réseaux sociaux : démographies, outils collaboratifs et stratégies</h3>
+        <p class="card-summary">Les données démographiques 2026 confirment la domination persistante de Facebook et Instagram dans les stratégies marketing : avec 3 milliards d&#39;utilisateurs actifs quotidiens, Facebook reste incontournable, tandis qu&#39;Instagram affine son positionnement grâce à une connaissance approfondie de ses audiences cibles. Sur le plan opérationnel, les équipes redéfinissent leurs workflows grâce à des outils collaboratifs spécialisés — Buffer en tête, qui documente ses propres pratiques internes. Hootsuite, de son côté, enrichit sa plateforme en février 2026 avec une intégration Upfluence dédiée au marketing d&#39;influence, de nouveaux insights d&#39;écoute sociale et des analytics étendus, consolidant ainsi son positionnement de tableau de bord tout-en-un.</p>
         
-        <span class="source-tag">
-          <a href="https://petapixel.com/2026/03/30/free-photography-tool-wants-to-be-a-landscape-photographers-best-friend/" target="_blank" rel="noopener">PetaPixel</a>
-          <span class="cache-badge">↩</span>
-        </span>
-        
-      </div>
-    </div>
-    
-    <div class="cluster-card "
-         style="">
-      <div class="cluster-meta">
-        <span>1 source(s)</span>
-        <div class="importance-bar">
-          <div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot "></div><div class="dot "></div><div class="dot "></div><div class="dot "></div><div class="dot "></div>
-        </div>
-      </div>
-      <div class="cluster-theme">‘I Enjoy Being a One-Man Band,’ Says Triple-Threat Sports Journalist</div>
-      <div class="cluster-summary">Sports journalist David Jablonski is a multimedia pioneer. For nearly two decades, he has achieved a journalism trifecta: writing, photography, and videography.
-[Read</div>
-      
-      <div class="cluster-sources">
-        
-        <span class="source-tag">
-          <a href="https://petapixel.com/2026/03/30/i-enjoy-being-a-one-man-band-says-triple-threat-sports-journalist/" target="_blank" rel="noopener">PetaPixel</a>
-          <span class="cache-badge">↩</span>
-        </span>
-        
-      </div>
-    </div>
-    
-    <div class="cluster-card "
-         style="">
-      <div class="cluster-meta">
-        <span>1 source(s)</span>
-        <div class="importance-bar">
-          <div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot "></div><div class="dot "></div><div class="dot "></div><div class="dot "></div><div class="dot "></div>
-        </div>
-      </div>
-      <div class="cluster-theme">The Vastnaut One Exoskeleton Expands Outdoor Photography’s Horizons</div>
-      <div class="cluster-summary">Photography is among the best and most fun ways to enjoy nature. However, for many, the physical demands of outdoor adventures can be too much, forcing people to stay home or stick to only the most accessible, often overcrowded, photo spots. That&#39;s where Vastnaut comes in with the Vastnaut One, th</div>
-      
-      <div class="cluster-sources">
-        
-        <span class="source-tag">
-          <a href="https://petapixel.com/2026/03/30/the-vastnaut-one-exoskeleton-expands-outdoor-photographys-horizons/" target="_blank" rel="noopener">PetaPixel</a>
-          <span class="cache-badge">↩</span>
-        </span>
-        
-      </div>
-    </div>
-    
-    <div class="cluster-card "
-         style="">
-      <div class="cluster-meta">
-        <span>1 source(s)</span>
-        <div class="importance-bar">
-          <div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot "></div><div class="dot "></div><div class="dot "></div><div class="dot "></div><div class="dot "></div>
-        </div>
-      </div>
-      <div class="cluster-theme">OPC Lens Dock-E Offers Wall-Mounted Storage for E-Mount Lenses</div>
-      <div class="cluster-summary">A new accessory aimed at streamlining studio organization brings a modular approach to lens storage. The OPC Lens Dock-E is a wall-mounted system designed specifically for Sony E-mount lenses, offering a structured way to keep optics visible, protected, and within easy reach.
-&lt;p class=&#34;</div>
-      
-      <div class="cluster-sources">
-        
-        <span class="source-tag">
-          <a href="https://petapixel.com/2026/03/30/opc-lens-dock-e-offers-wall-mounted-storage-for-e-mount-lenses/" target="_blank" rel="noopener">PetaPixel</a>
-          <span class="cache-badge">↩</span>
-        </span>
-        
-      </div>
-    </div>
-    
-    <div class="cluster-card "
-         style="">
-      <div class="cluster-meta">
-        <span>1 source(s)</span>
-        <div class="importance-bar">
-          <div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot "></div><div class="dot "></div><div class="dot "></div><div class="dot "></div><div class="dot "></div>
-        </div>
-      </div>
-      <div class="cluster-theme">Photography Fellowship Pays $30,000 for 3 Months of Documentary Work</div>
-      <div class="cluster-summary">PowerLines, a national nonprofit organization dedicated to modernizing public utilities, is seeking a documentary photographer for a three-month assignment dedicated to &#34;humanizing the impact of rising utility bills on everyday consumers and communities across the United Stat</div>
-      
-      <div class="cluster-sources">
-        
-        <span class="source-tag">
-          <a href="https://petapixel.com/2026/03/30/photography-fellowship-pays-30000-for-3-months-of-documentary-work/" target="_blank" rel="noopener">PetaPixel</a>
-          <span class="cache-badge">↩</span>
-        </span>
-        
-      </div>
-    </div>
-    
-    <div class="cluster-card "
-         style="">
-      <div class="cluster-meta">
-        <span>1 source(s)</span>
-        <div class="importance-bar">
-          <div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot "></div><div class="dot "></div><div class="dot "></div><div class="dot "></div><div class="dot "></div>
-        </div>
-      </div>
-      <div class="cluster-theme">Behind Every Choice Is a Compromise — and Creativity Pays the Price</div>
-      <div class="cluster-summary">Compromises, as I would describe them, are simply the consequences of decision-making. And it is something we don&#39;t talk about enough, especially in the photography industry. As much as we like to paint a beautiful picture of our creative journey, the truth is that we can&#39;t have everything laid out perfectly without accepting compromises, unless we are living somewhere over the rainbow or have unlimited skills, time, and resources. Pr</div>
-      
-      <div class="cluster-sources">
-        
-        <span class="source-tag">
-          <a href="https://fstoppers.com/originals/behind-every-choice-compromise-and-creativity-pays-price-900139?utm_source=fstoppers&amp;utm_medium=RSS&amp;utm_campaign=rss_feed_articles" target="_blank" rel="noopener">Fstoppers</a>
-          <span class="cache-badge">↩</span>
-        </span>
-        
-      </div>
-    </div>
-    
-    <div class="cluster-card "
-         style="">
-      <div class="cluster-meta">
-        <span>1 source(s)</span>
-        <div class="importance-bar">
-          <div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot "></div><div class="dot "></div><div class="dot "></div><div class="dot "></div><div class="dot "></div>
-        </div>
-      </div>
-      <div class="cluster-theme">Why You Need a &#39;Better Problem&#39; Than Your &#39;Bad&#39; Camera</div>
-      <div class="cluster-summary">Not happy about your photos lately? Your &#34;bad&#34; camera isn&#39;t always the first to blame.&amp;nbsp; 
-[Read More]</div>
-      
-      <div class="cluster-sources">
-        
-        <span class="source-tag">
-          <a href="https://fstoppers.com/education/why-need-better-problem-your-bad-camera-901068?utm_source=fstoppers&amp;utm_medium=RSS&amp;utm_campaign=rss_feed_articles" target="_blank" rel="noopener">Fstoppers</a>
-          <span class="cache-badge">↩</span>
-        </span>
-        
-      </div>
-    </div>
-    
-    <div class="cluster-card "
-         style="">
-      <div class="cluster-meta">
-        <span>1 source(s)</span>
-        <div class="importance-bar">
-          <div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot "></div><div class="dot "></div><div class="dot "></div><div class="dot "></div><div class="dot "></div>
-        </div>
-      </div>
-      <div class="cluster-theme">10 Lightroom Mistakes That Are Ruining Your Photos</div>
-      <div class="cluster-summary">Lightroom is the most widely used photo editing application in the world, and for good reason. It is powerful, nondestructive, and flexible enough to handle everything from a casual vacation gallery to a professional wedding shoot. But that flexibility comes with a cost: there are dozens of ways to make your images look worse instead of better, and most of them feel like improvements while you are doing them.&amp;nbsp; 
-[&lt;a href=&#34;https://fstoppers.com/lightr</div>
-      
-      <div class="cluster-sources">
-        
-        <span class="source-tag">
-          <a href="https://fstoppers.com/lightroom/10-lightroom-mistakes-are-ruining-your-photos-900338?utm_source=fstoppers&amp;utm_medium=RSS&amp;utm_campaign=rss_feed_articles" target="_blank" rel="noopener">Fstoppers</a>
-          <span class="cache-badge">↩</span>
-        </span>
-        
-      </div>
-    </div>
-    
-    <div class="cluster-card "
-         style="">
-      <div class="cluster-meta">
-        <span>1 source(s)</span>
-        <div class="importance-bar">
-          <div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot "></div><div class="dot "></div><div class="dot "></div><div class="dot "></div><div class="dot "></div>
-        </div>
-      </div>
-      <div class="cluster-theme">Nikon Z5 II Real-World Review: Is This the Best Value Full Frame Camera Right Now?</div>
-      <div class="cluster-summary">The Nikon Z5 II sits at the entry-level end of Nikon&#39;s full frame mirrorless lineup, but calling it &#34;entry-level&#34; undersells it fast. This camera carries specs that would have turned heads on a flagship body just a few years ago, and at its price point, it&#39;s hard to ignore.&amp;nbsp; 
-[&lt;a href=&#34;https://fstoppers.com/gear/nikon-z5-ii-real-world-review-best-value-full-frame-camera-right-now-901258?utm_source=fstoppers&amp;amp;utm_medium=RSS&amp;amp;utm_c</div>
-      
-      <div class="cluster-sources">
-        
-        <span class="source-tag">
-          <a href="https://fstoppers.com/gear/nikon-z5-ii-real-world-review-best-value-full-frame-camera-right-now-901258?utm_source=fstoppers&amp;utm_medium=RSS&amp;utm_campaign=rss_feed_articles" target="_blank" rel="noopener">Fstoppers</a>
-          <span class="cache-badge">↩</span>
-        </span>
-        
-      </div>
-    </div>
-    
-    <div class="cluster-card "
-         style="">
-      <div class="cluster-meta">
-        <span>1 source(s)</span>
-        <div class="importance-bar">
-          <div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot "></div><div class="dot "></div><div class="dot "></div><div class="dot "></div><div class="dot "></div>
-        </div>
-      </div>
-      <div class="cluster-theme">The Best Beginner Film Stocks for Color and Black and White</div>
-      <div class="cluster-summary">Picking the wrong film stock can ruin an entire roll before you ever press the shutter. ISO, light conditions, and your specific camera&#39;s limitations all play into which film actually makes sense for a given shoot, and getting this wrong costs you both money and photos.&amp;nbsp; 
-[Read More</div>
-      
-      <div class="cluster-sources">
-        
-        <span class="source-tag">
-          <a href="https://fstoppers.com/film/best-beginner-film-stocks-color-and-black-and-white-901257?utm_source=fstoppers&amp;utm_medium=RSS&amp;utm_campaign=rss_feed_articles" target="_blank" rel="noopener">Fstoppers</a>
-          <span class="cache-badge">↩</span>
-        </span>
-        
-      </div>
-    </div>
-    
-  </div>
-</section>
-
-
-
-<section class="category-section">
-  <div class="category-header">
-    <span class="category-icon">📱</span>
-    <span class="category-name" style="color:#D97706">Social Media</span>
-    <span class="category-count">4 sujet(s)</span>
-  </div>
-  <div class="clusters-grid">
-    
-    <div class="cluster-card "
-         style="">
-      <div class="cluster-meta">
-        <span>1 source(s)</span>
-        <div class="importance-bar">
-          <div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot "></div><div class="dot "></div><div class="dot "></div><div class="dot "></div>
-        </div>
-      </div>
-      <div class="cluster-theme">8 outils collaboratifs essentiels pour les réseaux sociaux — testés par l&#39;équipe Buffer</div>
-      <div class="cluster-summary">Buffer propose une sélection des meilleurs outils de collaboration pour optimiser le travail en équipe sur les réseaux sociaux. Cet article partage les solutions qu&#39;ils utilisent en interne.</div>
-      
-      <div class="cluster-sources">
-        
-        <span class="source-tag">
-          <a href="https://buffer.com/resources/social-media-collaboration-tools/" target="_blank" rel="noopener">Buffer Blog</a>
-          <span class="cache-badge">↩</span>
-        </span>
-        
-      </div>
-    </div>
-    
-    <div class="cluster-card "
-         style="">
-      <div class="cluster-meta">
-        <span>1 source(s)</span>
-        <div class="importance-bar">
-          <div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot "></div><div class="dot "></div><div class="dot "></div><div class="dot "></div><div class="dot "></div>
-        </div>
-      </div>
-      <div class="cluster-theme">23 Instagram demographics marketers need to know in 2026</div>
-      <div class="cluster-summary">Who uses Instagram every day? Instagram demographics will help you build a strategy that works — and reach your social marketing goals.
-The post 23 Instagram demographics marketers need to know in 2026 appeared first on Social Media Marketing &amp;amp; Management Dashboard.</div>
-      
-      <div class="cluster-sources">
-        
-        <span class="source-tag">
-          <a href="https://blog.hootsuite.com/instagram-demographics/" target="_blank" rel="noopener">Hootsuite Blog</a>
-          <span class="cache-badge">↩</span>
-        </span>
-        
-      </div>
-    </div>
-    
-    <div class="cluster-card "
-         style="">
-      <div class="cluster-meta">
-        <span>1 source(s)</span>
-        <div class="importance-bar">
-          <div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot "></div><div class="dot "></div><div class="dot "></div><div class="dot "></div><div class="dot "></div>
-        </div>
-      </div>
-      <div class="cluster-theme">30 Facebook demographics marketers need to know in 2026</div>
-      <div class="cluster-summary">With 3 billion daily active users, understanding Facebook demographics is key to creating a successful social marketing strategy.
-The post 30 Facebook demographics marketers need to know in 2026 appeared first on Social Media Marketing &amp;amp; Management Dashboard.</div>
-      
-      <div class="cluster-sources">
-        
-        <span class="source-tag">
-          <a href="https://blog.hootsuite.com/facebook-demographics/" target="_blank" rel="noopener">Hootsuite Blog</a>
-          <span class="cache-badge">↩</span>
-        </span>
-        
-      </div>
-    </div>
-    
-    <div class="cluster-card "
-         style="">
-      <div class="cluster-meta">
-        <span>1 source(s)</span>
-        <div class="importance-bar">
-          <div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot "></div><div class="dot "></div><div class="dot "></div><div class="dot "></div><div class="dot "></div>
-        </div>
-      </div>
-      <div class="cluster-theme">What are the latest Hootsuite product features? [Feb 2026]</div>
-      <div class="cluster-summary">Discover our Upfluence influencer marketing integration, new listening insights, and expanded analytics in February’s Hootsuite updates.
-The post What are the latest Hootsuite product features? [Feb 2026] appeared first on Social Media Marketing &amp;amp; Management Dashboard.</div>
-      
-      <div class="cluster-sources">
-        
-        <span class="source-tag">
-          <a href="https://blog.hootsuite.com/new-features-feb-2026/" target="_blank" rel="noopener">Hootsuite Blog</a>
-          <span class="cache-badge">↩</span>
-        </span>
-        
-      </div>
-    </div>
-    
-  </div>
-</section>
-
-
-
-<section class="category-section">
-  <div class="category-header">
-    <span class="category-icon">🌏</span>
-    <span class="category-name" style="color:#BE185D">Médias Asiatiques</span>
-    <span class="category-count">5 sujet(s)</span>
-  </div>
-  <div class="clusters-grid">
-    
-    <div class="cluster-card "
-         style="">
-      <div class="cluster-meta">
-        <span>1 source(s)</span>
-        <div class="importance-bar">
-          <div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot "></div><div class="dot "></div><div class="dot "></div><div class="dot "></div><div class="dot "></div>
-        </div>
-      </div>
-      <div class="cluster-theme">将AI戒指为入口，追觅瞄准万亿智能可穿戴市场｜最前线</div>
-      <div class="cluster-summary">作者 | 王欣逸
-  编辑 | 邓咏仪
-  火热的可穿戴智能硬件市场，崛起了一位野心勃勃的争夺者。
-  3月27日，追觅科技AI智能硬件新品招商会在苏州举办，新品智能戒指Glow成为了会上的焦点产品。
-  在AI硬件赛道，追觅最先从智能戒指开始布局。
-  追觅曾于2025年10月发布旗下首个AI硬件产品震动AI智能戒指。这一硬件上市至今累计订单破亿，并登上2026年CES大会，斩获最佳智能穿戴奖。
-  随后，在今年的3月14日AWE大会上，追觅发布了新一代智能硬件产品AI戒指Glow。
-  Glow官方定价1799元，首发价为1499元，相较于去年11月发布的定价2699元的震动戒指，Glow的独特之处在于新增了AI心电监测功能，更聚焦健康监测应用场景。
-  据介绍，追觅戒指Glow的定位是一个指尖的AI健康管家，首创指尖AI心电分析技术，结合AI健康管家、AI睡眠监测、AI运动监测三大算法，打造智能戒指全维度的健康管理能力。
-  从续航能力来看，单枚戒指本体可以续航7～10天，搭配专属充电仓续航可达150天。
-  智能涌现了解到，追觅推出智能戒指，并非要让其做智能手表的替代品，而是起到手表的补充作用，因为智能手表不可能24小时戴在身上。
-  而Glow戒指主打就是全天无感佩戴。其外圈采用航空工艺钛合金，内圈为抗过敏环氧树脂材料，厚度仅2.5mm，重量2.6g，比一枚5角硬币还轻。
-  同时，Glow还支持50米深度防水，在洗澡、游泳等场景中，用户无需反复摘取。
-  相比于传统智能手表，Glow戒指重量更轻，续航能力更强，由于贴近指尖血管，其健康监测也更加精准。
-  &lt;p clas</div>
-      
-      <div class="cluster-sources">
-        
-        <span class="source-tag">
-          <a href="https://36kr.com/p/3746508855869954?f=rss" target="_blank" rel="noopener">36Kr</a>
+        <div class="card-sources">
           
-        </span>
-        
-      </div>
-    </div>
-    
-    <div class="cluster-card "
-         style="">
-      <div class="cluster-meta">
-        <span>1 source(s)</span>
-        <div class="importance-bar">
-          <div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot "></div><div class="dot "></div><div class="dot "></div><div class="dot "></div><div class="dot "></div>
+          <span class="source-chip"><a href="https://blog.hootsuite.com/instagram-demographics/" target="_blank" rel="noopener">Hootsuite Blog</a></span>
+          
+          <span class="source-chip"><a href="https://blog.hootsuite.com/facebook-demographics/" target="_blank" rel="noopener">Hootsuite Blog</a></span>
+          
+          <span class="source-chip"><a href="https://blog.hootsuite.com/new-features-feb-2026/" target="_blank" rel="noopener">Hootsuite Blog</a></span>
+          
+          <span class="source-chip"><a href="https://buffer.com/resources/social-media-collaboration-tools/" target="_blank" rel="noopener">Buffer Blog</a></span>
+          
         </div>
-      </div>
-      <div class="cluster-theme">安踏“慢跑”，FILA重回轨道</div>
-      <div class="cluster-summary">作者 |&amp;nbsp;谢芸子
-  编辑 |&amp;nbsp;张帆&amp;nbsp;
-  安踏的增长结构在重塑，这反映出不同消费层级体育品牌的分化。
-  近日，安踏体育发布2025年财报，集团整体营收达802.2亿元，同比增长13.3%；归母净利润135.9亿元，同比减少12.9%。
-  财报解释称，净利润下滑是因为2024年安踏集团控股的亚玛芬体育上市，确认了一大笔“一次性收益”，从而推高了比较基数。剔除这一因素，安踏体育的归母净利润同比上涨13.9%。
-  再分品牌看，包括迪桑特、可隆在内的“其他品牌”成为拉动增长的主要动力。
-  上一年度，安踏体育“其他品牌”类目同比大增59.2%，至169.96亿元。其中，聚焦“滑雪、高尔夫、铁人三项”的高端品牌迪桑特，全年流水超过百亿元。安踏集团执行董事、联席CEO赖世贤在业绩发布会上透露，迪桑特流水同比增长35%，店效超过270万元。
-  另一边，素有“体制内代表穿搭”的户外品牌可隆，2025年现金流也突破了60亿元，同比增长近70%，店效突破200万元。
-  赖世贤称，可隆实现了服装之外的核心品类突破。对于运动品牌，鞋类营收占比能一定程度反映运动专业的科技水平。报告期内，可隆徒步鞋、越野跑鞋等畅销产品，支撑了鞋品类流水同比增长140%以上。
-  &lt;img src=&#34;https://img.36krcdn.com/hsossms/20260331/v2_755e4b6dafc54eb1a3a4bcb60db197d7@394564713_oswg191709oswg118</div>
-      
-      <div class="cluster-sources">
         
-        <span class="source-tag">
-          <a href="https://36kr.com/p/3746211357655808?f=rss" target="_blank" rel="noopener">36Kr</a>
-          <span class="cache-badge">↩</span>
-        </span>
         
-      </div>
-    </div>
-    
-    <div class="cluster-card "
-         style="">
-      <div class="cluster-meta">
-        <span>1 source(s)</span>
-        <div class="importance-bar">
-          <div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot "></div><div class="dot "></div><div class="dot "></div><div class="dot "></div><div class="dot "></div>
+        <div class="contradiction">
+          <div class="contradiction-label">Points de vue divergents</div>
+          <p class="contradiction-text">Une tension implicite émerge entre les approches Buffer et Hootsuite : Buffer valorise une logique d&#39;écosystème modulaire, en combinant plusieurs outils collaboratifs spécialisés et indépendants, tandis que Hootsuite mise sur une centralisation croissante des fonctionnalités au sein d&#39;une seule plateforme (influence, listening, analytics). Ces deux philosophies reflètent des visions opposées de l&#39;efficacité opérationnelle — spécialisation versus intégration — sans qu&#39;aucune source ne tranche explicitement en faveur de l&#39;une ou l&#39;autre.</p>
         </div>
-      </div>
-      <div class="cluster-theme">36氪首发 | 磷酸锰铁锂正极材料厂商再获数亿元融资，加码动力电池产能布局</div>
-      <div class="cluster-summary">作者&amp;nbsp;|&amp;nbsp;乔钰杰
-  编辑&amp;nbsp;|&amp;nbsp;袁斯来
-  硬氪获悉，近日，江苏珩创纳米科技有限公司（以下简称“珩创纳米”）正式宣布完成B轮融资的数亿元交割。本轮融资由银川育成凤凰科创基金投资，大桉资本担任本轮融资财务顾问。资金将主要用于公司在宁夏银川的产能布局，规划建设年产13万吨（一期3万吨）磷酸锰铁锂（LMFP）正极材料生产线。与此同时，公司在盐城的基地将进一步扩产。
-  珩创纳米成立于2022年，聚焦新能源电池核心材料磷酸锰铁锂正极材料的研发、生产与销售，其产品目前已覆盖新能源汽车、两轮电动车及储能系统等多个应用场景。
-  作为近年来备受关注的一条技术路线，磷酸锰铁锂被视为磷酸铁锂的重要升级方向之一。从材料特性来看，磷酸锰铁锂通过在磷酸铁锂体系中引入锰元素，能够使电压平台由约3.4V提升至约3.8V，带动能量密度提升约5%至20%。而在成本端则显著低于依赖镍、钴等金属的三元材料体系。相对于磷酸铁锂体系，磷酸锰铁锂可以达到度电成本更优。
-  
-  （图源/官网）
-  珩创纳米董事长姚维广博士向硬氪介绍称，随着锰含量的提升，材料在循环过程中容易出现锰溶出问题，围绕这一核心问题，公司在材料结构和制备工艺上进行了系统性创新。其中，“</div>
-      
-      <div class="cluster-sources">
-        
-        <span class="source-tag">
-          <a href="https://36kr.com/p/3746236378202631?f=rss" target="_blank" rel="noopener">36Kr</a>
-          <span class="cache-badge">↩</span>
-        </span>
-        
-      </div>
-    </div>
-    
-    <div class="cluster-card "
-         style="">
-      <div class="cluster-meta">
-        <span>1 source(s)</span>
-        <div class="importance-bar">
-          <div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot "></div><div class="dot "></div><div class="dot "></div><div class="dot "></div><div class="dot "></div>
-        </div>
-      </div>
-      <div class="cluster-theme">追觅生态链多了家清华系公司，要用AI储能融入智能家居体系｜硬氪专访</div>
-      <div class="cluster-summary">作者｜黄楠
-  编辑｜袁斯来
-  2024年进入储能市场，是个有些反常识的决定。
-  储能在2022年前后经历过一次疯狂的增长，产能过剩后又惨烈洗牌，到曹治鹏入场时，已经相对平静。华宝新能、正浩创新、安克、大疆、华为等等大厂，都在其中盘踞一块领地。
-  但曹治鹏发现，市场并非死水一潭。
-  曹治鹏从事能源行业近20年，他曾任职于沈飞、华硕、阿特斯等上市企业，主导参与了户用储能、工商业储能等产品从0到1的研发与设计，亲历过储能从专业设备走向家庭场景的全过程。这也让他对行业的演变节奏有清晰判断：硬件迭代趋同之后，真正的机会或许不在参数的线性竞赛中。
-  自2024年中旬开始，德国等成熟市场的政府补贴开始退坡，储能市场逐渐褪去早期的政策依赖与概念狂热，进入静默竞争期。
-  这意味着硬件参数竞赛正让位于一场更为复杂的综合较量。老牌公司还未觉醒，新创团队仍有机会。
-  2024年7月，曹治鹏成立星空源储。其核心团队来自俞浩母校清华，并作为生态伙伴加入追觅生态，目前产品已经覆盖户外便携、家庭储电、阳台光储及城市移动补能场景。
-  可以看到，星空源储最大的差异化是背靠追觅体系，跳过了创业公司前期最艰难的拉新期。
-  当然，正如曹治鹏所说，“我们虽然是追觅的生态伙伴，但用户对清洁电器的信任，并不会直接转移到储能这个新领域。”即便有追觅品牌的加持，打仗还是靠自身产品和渠道实力。
-  毕竟，这个赛道已经相当残酷。星空源储有一个好的开始，却绝不敢懈怠。
-  “从专业品牌到消费电子巨头都进来了，导致技术快速普及，价格战也越来越激烈。同时，电芯等原材料成本又在下降，这使得行业整体利润空间被持续压缩。对我们来说，必须在成本和运营效</div>
-      
-      <div class="cluster-sources">
-        
-        <span class="source-tag">
-          <a href="https://36kr.com/p/3743753252061189?f=rss" target="_blank" rel="noopener">36Kr</a>
-          <span class="cache-badge">↩</span>
-        </span>
-        
-      </div>
-    </div>
-    
-    <div class="cluster-card "
-         style="">
-      <div class="cluster-meta">
-        <span>1 source(s)</span>
-        <div class="importance-bar">
-          <div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot "></div><div class="dot "></div><div class="dot "></div><div class="dot "></div><div class="dot "></div>
-        </div>
-      </div>
-      <div class="cluster-theme">“医药界英伟达”，花200亿买中国AI公司的减重药</div>
-      <div class="cluster-summary">文｜胡香赟
-  编辑｜海若镜
-  AI制药领域，再现200亿人民币级交易。
-  3月29日晚，英矽智能（HK:03696）公告了与礼来和合作：首付款1.15亿美元、总价27.5亿美元，另包含产品上市后的潜在销售分成。交易核心是一款临床前口服GLP-1药物；此外，基于英矽智能Pharma AI技术平台，双方未来还将开展多项“围绕礼来选定靶点”的研发合作。
-  同日，英矽智能年报显示，2025年总收入5620万美元，截止报告期的BD授权合同总价为21.74亿美元。换言之，这次的一笔交易，首付款就是公司全年收入的2倍，总价也直接超过既往全部BD金额的总和。
-  3月30日，英矽智能盘中涨幅一度达15%、收涨2%。在海外，这笔交易还因“现金规模大”触发美国监管部门的反垄断审查，一度引发“英矽智能被礼来收购”的传闻。
-  3月30日英矽智能举办媒体交流会，创始人、首席执行官Alex Zhavoronkov表示，“将坚持独立发展，而且，如果一项BD就能达到现在的价值，收购估值理应更高。就本次合作而言，礼来作为‘制药界英伟达’的背书效应很强，这两天已经收到了更多海外大药企的沟通和咨询邀约。”
-  此次交易形式，与近期信达生物与礼来（88.5亿美元）、前沿生物与GSK（10.03亿美元）的BD合作结构有相似之处。授权产品都处于早期开发阶段，结构上，也不再是买定离手，而是由授权方主导推进早期临床验证后，再交给跨国药企。
-  “目前，英矽智能临床团队只有20余人，也没有商业化团队，即便是有上市的商业化产品，如果只有1-2个，销售收入也很难覆盖销售成本。因此，短期2-5年内，BD仍将是公司的主要收入来源。但长远看，BD能持续创造稳定现金流后，我们就拥有了搭建全球临床团队、商业化团</div>
-      
-      <div class="cluster-sources">
-        
-        <span class="source-tag">
-          <a href="https://36kr.com/p/3745377703608832?f=rss" target="_blank" rel="noopener">36Kr</a>
-          <span class="cache-badge">↩</span>
-        </span>
         
       </div>
     </div>
@@ -1542,130 +931,42 @@ The post What are the latest Hootsuite product features? [Feb 2026] appeared fir
 
 
 
-<section class="category-section">
-  <div class="category-header">
-    <span class="category-icon">📰</span>
-    <span class="category-name" style="color:#78716C">Contenus Offline</span>
-    <span class="category-count">2 sujet(s)</span>
+<section class="section" id="autres">
+  <div class="section-header">
+    <h2 class="section-title">Autres</h2>
+    <span class="section-count">1 sujet</span>
   </div>
-  <div class="clusters-grid">
+  <div class="cards-grid">
     
-    <div class="cluster-card "
-         style="">
-      <div class="cluster-meta">
-        <span>1 source(s)</span>
-        <div class="importance-bar">
-          <div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot "></div><div class="dot "></div><div class="dot "></div><div class="dot "></div><div class="dot "></div>
+    
+    
+    <div class="card card-featured">
+      <div class="card-img-wrap">
+        
+        <div class="card-placeholder" style="background:linear-gradient(135deg,#2d2d2d,#1a1a1a)">📌</div>
+        
+      </div>
+      <div class="card-body">
+        <div class="card-eyebrow">
+          2 sources
+          &nbsp;·&nbsp;hier
         </div>
-      </div>
-      <div class="cluster-theme">Shortlist Revealed for the 2026 Women’s Prize for Nonfiction</div>
-      <div class="cluster-summary">Organizers noted that the six “exceptional” books on the shortlist represent “far-reaching, global stories, spanning Asia, Europe and the Middle-East, but by giving a voice to individual experiences and perspectives.&#34;
-The post Shortlist Revealed for the 2026 Women&amp;#8217;s Prize for Nonfiction appeared first on Publishing Perspectives.</div>
-      
-      <div class="cluster-sources">
+        <h3 class="card-title">Sécurité numérique et discours de haine en ligne : régulation européenne</h3>
+        <p class="card-summary">Le code de conduite CHASE positionne les organisations médias comme des acteurs stratégiques dans la lutte contre les discours de haine en ligne ciblant les femmes, au sein du cadre réglementaire européen. Si les plateformes médias sont reconnues comme des espaces potentiellement vecteurs de haine, elles sont simultanément identifiées comme des leviers essentiels de prévention et de régulation. Le projet souligne cependant un paradoxe structurel : ces mêmes organisations manquent fréquemment des outils, politiques internes et formations nécessaires pour assumer pleinement ce rôle. L&#39;initiative CHASE entend combler ce déficit en dotant les médias d&#39;un cadre opérationnel pour construire des espaces numériques plus inclusifs et sécurisés.</p>
         
-        <span class="source-tag">
-          <a href="https://publishingperspectives.com/2026/03/shortlist-revealed-for-the-2026-womens-prize-for-nonfiction/" target="_blank" rel="noopener">Publishing Perspectives</a>
-          <span class="cache-badge">↩</span>
-        </span>
-        
-      </div>
-    </div>
-    
-    <div class="cluster-card "
-         style="">
-      <div class="cluster-meta">
-        <span>1 source(s)</span>
-        <div class="importance-bar">
-          <div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot "></div><div class="dot "></div><div class="dot "></div><div class="dot "></div><div class="dot "></div>
+        <div class="card-sources">
+          
+          <span class="source-chip"><a href="https://wan-ifra.org/2026/03/chase-code-of-conduct-contribute-to-safer-digital-spaces-across-europe/" target="_blank" rel="noopener">WAN-IFRA</a></span>
+          
+          <span class="source-chip"><a href="https://wan-ifra.org/2026/03/c-h-a-s-e-campaign-to-build-safer-digital-spaces-for-women/" target="_blank" rel="noopener">WAN-IFRA</a></span>
+          
         </div>
-      </div>
-      <div class="cluster-theme">Around the Book World: Monday, March 30, 2026</div>
-      <div class="cluster-summary">Publishing analyst Carlo Carrenho kicks off the week with a review of the headlines from across the international publishing world.
-The post Around the Book World: Monday, March 30, 2026 appeared first on Publishing Perspectives.</div>
-      
-      <div class="cluster-sources">
         
-        <span class="source-tag">
-          <a href="https://publishingperspectives.com/2026/03/around-the-book-world-monday-march-30-2026/" target="_blank" rel="noopener">Publishing Perspectives</a>
-          <span class="cache-badge">↩</span>
-        </span>
         
-      </div>
-    </div>
-    
-  </div>
-</section>
-
-
-
-<section class="category-section">
-  <div class="category-header">
-    <span class="category-icon">📌</span>
-    <span class="category-name" style="color:#6b7280">Autres</span>
-    <span class="category-count">3 sujet(s)</span>
-  </div>
-  <div class="clusters-grid">
-    
-    <div class="cluster-card "
-         style="">
-      <div class="cluster-meta">
-        <span>1 source(s)</span>
-        <div class="importance-bar">
-          <div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot "></div><div class="dot "></div>
+        <div class="contradiction">
+          <div class="contradiction-label">Points de vue divergents</div>
+          <p class="contradiction-text">Les deux sources se complètent davantage qu&#39;elles ne s&#39;opposent, mais une tension interne mérite d&#39;être relevée : la première source met en avant le rôle proactif et le potentiel des médias comme acteurs du changement, tandis que la seconde tempère ce volontarisme en soulignant leur manque structurel de moyens concrets. Cette nuance crée une légère dissonance entre l&#39;ambition affichée du code de conduite et le constat d&#39;un secteur encore insuffisamment équipé pour en honorer les engagements.</p>
         </div>
-      </div>
-      <div class="cluster-theme">La première expérience Substack du Guardian : republier sa newsletter gastronomique</div>
-      <div class="cluster-summary">Le Guardian teste Substack en republiant sa newsletter hebdomadaire Feast pour rejoindre une nouvelle audience. Cette stratégie de cross-posting dans les newsletters tierces représente une approche novatrice de distribution.</div>
-      
-      <div class="cluster-sources">
-        
-        <span class="source-tag">
-          <a href="https://pressgazette.co.uk/newsletters/guardian-substack-experiment-feast-food-newsletter/" target="_blank" rel="noopener">Press Gazette</a>
-          <span class="cache-badge">↩</span>
-        </span>
-        
-      </div>
-    </div>
-    
-    <div class="cluster-card "
-         style="">
-      <div class="cluster-meta">
-        <span>1 source(s)</span>
-        <div class="importance-bar">
-          <div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot "></div><div class="dot "></div><div class="dot "></div>
-        </div>
-      </div>
-      <div class="cluster-theme">Code de conduite CHASE : contribuer à des espaces numériques plus sûrs en Europe</div>
-      <div class="cluster-summary">Le code de conduite CHASE s&#39;engage contre le discours de haine en ligne ciblant les femmes. Les organisations médias peuvent jouer un rôle clé dans la création d&#39;espaces numériques plus inclusifs et sécurisés.</div>
-      
-      <div class="cluster-sources">
-        
-        <span class="source-tag">
-          <a href="https://wan-ifra.org/2026/03/chase-code-of-conduct-contribute-to-safer-digital-spaces-across-europe/" target="_blank" rel="noopener">WAN-IFRA</a>
-          <span class="cache-badge">↩</span>
-        </span>
-        
-      </div>
-    </div>
-    
-    <div class="cluster-card "
-         style="">
-      <div class="cluster-meta">
-        <span>1 source(s)</span>
-        <div class="importance-bar">
-          <div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot "></div><div class="dot "></div><div class="dot "></div>
-        </div>
-      </div>
-      <div class="cluster-theme">C.H.A.S.E. : campagne contre le discours de haine à caractère sexiste en ligne</div>
-      <div class="cluster-summary">C.H.A.S.E. reconnaît que les plateformes médias sont à la fois des vecteurs de haine et des acteurs essentiels de sa prévention. Les médias manquent souvent des outils, politiques et formations pour lutter efficacement contre ce phénomène.</div>
-      
-      <div class="cluster-sources">
-        
-        <span class="source-tag">
-          <a href="https://wan-ifra.org/2026/03/c-h-a-s-e-campaign-to-build-safer-digital-spaces-for-women/" target="_blank" rel="noopener">WAN-IFRA</a>
-          <span class="cache-badge">↩</span>
-        </span>
         
       </div>
     </div>
@@ -1676,9 +977,7 @@ The post Around the Book World: Monday, March 30, 2026 appeared first on Publish
 
 </main>
 
-<footer>
-  Veille Éditoriale · 64 articles · 31/03/2026 à 07h41
-</footer>
+<footer>Veille Éditoriale &mdash; 73 articles analysés &mdash; 31/03/2026 à 11h20</footer>
 
 </body>
 </html>
