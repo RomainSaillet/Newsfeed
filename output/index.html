@@ -63,26 +63,74 @@
     .nav-tab:hover { color: var(--text); }
     .nav-tab.active { color: var(--accent); border-bottom-color: var(--accent); }
 
-    /* ── Ticker ── */
-    .ticker { background: #1d1d1f; }
-    .ticker-inner {
-      max-width: 1400px; margin: 0 auto; padding: 0.65rem 2rem;
-      display: flex; align-items: center; gap: 1.5rem;
+    /* ── Hero ── */
+    .hero {
+      background: #1d1d1f;
+      padding: 2.5rem 2rem 3rem;
     }
-    .ticker-label {
-      font-size: 0.62rem; font-weight: 700; letter-spacing: 0.12em;
-      text-transform: uppercase; color: rgba(255,255,255,0.35); white-space: nowrap;
+    .hero-inner { max-width: 1400px; margin: 0 auto; }
+    .hero-label {
+      font-size: 0.62rem; font-weight: 700; letter-spacing: 0.14em;
+      text-transform: uppercase; color: rgba(255,255,255,0.35);
+      margin-bottom: 1.25rem;
     }
-    .ticker-scroll { display: flex; overflow-x: auto; scrollbar-width: none; }
-    .ticker-scroll::-webkit-scrollbar { display: none; }
-    .ticker-item {
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      grid-template-rows: auto;
+      gap: 0.75rem;
+    }
+    .hero-card {
+      position: relative; border-radius: 14px; overflow: hidden;
+      display: flex; flex-direction: column; justify-content: flex-end;
+      text-decoration: none; background: #2a2a2d;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .hero-card:hover { transform: scale(1.015); box-shadow: 0 16px 48px rgba(0,0,0,0.5); }
+    .hero-card--featured {
+      grid-row: span 2;
+      min-height: 460px;
+    }
+    .hero-card--small { min-height: 200px; }
+    .hero-card-bg {
+      position: absolute; inset: 0;
+      background-size: cover; background-position: center;
+    }
+    .hero-card-overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(to top, rgba(0,0,0,0.88) 0%, rgba(0,0,0,0.3) 55%, rgba(0,0,0,0.05) 100%);
+    }
+    .hero-card-body {
+      position: relative; z-index: 1;
+      padding: 1.25rem 1.35rem 1.4rem;
+    }
+    .hero-card-eyebrow {
+      font-size: 0.65rem; font-weight: 700; letter-spacing: 0.08em;
+      text-transform: uppercase; color: rgba(255,255,255,0.55);
+      margin-bottom: 0.4rem;
       display: flex; align-items: center; gap: 0.5rem;
-      padding: 0 1rem; border-right: 1px solid rgba(255,255,255,0.08); white-space: nowrap;
     }
-    .ticker-item:last-child { border-right: none; }
-    .ticker-item a { font-size: 0.78rem; color: rgba(255,255,255,0.75); text-decoration: none; }
-    .ticker-item a:hover { color: white; }
-    .ticker-score { font-size: 0.62rem; font-weight: 600; color: rgba(255,255,255,0.3); }
+    .hero-card-score {
+      background: rgba(255,255,255,0.12); border-radius: 20px;
+      padding: 0.1rem 0.45rem; font-size: 0.6rem;
+      color: rgba(255,255,255,0.6);
+    }
+    .hero-card--featured .hero-card-title {
+      font-size: 1.35rem; font-weight: 700; line-height: 1.3;
+      letter-spacing: -0.025em; color: #ffffff;
+      display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;
+    }
+    .hero-card--small .hero-card-title {
+      font-size: 0.92rem; font-weight: 600; line-height: 1.35;
+      letter-spacing: -0.015em; color: #ffffff;
+      display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+    }
+
+    @media (max-width: 700px) {
+      .hero-grid { grid-template-columns: 1fr; }
+      .hero-card--featured { min-height: 300px; grid-row: span 1; }
+      .hero-card--small { min-height: 150px; }
+    }
 
     /* ── Main ── */
     main { max-width: 1400px; margin: 0 auto; padding: 3rem 0 5rem; }
@@ -247,7 +295,8 @@
     @media (max-width: 600px) {
       :root { --card-w: 240px; --card-h: 370px; }
       .section-header, .cards-row { padding-left: 1rem; padding-right: 1rem; }
-      .header-inner, .nav-inner, .ticker-inner { padding: 0 1rem; }
+      .header-inner, .nav-inner { padding: 0 1rem; }
+      .hero { padding: 1.5rem 1rem 2rem; }
       main { padding-top: 2rem; }
     }
   </style>
@@ -257,7 +306,7 @@
 <header>
   <div class="header-inner">
     <span class="logo">Veille Éditoriale</span>
-    <span class="header-date">31/03/2026 à 16h46</span>
+    <span class="header-date">31/03/2026 à 17h04</span>
   </div>
 </header>
 
@@ -281,35 +330,79 @@
 </nav>
 
 
-<div class="ticker">
-  <div class="ticker-inner">
-    <span class="ticker-label">À la une</span>
-    <div class="ticker-scroll">
+<div class="hero">
+  <div class="hero-inner">
+    <div class="hero-label">À la une</div>
+    <div class="hero-grid">
       
-      <div class="ticker-item">
-        <span class="ticker-score">8/10</span>
-        <a href="https://pressgazette.co.uk/newsletters/guardian-substack-experiment-feast-food-newsletter/" target="_blank" rel="noopener">La première expérience Substack du Guardian : republier sa...</a>
-      </div>
+      <a class="hero-card hero-card--featured"
+         href="https://pressgazette.co.uk/newsletters/guardian-substack-experiment-feast-food-newsletter/" target="_blank" rel="noopener">
+        
+        <div class="hero-card-overlay"></div>
+        <div class="hero-card-body">
+          <div class="hero-card-eyebrow">
+            Press Gazette
+            <span class="hero-card-score">8/10</span>
+          </div>
+          <div class="hero-card-title">La première expérience Substack du Guardian : republier sa newsletter gastronomique</div>
+        </div>
+      </a>
       
-      <div class="ticker-item">
-        <span class="ticker-score">7/10</span>
-        <a href="https://wan-ifra.org/2026/03/chase-code-of-conduct-contribute-to-safer-digital-spaces-across-europe/" target="_blank" rel="noopener">Code de conduite CHASE : contribuer à des espaces numériques...</a>
-      </div>
+      <a class="hero-card hero-card--small"
+         href="https://wan-ifra.org/2026/03/chase-code-of-conduct-contribute-to-safer-digital-spaces-across-europe/" target="_blank" rel="noopener">
+        
+        <div class="hero-card-overlay"></div>
+        <div class="hero-card-body">
+          <div class="hero-card-eyebrow">
+            WAN-IFRA
+            <span class="hero-card-score">7/10</span>
+          </div>
+          <div class="hero-card-title">Code de conduite CHASE : contribuer à des espaces numériques plus sûrs en Europe</div>
+        </div>
+      </a>
       
-      <div class="ticker-item">
-        <span class="ticker-score">7/10</span>
-        <a href="https://wan-ifra.org/2026/03/c-h-a-s-e-campaign-to-build-safer-digital-spaces-for-women/" target="_blank" rel="noopener">C.H.A.S.E. : campagne contre le discours de haine à caractère...</a>
-      </div>
+      <a class="hero-card hero-card--small"
+         href="https://wan-ifra.org/2026/03/c-h-a-s-e-campaign-to-build-safer-digital-spaces-for-women/" target="_blank" rel="noopener">
+        
+        <div class="hero-card-overlay"></div>
+        <div class="hero-card-body">
+          <div class="hero-card-eyebrow">
+            WAN-IFRA
+            <span class="hero-card-score">7/10</span>
+          </div>
+          <div class="hero-card-title">C.H.A.S.E. : campagne contre le discours de haine à caractère sexiste en ligne</div>
+        </div>
+      </a>
       
-      <div class="ticker-item">
-        <span class="ticker-score">6/10</span>
-        <a href="https://buffer.com/resources/social-media-collaboration-tools/" target="_blank" rel="noopener">8 outils collaboratifs essentiels pour les réseaux sociaux —...</a>
-      </div>
+      <a class="hero-card hero-card--small"
+         href="https://buffer.com/resources/social-media-collaboration-tools/" target="_blank" rel="noopener">
+        
+        <div class="hero-card-bg" style="background-image:url('https://buffer.com/resources/content/images/2026/03/photo-1758873272955-3b066dd11c6b.jpeg')"></div>
+        
+        <div class="hero-card-overlay"></div>
+        <div class="hero-card-body">
+          <div class="hero-card-eyebrow">
+            Buffer Blog
+            <span class="hero-card-score">6/10</span>
+          </div>
+          <div class="hero-card-title">8 outils collaboratifs essentiels pour les réseaux sociaux — testés par l&#39;équipe Buffer</div>
+        </div>
+      </a>
       
-      <div class="ticker-item">
-        <span class="ticker-score">5/10</span>
-        <a href="https://www.woshipm.com/ai/6367032.html" target="_blank" rel="noopener">AI日报：OpenAI居然给Claude Code发插件了！两大AI巨头”化敌为友”</a>
-      </div>
+      <a class="hero-card hero-card--small"
+         href="https://usbeketrica.com/fr/article/meta-et-google-condamnes-un-tournant-pour-les-reseaux-sociaux" target="_blank" rel="noopener">
+        
+        <div class="hero-card-bg" style="background-image:url('https://usbeketrica.com/uploads/media/1200x628/06/132906-meta_proces_podcast.jpg?v=1-0')"></div>
+        
+        <div class="hero-card-overlay"></div>
+        <div class="hero-card-body">
+          <div class="hero-card-eyebrow">
+            Usbek &amp; Rica
+            <span class="hero-card-score">5/10</span>
+          </div>
+          <div class="hero-card-title">Meta et Google condamnés : un tournant pour les réseaux sociaux ?</div>
+        </div>
+      </a>
       
     </div>
   </div>
@@ -326,7 +419,7 @@
       <h2 class="section-title" style="color:#0071e3">Stratégie Éditoriale</h2>
     </div>
     <div style="display:flex;align-items:center;gap:1rem">
-      <span class="section-count">5 articles</span>
+      <span class="section-count">20 articles</span>
       <div class="section-arrows">
         <button class="arrow-btn" onclick="scrollRow('strategie-editoriale', -1)" aria-label="Précédent">&#8592;</button>
         <button class="arrow-btn" onclick="scrollRow('strategie-editoriale', 1)" aria-label="Suivant">&#8594;</button>
@@ -343,32 +436,32 @@
         <div class="card-front">
           <div class="card-img-wrap">
             
-            <img class="card-img" src="https://image.woshipm.com/wp-files/2026/03/jOBLk2W0I1uV43nwsCSA-scaled.jpg" alt="" loading="lazy"
+            <img class="card-img" src="https://usbeketrica.com/uploads/media/1200x628/06/132906-meta_proces_podcast.jpg?v=1-0" alt="" loading="lazy"
                  onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
             <div class="card-placeholder" style="background:linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);display:none">✦</div>
             
           </div>
           <div class="card-front-body">
             <div class="card-eyebrow">
-              Woshipm (人人都是产品经理)
+              Usbek &amp; Rica
               &nbsp;·&nbsp;il y a 4h
             </div>
-            <h3 class="card-title">AI日报：OpenAI居然给Claude Code发插件了！两大AI巨头”化敌为友”</h3>
+            <h3 class="card-title">Meta et Google condamnés : un tournant pour les réseaux sociaux ?</h3>
             <div class="card-flip-hint">Appuyer pour résumé &#8594;</div>
           </div>
         </div>
         <!-- BACK -->
         <div class="card-back">
           <div class="card-back-header">Résumé</div>
-          <div class="card-back-title">AI日报：OpenAI居然给Claude Code发插件了！两大AI巨头”化敌为友”</div>
-          <p class="card-back-summary">晚上好！我是老曹。今天AI圈最值得关注的就是OpenAI居然主动给Claude Code发布了插件codex-plugin-cc，让两个竞争对手实现了互联互通——这件事的象征意义远大于技术本身。另外智元机器人第10000台具身机器人正式下线，标志着具身智能正式迈入规模化部署阶段。 AI Coding 领域（5条） 1. OpenAI发布codex-plugin-cc插件：Claude Code与Codex实现互联 关键内容 ：OpenAI于3月31日正式发布codex-plugin-cc插件，使开发者能在Anthropic的Claude Code中直接调用OpenAI的Codex模型。这是OpenAI首次主动将自家工具集成到竞争对手平台。插件提供三大核心功能：代码审查、对抗性审查和任务移交。 值得关注 ：OpenAI和Anthropic一直是AI编程工具领域的主要竞争对手，OpenAI主动发布支持竞争对手的插件，说明行业生态正在从封闭竞争走向开放。Claude Code年收入25亿美元、占46%开发者市场的份额，是OpenAI必须重视的竞争对手。 2. 微软内部大规模推广Claude Code：鼓励非技术员工使用AI编程&lt;/h</p>
+          <div class="card-back-title">Meta et Google condamnés : un tournant pour les réseaux sociaux ?</div>
+          <p class="card-back-summary">Reconnus coupables de rendre dépendant via leurs algorithmes, Meta et Google ont été condamnés par la justice américaine. Est-ce un tournant pour les réseaux sociaux ? Blaise Mao, rédacteur en chef d&#39;Usbek &amp; Rica, était l&#39;invité de l&#39;émission « Allez-y franco », sur TV5-Monde, pour en débattre.</p>
           <div class="card-sources">
             
-            <span class="source-chip"><a href="https://www.woshipm.com/ai/6367032.html" target="_blank" rel="noopener" onclick="event.stopPropagation()">Woshipm (人人都是产品经理)</a></span>
+            <span class="source-chip"><a href="https://usbeketrica.com/fr/article/meta-et-google-condamnes-un-tournant-pour-les-reseaux-sociaux" target="_blank" rel="noopener" onclick="event.stopPropagation()">Usbek &amp; Rica</a></span>
             
           </div>
           
-          <a class="card-back-cta" href="https://www.woshipm.com/ai/6367032.html" target="_blank" rel="noopener" onclick="event.stopPropagation()">
+          <a class="card-back-cta" href="https://usbeketrica.com/fr/article/meta-et-google-condamnes-un-tournant-pour-les-reseaux-sociaux" target="_blank" rel="noopener" onclick="event.stopPropagation()">
             Lire l'article complet &#8599;
           </a>
         </div>
@@ -383,32 +476,352 @@
         <div class="card-front">
           <div class="card-img-wrap">
             
-            <img class="card-img" src="https://image.woshipm.com/2023/04/14/2ecb8e6e-da8f-11ed-aeb8-00163e0b5ff3.jpg" alt="" loading="lazy"
+            <img class="card-img" src="https://usbeketrica.com/uploads/media/1200x628/03/132903-odyssee-celeste.jpg?v=1-0" alt="" loading="lazy"
                  onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
             <div class="card-placeholder" style="background:linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);display:none">✦</div>
             
           </div>
           <div class="card-front-body">
             <div class="card-eyebrow">
-              Woshipm (人人都是产品经理)
+              Usbek &amp; Rica
+              &nbsp;·&nbsp;il y a 4h
+            </div>
+            <h3 class="card-title">« L’odyssée de Céleste », un film d’animation spatial qui file la larme à l&#39;œil</h3>
+            <div class="card-flip-hint">Appuyer pour résumé &#8594;</div>
+          </div>
+        </div>
+        <!-- BACK -->
+        <div class="card-back">
+          <div class="card-back-header">Résumé</div>
+          <div class="card-back-title">« L’odyssée de Céleste », un film d’animation spatial qui file la larme à l&#39;œil</div>
+          <p class="card-back-summary">Lorsque Céleste embarque pour sa première mission interstellaire, son robot se retrouve seul sur Terre. Entièrement muet mais très musical, le film d’animation L’odyssée de Céleste réussit son pari minimaliste. En salles depuis le mercredi 25 mars.</p>
+          <div class="card-sources">
+            
+            <span class="source-chip"><a href="https://usbeketrica.com/fr/article/l-odyssee-de-celeste-un-film-d-animation-spatial-qui-file-la-larme-a-l-oeil" target="_blank" rel="noopener" onclick="event.stopPropagation()">Usbek &amp; Rica</a></span>
+            
+          </div>
+          
+          <a class="card-back-cta" href="https://usbeketrica.com/fr/article/l-odyssee-de-celeste-un-film-d-animation-spatial-qui-file-la-larme-a-l-oeil" target="_blank" rel="noopener" onclick="event.stopPropagation()">
+            Lire l'article complet &#8599;
+          </a>
+        </div>
+      </div>
+    </div>
+    
+    
+    
+    <div class="flip-wrap " onclick="flipCard(this)">
+      <div class="flip-inner">
+        <!-- FRONT -->
+        <div class="card-front">
+          <div class="card-img-wrap">
+            
+            <img class="card-img" src="https://www.cbnews.fr/sites/cbnews.fr/files/styles/panoramic_w1200/public/2020-01/video-controller-336657_1920.jpg?itok=nqkfdlVP" alt="" loading="lazy"
+                 onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+            <div class="card-placeholder" style="background:linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);display:none">✦</div>
+            
+          </div>
+          <div class="card-front-body">
+            <div class="card-eyebrow">
+              CB News
+              &nbsp;·&nbsp;il y a 2h
+            </div>
+            <h3 class="card-title">Ubisoft assigné en justice par UFC Que-Choisir</h3>
+            <div class="card-flip-hint">Appuyer pour résumé &#8594;</div>
+          </div>
+        </div>
+        <!-- BACK -->
+        <div class="card-back">
+          <div class="card-back-header">Résumé</div>
+          <div class="card-back-title">Ubisoft assigné en justice par UFC Que-Choisir</div>
+          <p class="card-back-summary">Ubisoft assigné en justice par UFC Que-Choisir Ubisoft assigné en justice par UFC Que-Choisir amelle.nebia mar 31/03/2026 - 16:23&lt;/time</p>
+          <div class="card-sources">
+            
+            <span class="source-chip"><a href="https://www.cbnews.fr/cb/ubisoft-assigne-justice-ufc-que-choisir" target="_blank" rel="noopener" onclick="event.stopPropagation()">CB News</a></span>
+            
+          </div>
+          
+          <a class="card-back-cta" href="https://www.cbnews.fr/cb/ubisoft-assigne-justice-ufc-que-choisir" target="_blank" rel="noopener" onclick="event.stopPropagation()">
+            Lire l'article complet &#8599;
+          </a>
+        </div>
+      </div>
+    </div>
+    
+    
+    
+    <div class="flip-wrap " onclick="flipCard(this)">
+      <div class="flip-inner">
+        <!-- FRONT -->
+        <div class="card-front">
+          <div class="card-img-wrap">
+            
+            <img class="card-img" src="https://www.cbnews.fr/sites/cbnews.fr/files/styles/panoramic_w1200/public/2024-12/triste.jpg?itok=S1E0sbWO" alt="" loading="lazy"
+                 onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+            <div class="card-placeholder" style="background:linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);display:none">✦</div>
+            
+          </div>
+          <div class="card-front-body">
+            <div class="card-eyebrow">
+              CB News
+              &nbsp;·&nbsp;il y a 2h
+            </div>
+            <h3 class="card-title">Médecins du Monde alerte sur le quotidien des livreurs à vélo</h3>
+            <div class="card-flip-hint">Appuyer pour résumé &#8594;</div>
+          </div>
+        </div>
+        <!-- BACK -->
+        <div class="card-back">
+          <div class="card-back-header">Résumé</div>
+          <div class="card-back-title">Médecins du Monde alerte sur le quotidien des livreurs à vélo</div>
+          <p class="card-back-summary">Médecins du Monde alerte sur le quotidien des livreurs à vélo Médecins du Monde alerte sur le quotidien des livreurs à vélo amelle.nebia mar</p>
+          <div class="card-sources">
+            
+            <span class="source-chip"><a href="https://www.cbnews.fr/cb/medecins-du-monde-alerte-quotidien-livreurs-velo" target="_blank" rel="noopener" onclick="event.stopPropagation()">CB News</a></span>
+            
+          </div>
+          
+          <a class="card-back-cta" href="https://www.cbnews.fr/cb/medecins-du-monde-alerte-quotidien-livreurs-velo" target="_blank" rel="noopener" onclick="event.stopPropagation()">
+            Lire l'article complet &#8599;
+          </a>
+        </div>
+      </div>
+    </div>
+    
+    
+    
+    <div class="flip-wrap " onclick="flipCard(this)">
+      <div class="flip-inner">
+        <!-- FRONT -->
+        <div class="card-front">
+          <div class="card-img-wrap">
+            
+            <img class="card-img" src="https://www.cbnews.fr/sites/cbnews.fr/files/styles/panoramic_w1200/public/2026-03/26-0562-ds-totalview-primage-2-1.jpg?itok=FTmQ-Qsp" alt="" loading="lazy"
+                 onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+            <div class="card-placeholder" style="background:linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);display:none">✦</div>
+            
+          </div>
+          <div class="card-front-body">
+            <div class="card-eyebrow">
+              CB News
+              &nbsp;·&nbsp;il y a 2h
+            </div>
+            <h3 class="card-title">Samsung Ads lance TotalView, une solution unifiée pour mesurer le reach TV</h3>
+            <div class="card-flip-hint">Appuyer pour résumé &#8594;</div>
+          </div>
+        </div>
+        <!-- BACK -->
+        <div class="card-back">
+          <div class="card-back-header">Résumé</div>
+          <div class="card-back-title">Samsung Ads lance TotalView, une solution unifiée pour mesurer le reach TV</div>
+          <p class="card-back-summary">Samsung Ads lance TotalView, une solution unifiée pour mesurer le reach TV Samsung Ads lance TotalView , une solution unifiée pour mesurer le reach TV echaronnat &lt;time class=&#34;datet</p>
+          <div class="card-sources">
+            
+            <span class="source-chip"><a href="https://www.cbnews.fr/cb/samsung-ads-lance-totalview-solution-unifiee-mesurer-reach-tv" target="_blank" rel="noopener" onclick="event.stopPropagation()">CB News</a></span>
+            
+          </div>
+          
+          <a class="card-back-cta" href="https://www.cbnews.fr/cb/samsung-ads-lance-totalview-solution-unifiee-mesurer-reach-tv" target="_blank" rel="noopener" onclick="event.stopPropagation()">
+            Lire l'article complet &#8599;
+          </a>
+        </div>
+      </div>
+    </div>
+    
+    
+    
+    <div class="flip-wrap " onclick="flipCard(this)">
+      <div class="flip-inner">
+        <!-- FRONT -->
+        <div class="card-front">
+          <div class="card-img-wrap">
+            
+            <img class="card-img" src="https://www.cbnews.fr/sites/cbnews.fr/files/styles/panoramic_w1200/public/2020-06/courbe.PNG?itok=YPNDipyx" alt="" loading="lazy"
+                 onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+            <div class="card-placeholder" style="background:linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);display:none">✦</div>
+            
+          </div>
+          <div class="card-front-body">
+            <div class="card-eyebrow">
+              CB News
+              &nbsp;·&nbsp;il y a 2h
+            </div>
+            <h3 class="card-title">Forte hausse de l&#39;inflation en mars à 1,7%</h3>
+            <div class="card-flip-hint">Appuyer pour résumé &#8594;</div>
+          </div>
+        </div>
+        <!-- BACK -->
+        <div class="card-back">
+          <div class="card-back-header">Résumé</div>
+          <div class="card-back-title">Forte hausse de l&#39;inflation en mars à 1,7%</div>
+          <p class="card-back-summary">Forte hausse de l&#39;inflation en mars à 1,7% Forte hausse de l&#39;inflation en mars à 1,7% amelle.nebia mar 31/03/2026 - 16:22</p>
+          <div class="card-sources">
+            
+            <span class="source-chip"><a href="https://www.cbnews.fr/cb/forte-hausse-inflation-mars-17" target="_blank" rel="noopener" onclick="event.stopPropagation()">CB News</a></span>
+            
+          </div>
+          
+          <a class="card-back-cta" href="https://www.cbnews.fr/cb/forte-hausse-inflation-mars-17" target="_blank" rel="noopener" onclick="event.stopPropagation()">
+            Lire l'article complet &#8599;
+          </a>
+        </div>
+      </div>
+    </div>
+    
+    
+    
+    <div class="flip-wrap " onclick="flipCard(this)">
+      <div class="flip-inner">
+        <!-- FRONT -->
+        <div class="card-front">
+          <div class="card-img-wrap">
+            
+            <img class="card-img" src="https://www.cbnews.fr/sites/cbnews.fr/files/styles/panoramic_w1200/public/2025-11/VISUEL%20BEREAL_0.jpg?itok=XVd00Ci2" alt="" loading="lazy"
+                 onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+            <div class="card-placeholder" style="background:linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);display:none">✦</div>
+            
+          </div>
+          <div class="card-front-body">
+            <div class="card-eyebrow">
+              CB News
+              &nbsp;·&nbsp;il y a 2h
+            </div>
+            <h3 class="card-title">Mémorisation, considération d&#39;achat... BeReal revendique des meilleures performances</h3>
+            <div class="card-flip-hint">Appuyer pour résumé &#8594;</div>
+          </div>
+        </div>
+        <!-- BACK -->
+        <div class="card-back">
+          <div class="card-back-header">Résumé</div>
+          <div class="card-back-title">Mémorisation, considération d&#39;achat... BeReal revendique des meilleures performances</div>
+          <p class="card-back-summary">Mémorisation, considération d&#39;achat... BeReal revendique des meilleures performances Mémorisation, considération d&#39;achat... BeReal revendique des meilleures performances dahlia.girgis@… &lt;time class=&#34;datetime&#34; datetime=&#34;2026-03-31T16:2</p>
+          <div class="card-sources">
+            
+            <span class="source-chip"><a href="https://www.cbnews.fr/cb/memorisation-consideration-achat-bereal-revendique-meilleures-performances" target="_blank" rel="noopener" onclick="event.stopPropagation()">CB News</a></span>
+            
+          </div>
+          
+          <a class="card-back-cta" href="https://www.cbnews.fr/cb/memorisation-consideration-achat-bereal-revendique-meilleures-performances" target="_blank" rel="noopener" onclick="event.stopPropagation()">
+            Lire l'article complet &#8599;
+          </a>
+        </div>
+      </div>
+    </div>
+    
+    
+    
+    <div class="flip-wrap " onclick="flipCard(this)">
+      <div class="flip-inner">
+        <!-- FRONT -->
+        <div class="card-front">
+          <div class="card-img-wrap">
+            
+            <img class="card-img" src="https://static-www.adweek.com/wp-content/uploads/2026/03/Screenshot-2026-03-30-at-4.20.57-PM.png?w=600&amp;h=315&amp;crop=1" alt="" loading="lazy"
+                 onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+            <div class="card-placeholder" style="background:linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);display:none">✦</div>
+            
+          </div>
+          <div class="card-front-body">
+            <div class="card-eyebrow">
+              Adweek
+              &nbsp;·&nbsp;il y a 5h
+            </div>
+            <h3 class="card-title">Virtual Vanguard Recap: David Sable</h3>
+            <div class="card-flip-hint">Appuyer pour résumé &#8594;</div>
+          </div>
+        </div>
+        <!-- BACK -->
+        <div class="card-back">
+          <div class="card-back-header">Résumé</div>
+          <div class="card-back-title">Virtual Vanguard Recap: David Sable</div>
+          <p class="card-back-summary">In our latest Virtual Vanguard with David Sable, the discussion examined what’sactually happening inside the consolidation machine—and more important, what CMOscan do to protect their brands’ creative output and strategic […]</p>
+          <div class="card-sources">
+            
+            <span class="source-chip"><a href="https://www.adweek.com/brand-marketing/virtual-vanguard-recap-david-sable/" target="_blank" rel="noopener" onclick="event.stopPropagation()">Adweek</a></span>
+            
+          </div>
+          
+          <a class="card-back-cta" href="https://www.adweek.com/brand-marketing/virtual-vanguard-recap-david-sable/" target="_blank" rel="noopener" onclick="event.stopPropagation()">
+            Lire l'article complet &#8599;
+          </a>
+        </div>
+      </div>
+    </div>
+    
+    
+    
+    <div class="flip-wrap " onclick="flipCard(this)">
+      <div class="flip-inner">
+        <!-- FRONT -->
+        <div class="card-front">
+          <div class="card-img-wrap">
+            
+            <img class="card-img" src="https://static-www.adweek.com/wp-content/uploads/2026/03/yahoo-dsp-growth-performance-2026.png?w=600&amp;h=315&amp;crop=1" alt="" loading="lazy"
+                 onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+            <div class="card-placeholder" style="background:linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);display:none">✦</div>
+            
+          </div>
+          <div class="card-front-body">
+            <div class="card-eyebrow">
+              Adweek
+              &nbsp;·&nbsp;il y a 5h
+            </div>
+            <h3 class="card-title">EXCLUSIVE: Yahoo Moves Downmarket With DSP Performance Push</h3>
+            <div class="card-flip-hint">Appuyer pour résumé &#8594;</div>
+          </div>
+        </div>
+        <!-- BACK -->
+        <div class="card-back">
+          <div class="card-back-header">Résumé</div>
+          <div class="card-back-title">EXCLUSIVE: Yahoo Moves Downmarket With DSP Performance Push</div>
+          <p class="card-back-summary">A wave of new features targets the mid-market advertisers that DSPs like DV360 and The Trade Desk have long dominated.</p>
+          <div class="card-sources">
+            
+            <span class="source-chip"><a href="https://www.adweek.com/agencies/exclusive-yahoo-moves-downmarket-with-dsp-performance-push/" target="_blank" rel="noopener" onclick="event.stopPropagation()">Adweek</a></span>
+            
+          </div>
+          
+          <a class="card-back-cta" href="https://www.adweek.com/agencies/exclusive-yahoo-moves-downmarket-with-dsp-performance-push/" target="_blank" rel="noopener" onclick="event.stopPropagation()">
+            Lire l'article complet &#8599;
+          </a>
+        </div>
+      </div>
+    </div>
+    
+    
+    
+    <div class="flip-wrap " onclick="flipCard(this)">
+      <div class="flip-inner">
+        <!-- FRONT -->
+        <div class="card-front">
+          <div class="card-img-wrap">
+            
+            <img class="card-img" src="https://static-www.adweek.com/wp-content/uploads/2026/03/ConnorVerizon.jpg?w=600&amp;h=315&amp;crop=1" alt="" loading="lazy"
+                 onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+            <div class="card-placeholder" style="background:linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);display:none">✦</div>
+            
+          </div>
+          <div class="card-front-body">
+            <div class="card-eyebrow">
+              Adweek
               &nbsp;·&nbsp;il y a 8h
             </div>
-            <h3 class="card-title">COZE 实战：从零搭建人物生平视频自动化生成流程</h3>
+            <h3 class="card-title">Verizon Casts Heated Rivalry&amp;#8217;s Connor Storrie in Cabin Thriller Ad With a Twist Ending</h3>
             <div class="card-flip-hint">Appuyer pour résumé &#8594;</div>
           </div>
         </div>
         <!-- BACK -->
         <div class="card-back">
           <div class="card-back-header">Résumé</div>
-          <div class="card-back-title">COZE 实战：从零搭建人物生平视频自动化生成流程</div>
-          <p class="card-back-summary">AIGC时代，视频创作正经历从手工到自动化的革命性转变。字节跳动COZE平台通过可视化节点编排与AI插件协同，实现了从人物信息输入到完整视频输出的全流程自动化。本文将深度拆解如何利用COZE的循环体与循环体外设计逻辑，以人物生平科普视频为案例，展示从剧本生成、素材制作到剪映对接的一站式解决方案，让批量视频生产变得简单高效。 作为 AIGC 时代的内容创作者，手动剪辑视频不仅耗时费力，批量产出时还容易出现格式不统一、节奏混乱等问题。而字节跳动的 COZE（扣子）平台，凭借可视化节点编排、丰富的 AI 插件和一站式的音视频生成能力，能完美解决这一痛点 —— 只需简单配置，就能实现从 人物信息输入 到 完整视频草稿输出 的全流程自动化。 本文将以「人物生平科普视频」为核心场景，结合实战操作拆解 COZE 的使用逻辑，从核心概念理解到节点编排、参数配置，再到剪映对接落地，用 COZE 实现视频批量生成，新手也能快速上手，这里先抛砖引玉。 一、先搞懂 COZE 核心逻辑：别再搞混循环体与循环体外 很多人初次使用 COZE</p>
+          <div class="card-back-title">Verizon Casts Heated Rivalry&amp;#8217;s Connor Storrie in Cabin Thriller Ad With a Twist Ending</div>
+          <p class="card-back-summary">Heated Rivalry breakout star Connor Storrie fronts a Verizon horror-style ad directed by Nia DaCosta.</p>
           <div class="card-sources">
             
-            <span class="source-chip"><a href="https://www.woshipm.com/ai/6366882.html" target="_blank" rel="noopener" onclick="event.stopPropagation()">Woshipm (人人都是产品经理)</a></span>
+            <span class="source-chip"><a href="https://www.adweek.com/creativity/verizon-casts-heated-rivalry-star-connor-storrie-in-cabin-thriller-ad/" target="_blank" rel="noopener" onclick="event.stopPropagation()">Adweek</a></span>
             
           </div>
           
-          <a class="card-back-cta" href="https://www.woshipm.com/ai/6366882.html" target="_blank" rel="noopener" onclick="event.stopPropagation()">
+          <a class="card-back-cta" href="https://www.adweek.com/creativity/verizon-casts-heated-rivalry-star-connor-storrie-in-cabin-thriller-ad/" target="_blank" rel="noopener" onclick="event.stopPropagation()">
             Lire l'article complet &#8599;
           </a>
         </div>
@@ -423,32 +836,32 @@
         <div class="card-front">
           <div class="card-img-wrap">
             
-            <img class="card-img" src="https://image.woshipm.com/wp-files/2026/03/r6s5EDkIp8pcks8MGsV0.png" alt="" loading="lazy"
+            <img class="card-img" src="https://static-www.adweek.com/wp-content/uploads/2026/03/Zuck-in-court-Feb.2026.png?w=600&amp;h=315&amp;crop=1" alt="" loading="lazy"
                  onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
             <div class="card-placeholder" style="background:linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);display:none">✦</div>
             
           </div>
           <div class="card-front-body">
             <div class="card-eyebrow">
-              Woshipm (人人都是产品经理)
+              Adweek
               &nbsp;·&nbsp;il y a 8h
             </div>
-            <h3 class="card-title">为什么有了MCP后，又出现了Skill？</h3>
+            <h3 class="card-title">Ray Media Advisory Wants To Fix Agency-Client Relationships Before They Break</h3>
             <div class="card-flip-hint">Appuyer pour résumé &#8594;</div>
           </div>
         </div>
         <!-- BACK -->
         <div class="card-back">
           <div class="card-back-header">Résumé</div>
-          <div class="card-back-title">为什么有了MCP后，又出现了Skill？</div>
-          <p class="card-back-summary">AI工具的进化正在经历一场从MCP到Skill的范式转移。当MCP解决了AI与外部工具的标准化连接问题却引发上下文灾难时，Skill通过渐进式披露和预置脚本彻底重构了AI的认知逻辑。本文深度解析两种架构的设计哲学与技术差异，揭示AI工程从‘能做’到‘做得好’的关键跃迁，以及产品经理如何在这场变革中重新定义AI的工作方式。 很多折腾过AI工具的人，最近大概都经历过这样一种微妙的迷茫： 好不容易搞懂了MCP（模型上下文协议），把Claude Desktop配置妥当，装上几个热门的MCP Server，兴冲冲地准备大干一场——结果却发现，AI时不时选错工具，偶尔还会陷入死机般的卡顿，响应速度更是慢得让人抓狂。 还没等你排查出究竟是哪行配置写错了，开发者社群里的风向已经变了：“Skill出来了！”“Skill才是未来！”“MCP要被淘汰了！” 盯着屏幕，你可能满脑子问号：MCP不是号称终极解决方案吗？Skill到底在解决什么新问题？难道刚建好的基建又要推倒重来？ 要彻底理清这两者的关系，我们得先跳出代码，从AI工具演进的真实痛点聊起。 MCP的诞生：终结AI工具的“充电线灾难” 要理解MCP为什么会被捧上神坛，得先回到2024年之前的那段技术混沌期。 那时候，AI工具的连接方式是一场彻头彻尾的灾难。每一个AI应用想要调用外部工具，都需要单独手写一套对接逻辑。你想让Agent读取GitHub仓库？写一</p>
+          <div class="card-back-title">Ray Media Advisory Wants To Fix Agency-Client Relationships Before They Break</div>
+          <p class="card-back-summary">New Partnership Accelerator proactively addresses tensions and pressures before things go south</p>
           <div class="card-sources">
             
-            <span class="source-chip"><a href="https://www.woshipm.com/ai/6366775.html" target="_blank" rel="noopener" onclick="event.stopPropagation()">Woshipm (人人都是产品经理)</a></span>
+            <span class="source-chip"><a href="https://www.adweek.com/agencies/ray-media-advisory-wants-to-fix-agency-client-relationships-before-they-break/" target="_blank" rel="noopener" onclick="event.stopPropagation()">Adweek</a></span>
             
           </div>
           
-          <a class="card-back-cta" href="https://www.woshipm.com/ai/6366775.html" target="_blank" rel="noopener" onclick="event.stopPropagation()">
+          <a class="card-back-cta" href="https://www.adweek.com/agencies/ray-media-advisory-wants-to-fix-agency-client-relationships-before-they-break/" target="_blank" rel="noopener" onclick="event.stopPropagation()">
             Lire l'article complet &#8599;
           </a>
         </div>
@@ -463,72 +876,344 @@
         <div class="card-front">
           <div class="card-img-wrap">
             
-            <img class="card-img" src="https://image.woshipm.com/2024/03/08/8e27e56a-dd31-11ee-9846-00163e142b65.png" alt="" loading="lazy"
+            <img class="card-img" src="https://static-www.adweek.com/wp-content/uploads/2026/03/RocketArena.jpg?w=600&amp;h=315&amp;crop=1" alt="" loading="lazy"
                  onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
             <div class="card-placeholder" style="background:linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);display:none">✦</div>
             
           </div>
           <div class="card-front-body">
             <div class="card-eyebrow">
-              Woshipm (人人都是产品经理)
-              &nbsp;·&nbsp;il y a 8h
-            </div>
-            <h3 class="card-title">回顾：小红书2025年经营趋势预测及解读</h3>
-            <div class="card-flip-hint">Appuyer pour résumé &#8594;</div>
-          </div>
-        </div>
-        <!-- BACK -->
-        <div class="card-back">
-          <div class="card-back-header">Résumé</div>
-          <div class="card-back-title">回顾：小红书2025年经营趋势预测及解读</div>
-          <p class="card-back-summary">2025年小红书经营趋势预判已成现实：从流量争夺到心智占领的战略转型正在发生。平台商业化进程加速、产品基建向抖音阿里靠拢、AI深度嵌入工作流等九大趋势正在重塑内容生态。本文将深度解析小红书如何从种草平台蜕变为商业闭环生态，以及创作者如何在新规则下抓住‘小生意时代’的百万级机会。 和朋友聊天的时候，突然发现自己今年年初（2025年2月份）做的小红书经营趋势预判中了好多，所以公开一下，也算是一种回顾吧。 01.大趋势 1.1.存量时代：流量竞争从注意力（曝光）转向记忆力（心智） 我们已经进入存量时代，所有平台的用户增长放缓、甚至接近瓶颈，流量红利（2025年有且仅有的流量红利只有小红书和视频号）在以肉眼可见的速度流逝； 且随着渠道分散、信息过载，用户对于广告的免疫力增强，注意力变得分散且短暂； 这就导致流量竞争也发生了本质的变化，不再只是抢夺用户的注意力、争夺曝光，而是要让用户记住我们，在用户心智里留下深刻印象，这样才能促使用户在消费决策的过程选择我们，甚至忠诚于我们。 举个真实的例子，我们在浏览小红书的时候，也会看一些Vlog类型的内容，Vlog里也有一些品牌/产品露出/植入，它也的的确确强制性地曝光在了我们面前，但是曝光之后呢，又有多少用户记住了呢，又有多少用户因此而改变消费决策了呢？ 寥寥无几，对嘛？ 除非品牌/产品在内容里有记忆点； 除</p>
-          <div class="card-sources">
-            
-            <span class="source-chip"><a href="https://www.woshipm.com/share/6366831.html" target="_blank" rel="noopener" onclick="event.stopPropagation()">Woshipm (人人都是产品经理)</a></span>
-            
-          </div>
-          
-          <a class="card-back-cta" href="https://www.woshipm.com/share/6366831.html" target="_blank" rel="noopener" onclick="event.stopPropagation()">
-            Lire l'article complet &#8599;
-          </a>
-        </div>
-      </div>
-    </div>
-    
-    
-    
-    <div class="flip-wrap " onclick="flipCard(this)">
-      <div class="flip-inner">
-        <!-- FRONT -->
-        <div class="card-front">
-          <div class="card-img-wrap">
-            
-            <img class="card-img" src="https://image.woshipm.com/2026/03/31/f9c94f6a-2ccc-11f1-adfe-00163e09d72f.jpg" alt="" loading="lazy"
-                 onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
-            <div class="card-placeholder" style="background:linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);display:none">✦</div>
-            
-          </div>
-          <div class="card-front-body">
-            <div class="card-eyebrow">
-              Woshipm (人人都是产品经理)
+              Adweek
               &nbsp;·&nbsp;il y a 9h
             </div>
-            <h3 class="card-title">AI coding 不是杀死了中国 SaaS，而是暴露了它从未有过护城河</h3>
+            <h3 class="card-title">Redfin Just Listed Rocket Arena as Its Biggest Open House, and Everyone’s Invited</h3>
             <div class="card-flip-hint">Appuyer pour résumé &#8594;</div>
           </div>
         </div>
         <!-- BACK -->
         <div class="card-back">
           <div class="card-back-header">Résumé</div>
-          <div class="card-back-title">AI coding 不是杀死了中国 SaaS，而是暴露了它从未有过护城河</div>
-          <p class="card-back-summary">SaaS行业正面临前所未有的挑战，AI coding的崛起正在颠覆传统商业模式。当代码生成成本趋近于零，那些仅靠&#39;研发产能套利&#39;的企业将无处遁形。本文深度剖析中国SaaS企业护城河缺失的根本原因，揭示AI浪潮下真正能存活的关键要素：行业know-how、数据沉淀与生态壁垒。 2026 年 2 月，全球 SaaS 股票集体暴跌，超过 1 万亿美元市值蒸发，媒体称之为”SaaSpocalypse”。Redpoint 最新报告显示，83% 的 CIO 愿意用 AI 原生方案替换现有的销售自动化工具。Retool 的调查更直接：35% 的企业已经用自建工具替换了至少一个 SaaS 产品。 很多人据此得出结论：AI coding 正在杀死 SaaS。 这是一个误诊。AI coding 没有杀死中国 SaaS，它只是暴露了一个事实——绝大多数中国 SaaS 从来没有真正建立过护城河。 国内大部分 SaaS 公司的商业模式，本质上是”研发产能套利”。靠堆几十个工程师，把基础的商业逻辑翻译成代码，打包成几百个功能模块售卖。客户买单的不是软件背后的行业洞察，而是自己开发这套系统的昂贵成本。当 Cursor、Claude Code 这样的工具把代码生成的边际成本拉到接近零，这种建立在”代码实现门槛”上的护城河就不存在了。 如果你的 SaaS</p>
+          <div class="card-back-title">Redfin Just Listed Rocket Arena as Its Biggest Open House, and Everyone’s Invited</div>
+          <p class="card-back-summary">Redfin is listing a unique open house: Rocket Arena in Cleveland, Ohio.</p>
           <div class="card-sources">
             
-            <span class="source-chip"><a href="https://www.woshipm.com/share/6366844.html" target="_blank" rel="noopener" onclick="event.stopPropagation()">Woshipm (人人都是产品经理)</a></span>
+            <span class="source-chip"><a href="https://www.adweek.com/creativity/redfin-just-listed-rocket-arena-as-its-biggest-open-house-and-everyones-invited/" target="_blank" rel="noopener" onclick="event.stopPropagation()">Adweek</a></span>
             
           </div>
           
-          <a class="card-back-cta" href="https://www.woshipm.com/share/6366844.html" target="_blank" rel="noopener" onclick="event.stopPropagation()">
+          <a class="card-back-cta" href="https://www.adweek.com/creativity/redfin-just-listed-rocket-arena-as-its-biggest-open-house-and-everyones-invited/" target="_blank" rel="noopener" onclick="event.stopPropagation()">
+            Lire l'article complet &#8599;
+          </a>
+        </div>
+      </div>
+    </div>
+    
+    
+    
+    <div class="flip-wrap " onclick="flipCard(this)">
+      <div class="flip-inner">
+        <!-- FRONT -->
+        <div class="card-front">
+          <div class="card-img-wrap">
+            
+            <img class="card-img" src="https://digiday.com/wp-content/uploads/sites/3/2025/11/online-revenue-digiday.webp?w=230&amp;amp;h=130&amp;amp;crop=1" alt="" loading="lazy"
+                 onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+            <div class="card-placeholder" style="background:linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);display:none">✦</div>
+            
+          </div>
+          <div class="card-front-body">
+            <div class="card-eyebrow">
+              Digiday
+              &nbsp;·&nbsp;il y a 7h
+            </div>
+            <h3 class="card-title">Ad Tech Briefing: Criteo makes self-serve push with GO, targeting SMB growth</h3>
+            <div class="card-flip-hint">Appuyer pour résumé &#8594;</div>
+          </div>
+        </div>
+        <!-- BACK -->
+        <div class="card-back">
+          <div class="card-back-header">Résumé</div>
+          <div class="card-back-title">Ad Tech Briefing: Criteo makes self-serve push with GO, targeting SMB growth</div>
+          <p class="card-back-summary">Criteo is bringing itself into more direct competition with Amazon and Google.</p>
+          <div class="card-sources">
+            
+            <span class="source-chip"><a href="https://digiday.com/media-buying/ad-tech-briefing-criteo-makes-self-serve-push-with-go-targeting-smb-growth/?utm_campaign=digidaydis&amp;utm_medium=rss&amp;utm_source=general-rss" target="_blank" rel="noopener" onclick="event.stopPropagation()">Digiday</a></span>
+            
+          </div>
+          
+          <a class="card-back-cta" href="https://digiday.com/media-buying/ad-tech-briefing-criteo-makes-self-serve-push-with-go-targeting-smb-growth/?utm_campaign=digidaydis&amp;utm_medium=rss&amp;utm_source=general-rss" target="_blank" rel="noopener" onclick="event.stopPropagation()">
+            Lire l'article complet &#8599;
+          </a>
+        </div>
+      </div>
+    </div>
+    
+    
+    
+    <div class="flip-wrap " onclick="flipCard(this)">
+      <div class="flip-inner">
+        <!-- FRONT -->
+        <div class="card-front">
+          <div class="card-img-wrap">
+            
+            <div class="card-placeholder" style="background:linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)">✦</div>
+            
+          </div>
+          <div class="card-front-body">
+            <div class="card-eyebrow">
+              Digiday
+              &nbsp;·&nbsp;il y a 13h
+            </div>
+            <h3 class="card-title">The Trade Desk shakes up Identity Alliance payouts, with a new focus on incrementality</h3>
+            <div class="card-flip-hint">Appuyer pour résumé &#8594;</div>
+          </div>
+        </div>
+        <!-- BACK -->
+        <div class="card-back">
+          <div class="card-back-header">Résumé</div>
+          <div class="card-back-title">The Trade Desk shakes up Identity Alliance payouts, with a new focus on incrementality</div>
+          <p class="card-back-summary">The Trade Desk is changing how it pays its &#39;identity partners&#39; in a shakeup potentially worth &#39;tens of millions of dollars&#39; a year.</p>
+          <div class="card-sources">
+            
+            <span class="source-chip"><a href="https://digiday.com/media-buying/the-trade-desk-shakes-up-identity-alliance-payouts-with-a-new-focus-on-incrementality/?utm_campaign=digidaydis&amp;utm_medium=rss&amp;utm_source=general-rss" target="_blank" rel="noopener" onclick="event.stopPropagation()">Digiday</a></span>
+            
+          </div>
+          
+          <a class="card-back-cta" href="https://digiday.com/media-buying/the-trade-desk-shakes-up-identity-alliance-payouts-with-a-new-focus-on-incrementality/?utm_campaign=digidaydis&amp;utm_medium=rss&amp;utm_source=general-rss" target="_blank" rel="noopener" onclick="event.stopPropagation()">
+            Lire l'article complet &#8599;
+          </a>
+        </div>
+      </div>
+    </div>
+    
+    
+    
+    <div class="flip-wrap " onclick="flipCard(this)">
+      <div class="flip-inner">
+        <!-- FRONT -->
+        <div class="card-front">
+          <div class="card-img-wrap">
+            
+            <div class="card-placeholder" style="background:linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)">✦</div>
+            
+          </div>
+          <div class="card-front-body">
+            <div class="card-eyebrow">
+              Digiday
+              &nbsp;·&nbsp;il y a 13h
+            </div>
+            <h3 class="card-title">Time pitches GEO insights into a new brand offering</h3>
+            <div class="card-flip-hint">Appuyer pour résumé &#8594;</div>
+          </div>
+        </div>
+        <!-- BACK -->
+        <div class="card-back">
+          <div class="card-back-header">Résumé</div>
+          <div class="card-back-title">Time pitches GEO insights into a new brand offering</div>
+          <p class="card-back-summary">Time is turning its AI insights into a new product, selling branded content to shape how brands are talked about inside AI-generated answers.</p>
+          <div class="card-sources">
+            
+            <span class="source-chip"><a href="https://digiday.com/media/time-pitches-geo-insights-into-a-new-brand-offering/?utm_campaign=digidaydis&amp;utm_medium=rss&amp;utm_source=general-rss" target="_blank" rel="noopener" onclick="event.stopPropagation()">Digiday</a></span>
+            
+          </div>
+          
+          <a class="card-back-cta" href="https://digiday.com/media/time-pitches-geo-insights-into-a-new-brand-offering/?utm_campaign=digidaydis&amp;utm_medium=rss&amp;utm_source=general-rss" target="_blank" rel="noopener" onclick="event.stopPropagation()">
+            Lire l'article complet &#8599;
+          </a>
+        </div>
+      </div>
+    </div>
+    
+    
+    
+    <div class="flip-wrap " onclick="flipCard(this)">
+      <div class="flip-inner">
+        <!-- FRONT -->
+        <div class="card-front">
+          <div class="card-img-wrap">
+            
+            <div class="card-placeholder" style="background:linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)">✦</div>
+            
+          </div>
+          <div class="card-front-body">
+            <div class="card-eyebrow">
+              Digiday
+              &nbsp;·&nbsp;il y a 13h
+            </div>
+            <h3 class="card-title">In graphic detail: The long road to accountability for social media platforms</h3>
+            <div class="card-flip-hint">Appuyer pour résumé &#8594;</div>
+          </div>
+        </div>
+        <!-- BACK -->
+        <div class="card-back">
+          <div class="card-back-header">Résumé</div>
+          <div class="card-back-title">In graphic detail: The long road to accountability for social media platforms</div>
+          <p class="card-back-summary">Last week&#39;s social media addiction rulings signal a fundamental shift:  the platforms can now judged, not just on their content, but on how they are built and designed.</p>
+          <div class="card-sources">
+            
+            <span class="source-chip"><a href="https://digiday.com/marketing/in-graphic-detail-the-long-road-to-accountability-for-social-media-platforms/?utm_campaign=digidaydis&amp;utm_medium=rss&amp;utm_source=general-rss" target="_blank" rel="noopener" onclick="event.stopPropagation()">Digiday</a></span>
+            
+          </div>
+          
+          <a class="card-back-cta" href="https://digiday.com/marketing/in-graphic-detail-the-long-road-to-accountability-for-social-media-platforms/?utm_campaign=digidaydis&amp;utm_medium=rss&amp;utm_source=general-rss" target="_blank" rel="noopener" onclick="event.stopPropagation()">
+            Lire l'article complet &#8599;
+          </a>
+        </div>
+      </div>
+    </div>
+    
+    
+    
+    <div class="flip-wrap " onclick="flipCard(this)">
+      <div class="flip-inner">
+        <!-- FRONT -->
+        <div class="card-front">
+          <div class="card-img-wrap">
+            
+            <div class="card-placeholder" style="background:linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)">✦</div>
+            
+          </div>
+          <div class="card-front-body">
+            <div class="card-eyebrow">
+              Digiday
+              &nbsp;·&nbsp;il y a 13h
+            </div>
+            <h3 class="card-title">Why The Guardian’s first reader-facing AI product isn’t a chatbot</h3>
+            <div class="card-flip-hint">Appuyer pour résumé &#8594;</div>
+          </div>
+        </div>
+        <!-- BACK -->
+        <div class="card-back">
+          <div class="card-back-header">Résumé</div>
+          <div class="card-back-title">Why The Guardian’s first reader-facing AI product isn’t a chatbot</div>
+          <p class="card-back-summary">The Guardian has begun to roll out its first reader-facing AI product. But it doesn’t really look like an AI product.</p>
+          <div class="card-sources">
+            
+            <span class="source-chip"><a href="https://digiday.com/media/why-the-guardians-first-reader-facing-ai-product-isnt-a-chatbot/?utm_campaign=digidaydis&amp;utm_medium=rss&amp;utm_source=general-rss" target="_blank" rel="noopener" onclick="event.stopPropagation()">Digiday</a></span>
+            
+          </div>
+          
+          <a class="card-back-cta" href="https://digiday.com/media/why-the-guardians-first-reader-facing-ai-product-isnt-a-chatbot/?utm_campaign=digidaydis&amp;utm_medium=rss&amp;utm_source=general-rss" target="_blank" rel="noopener" onclick="event.stopPropagation()">
+            Lire l'article complet &#8599;
+          </a>
+        </div>
+      </div>
+    </div>
+    
+    
+    
+    <div class="flip-wrap " onclick="flipCard(this)">
+      <div class="flip-inner">
+        <!-- FRONT -->
+        <div class="card-front">
+          <div class="card-img-wrap">
+            
+            <img class="card-img" src="https://www.danstapub.com/wp-content/uploads/2026/03/Logo_VIBE-100_Avec-R_Avec-TBWA.png" alt="" loading="lazy"
+                 onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+            <div class="card-placeholder" style="background:linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);display:none">✦</div>
+            
+          </div>
+          <div class="card-front-body">
+            <div class="card-eyebrow">
+              Dans Ta Pub
+              &nbsp;·&nbsp;il y a 2h
+            </div>
+            <h3 class="card-title">VIBE100 : Les 100 marques qui vibrent le plus juste et le plus fort selon TBWA Paris</h3>
+            <div class="card-flip-hint">Appuyer pour résumé &#8594;</div>
+          </div>
+        </div>
+        <!-- BACK -->
+        <div class="card-back">
+          <div class="card-back-header">Résumé</div>
+          <div class="card-back-title">VIBE100 : Les 100 marques qui vibrent le plus juste et le plus fort selon TBWA Paris</div>
+          <p class="card-back-summary">Dans le monde de la publicité, être en phase avec son temps n’est plus une option, c’est une condition de survie. Historiquement, l’agence TBWA\PARIS a bâti sa réputation sur la… L’article VIBE100 : Les 100 marques qui vibrent le plus juste et le plus fort selon TBWA Paris est apparu en premier sur Dans Ta Pub .</p>
+          <div class="card-sources">
+            
+            <span class="source-chip"><a href="https://www.danstapub.com/vibe100-marques-vibrent-tbwa-paris/" target="_blank" rel="noopener" onclick="event.stopPropagation()">Dans Ta Pub</a></span>
+            
+          </div>
+          
+          <a class="card-back-cta" href="https://www.danstapub.com/vibe100-marques-vibrent-tbwa-paris/" target="_blank" rel="noopener" onclick="event.stopPropagation()">
+            Lire l'article complet &#8599;
+          </a>
+        </div>
+      </div>
+    </div>
+    
+    
+    
+    <div class="flip-wrap " onclick="flipCard(this)">
+      <div class="flip-inner">
+        <!-- FRONT -->
+        <div class="card-front">
+          <div class="card-img-wrap">
+            
+            <img class="card-img" src="https://www.danstapub.com/wp-content/uploads/2026/03/McDonalds-Shortcuts-Hero.wPeDW7EE.jpg" alt="" loading="lazy"
+                 onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+            <div class="card-placeholder" style="background:linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);display:none">✦</div>
+            
+          </div>
+          <div class="card-front-body">
+            <div class="card-eyebrow">
+              Dans Ta Pub
+              &nbsp;·&nbsp;il y a 2h
+            </div>
+            <h3 class="card-title">McDonald’s cartographie les raccourcis sauvages créés par ses fans affamés</h3>
+            <div class="card-flip-hint">Appuyer pour résumé &#8594;</div>
+          </div>
+        </div>
+        <!-- BACK -->
+        <div class="card-back">
+          <div class="card-back-header">Résumé</div>
+          <div class="card-back-title">McDonald’s cartographie les raccourcis sauvages créés par ses fans affamés</div>
+          <p class="card-back-summary">L’insight publicitaire le plus puissant est souvent celui qui ne s’invente pas, mais qui s’observe simplement dans le monde réel. En marketing, on appelle cela un « sentier de désir » :… L’article McDonald’s cartographie les raccourcis sauvages créés par ses fans affamés est apparu en premier sur Dans Ta Pub .</p>
+          <div class="card-sources">
+            
+            <span class="source-chip"><a href="https://www.danstapub.com/mcdonalds-raccourcis-sauvages-shortcuts/" target="_blank" rel="noopener" onclick="event.stopPropagation()">Dans Ta Pub</a></span>
+            
+          </div>
+          
+          <a class="card-back-cta" href="https://www.danstapub.com/mcdonalds-raccourcis-sauvages-shortcuts/" target="_blank" rel="noopener" onclick="event.stopPropagation()">
+            Lire l'article complet &#8599;
+          </a>
+        </div>
+      </div>
+    </div>
+    
+    
+    
+    <div class="flip-wrap " onclick="flipCard(this)">
+      <div class="flip-inner">
+        <!-- FRONT -->
+        <div class="card-front">
+          <div class="card-img-wrap">
+            
+            <img class="card-img" src="https://www.danstapub.com/wp-content/uploads/2026/03/hero-VW_NATIO-PANO_1_LD.jpg" alt="" loading="lazy"
+                 onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+            <div class="card-placeholder" style="background:linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);display:none">✦</div>
+            
+          </div>
+          <div class="card-front-body">
+            <div class="card-eyebrow">
+              Dans Ta Pub
+              &nbsp;·&nbsp;il y a 3h
+            </div>
+            <h3 class="card-title">« On n’a rien inventé » : la campagne pleine d’humilité de Volkswagen et BBDO Paris</h3>
+            <div class="card-flip-hint">Appuyer pour résumé &#8594;</div>
+          </div>
+        </div>
+        <!-- BACK -->
+        <div class="card-back">
+          <div class="card-back-header">Résumé</div>
+          <div class="card-back-title">« On n’a rien inventé » : la campagne pleine d’humilité de Volkswagen et BBDO Paris</div>
+          <p class="card-back-summary">L’industrie automobile traverse une véritable crise de sens technologique. À force d’empiler les écrans et les assistances gadgets, les constructeurs finissent parfois par oublier l’essentiel : l’utilité réelle pour le… L’article « On n’a rien inventé » : la campagne pleine d’humilité de Volkswagen et BBDO Paris est apparu en premier sur Dans Ta Pub .</p>
+          <div class="card-sources">
+            
+            <span class="source-chip"><a href="https://www.danstapub.com/on-na-rien-invente-volkswagen-bbdo-paris/" target="_blank" rel="noopener" onclick="event.stopPropagation()">Dans Ta Pub</a></span>
+            
+          </div>
+          
+          <a class="card-back-cta" href="https://www.danstapub.com/on-na-rien-invente-volkswagen-bbdo-paris/" target="_blank" rel="noopener" onclick="event.stopPropagation()">
             Lire l'article complet &#8599;
           </a>
         </div>
@@ -547,7 +1232,7 @@
       <h2 class="section-title" style="color:#ff9f0a">Marketing Digital &amp; SEO</h2>
     </div>
     <div style="display:flex;align-items:center;gap:1rem">
-      <span class="section-count">5 articles</span>
+      <span class="section-count">20 articles</span>
       <div class="section-arrows">
         <button class="arrow-btn" onclick="scrollRow('marketing-digital--seo', -1)" aria-label="Précédent">&#8592;</button>
         <button class="arrow-btn" onclick="scrollRow('marketing-digital--seo', 1)" aria-label="Suivant">&#8594;</button>
@@ -572,7 +1257,7 @@
           <div class="card-front-body">
             <div class="card-eyebrow">
               Neil Patel
-              &nbsp;·&nbsp;il y a 21h
+              &nbsp;·&nbsp;il y a 22h
             </div>
             <h3 class="card-title">How To Boost a Post on Linkedin</h3>
             <div class="card-flip-hint">Appuyer pour résumé &#8594;</div>
@@ -612,7 +1297,7 @@
           <div class="card-front-body">
             <div class="card-eyebrow">
               Seth Godin
-              &nbsp;·&nbsp;il y a 7h
+              &nbsp;·&nbsp;il y a 8h
             </div>
             <h3 class="card-title">Rehearsing possibility</h3>
             <div class="card-flip-hint">Appuyer pour résumé &#8594;</div>
@@ -732,7 +1417,7 @@
           <div class="card-front-body">
             <div class="card-eyebrow">
               SEMrush Blog
-              &nbsp;·&nbsp;il y a 19h
+              &nbsp;·&nbsp;il y a 20h
             </div>
             <h3 class="card-title">What Is an AI Agent? (And What AI Agents Mean for Your Brand’s Visibility)</h3>
             <div class="card-flip-hint">Appuyer pour résumé &#8594;</div>
@@ -756,6 +1441,606 @@
       </div>
     </div>
     
+    
+    
+    <div class="flip-wrap " onclick="flipCard(this)">
+      <div class="flip-inner">
+        <!-- FRONT -->
+        <div class="card-front">
+          <div class="card-img-wrap">
+            
+            <img class="card-img" src="https://static.semrush.com/blog/uploads/media/de/07/de07992c6a82c6ff5bc2154f60af814b/c84b2240293cc0cd501fb501c739bcdc/the-agentic-web.png" alt="" loading="lazy"
+                 onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+            <div class="card-placeholder" style="background:linear-gradient(135deg, #1a1000 0%, #2d1f00 50%, #3d2c00 100%);display:none">◎</div>
+            
+          </div>
+          <div class="card-front-body">
+            <div class="card-eyebrow">
+              SEMrush Blog
+              &nbsp;·&nbsp;il y a 20h
+            </div>
+            <h3 class="card-title">The agentic web: How AI agents decide which brands make the cut</h3>
+            <div class="card-flip-hint">Appuyer pour résumé &#8594;</div>
+          </div>
+        </div>
+        <!-- BACK -->
+        <div class="card-back">
+          <div class="card-back-header">Résumé</div>
+          <div class="card-back-title">The agentic web: How AI agents decide which brands make the cut</div>
+          <p class="card-back-summary">AI agents are browsing, comparing, and buying on behalf of your customers. Here‘s what the agentic web means for your brand visibility strategy.</p>
+          <div class="card-sources">
+            
+            <span class="source-chip"><a href="https://www.semrush.com/blog/the-agentic-web/" target="_blank" rel="noopener" onclick="event.stopPropagation()">SEMrush Blog</a></span>
+            
+          </div>
+          
+          <a class="card-back-cta" href="https://www.semrush.com/blog/the-agentic-web/" target="_blank" rel="noopener" onclick="event.stopPropagation()">
+            Lire l'article complet &#8599;
+          </a>
+        </div>
+      </div>
+    </div>
+    
+    
+    
+    <div class="flip-wrap " onclick="flipCard(this)">
+      <div class="flip-inner">
+        <!-- FRONT -->
+        <div class="card-front">
+          <div class="card-img-wrap">
+            
+            <img class="card-img" src="https://static.semrush.com/blog/uploads/media/76/52/7652095291a418e203762bc35e4ece33/how-to-measure-brand-awareness.svg" alt="" loading="lazy"
+                 onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+            <div class="card-placeholder" style="background:linear-gradient(135deg, #1a1000 0%, #2d1f00 50%, #3d2c00 100%);display:none">◎</div>
+            
+          </div>
+          <div class="card-front-body">
+            <div class="card-eyebrow">
+              SEMrush Blog
+              &nbsp;·&nbsp;hier
+            </div>
+            <h3 class="card-title">How to measure brand awareness: 9 methods that matter</h3>
+            <div class="card-flip-hint">Appuyer pour résumé &#8594;</div>
+          </div>
+        </div>
+        <!-- BACK -->
+        <div class="card-back">
+          <div class="card-back-header">Résumé</div>
+          <div class="card-back-title">How to measure brand awareness: 9 methods that matter</div>
+          <p class="card-back-summary">Measure brand awareness online by tracking brand mentions, monitoring AI search visibility, and more.</p>
+          <div class="card-sources">
+            
+            <span class="source-chip"><a href="https://www.semrush.com/blog/measure-brand-awareness/" target="_blank" rel="noopener" onclick="event.stopPropagation()">SEMrush Blog</a></span>
+            
+          </div>
+          
+          <a class="card-back-cta" href="https://www.semrush.com/blog/measure-brand-awareness/" target="_blank" rel="noopener" onclick="event.stopPropagation()">
+            Lire l'article complet &#8599;
+          </a>
+        </div>
+      </div>
+    </div>
+    
+    
+    
+    <div class="flip-wrap " onclick="flipCard(this)">
+      <div class="flip-inner">
+        <!-- FRONT -->
+        <div class="card-front">
+          <div class="card-img-wrap">
+            
+            <img class="card-img" src="https://static.semrush.com/blog/uploads/media/eb/2c/eb2c38841de89d449561e5263f7488a6/5fe9f3cfb01a46a400c08b17eff1041c/seo-roles-are-shifting-toward-visibility-strategy-insights-from-3900-job-listings.png" alt="" loading="lazy"
+                 onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+            <div class="card-placeholder" style="background:linear-gradient(135deg, #1a1000 0%, #2d1f00 50%, #3d2c00 100%);display:none">◎</div>
+            
+          </div>
+          <div class="card-front-body">
+            <div class="card-eyebrow">
+              SEMrush Blog
+              &nbsp;·&nbsp;hier
+            </div>
+            <h3 class="card-title">What 3,900 SEO Job Listings Reveal for 2026: Experiments, AI, and Six-Figure Salaries</h3>
+            <div class="card-flip-hint">Appuyer pour résumé &#8594;</div>
+          </div>
+        </div>
+        <!-- BACK -->
+        <div class="card-back">
+          <div class="card-back-header">Résumé</div>
+          <div class="card-back-title">What 3,900 SEO Job Listings Reveal for 2026: Experiments, AI, and Six-Figure Salaries</div>
+          <p class="card-back-summary">What does it take to build a career in SEO in 2026? We analyzed 3,900 job listings to uncover how the role is evolving—from experimentation and AI to shifts in salaries, responsibilities, and the growing demand for strategic thinking.</p>
+          <div class="card-sources">
+            
+            <span class="source-chip"><a href="https://www.semrush.com/blog/seo-job-market-study/" target="_blank" rel="noopener" onclick="event.stopPropagation()">SEMrush Blog</a></span>
+            
+          </div>
+          
+          <a class="card-back-cta" href="https://www.semrush.com/blog/seo-job-market-study/" target="_blank" rel="noopener" onclick="event.stopPropagation()">
+            Lire l'article complet &#8599;
+          </a>
+        </div>
+      </div>
+    </div>
+    
+    
+    
+    <div class="flip-wrap " onclick="flipCard(this)">
+      <div class="flip-inner">
+        <!-- FRONT -->
+        <div class="card-front">
+          <div class="card-img-wrap">
+            
+            <img class="card-img" src="https://cdn.searchenginejournal.com/wp-content/uploads/2026/03/eb5f6b78-22b1-4f7f-a406-37c1c3e1f89c-189.jpeg" alt="" loading="lazy"
+                 onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+            <div class="card-placeholder" style="background:linear-gradient(135deg, #1a1000 0%, #2d1f00 50%, #3d2c00 100%);display:none">◎</div>
+            
+          </div>
+          <div class="card-front-body">
+            <div class="card-eyebrow">
+              Search Engine Journal
+              &nbsp;·&nbsp;il y a 1h
+            </div>
+            <h3 class="card-title">Google Explains Googlebot Byte Limits And Crawling Architecture via @sejournal, @MattGSouthern</h3>
+            <div class="card-flip-hint">Appuyer pour résumé &#8594;</div>
+          </div>
+        </div>
+        <!-- BACK -->
+        <div class="card-back">
+          <div class="card-back-header">Résumé</div>
+          <div class="card-back-title">Google Explains Googlebot Byte Limits And Crawling Architecture via @sejournal, @MattGSouthern</div>
+          <p class="card-back-summary">Google&#39;s Gary Illyes published a blog post explaining how Googlebot works as one client of a centralized crawling platform, with new byte-level details. The post Google Explains Googlebot Byte Limits And Crawling Architecture appeared first on Search Engine Journal .</p>
+          <div class="card-sources">
+            
+            <span class="source-chip"><a href="https://www.searchenginejournal.com/google-explains-googlebot-byte-limits-and-crawling-architecture/570961/" target="_blank" rel="noopener" onclick="event.stopPropagation()">Search Engine Journal</a></span>
+            
+          </div>
+          
+          <a class="card-back-cta" href="https://www.searchenginejournal.com/google-explains-googlebot-byte-limits-and-crawling-architecture/570961/" target="_blank" rel="noopener" onclick="event.stopPropagation()">
+            Lire l'article complet &#8599;
+          </a>
+        </div>
+      </div>
+    </div>
+    
+    
+    
+    <div class="flip-wrap " onclick="flipCard(this)">
+      <div class="flip-inner">
+        <!-- FRONT -->
+        <div class="card-front">
+          <div class="card-img-wrap">
+            
+            <img class="card-img" src="https://cdn.searchenginejournal.com/wp-content/uploads/2026/03/kevin-indig-growth-memo-900.png" alt="" loading="lazy"
+                 onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+            <div class="card-placeholder" style="background:linear-gradient(135deg, #1a1000 0%, #2d1f00 50%, #3d2c00 100%);display:none">◎</div>
+            
+          </div>
+          <div class="card-front-body">
+            <div class="card-eyebrow">
+              Search Engine Journal
+              &nbsp;·&nbsp;il y a 3h
+            </div>
+            <h3 class="card-title">The Science Of What AI Actually Rewards via @sejournal, @Kevin_Indig</h3>
+            <div class="card-flip-hint">Appuyer pour résumé &#8594;</div>
+          </div>
+        </div>
+        <!-- BACK -->
+        <div class="card-back">
+          <div class="card-back-header">Résumé</div>
+          <div class="card-back-title">The Science Of What AI Actually Rewards via @sejournal, @Kevin_Indig</div>
+          <p class="card-back-summary">Part 3 of this analysis reveals what AI actually rewards in content, from entity types to structure, across seven verticals. The post The Science Of What AI Actually Rewards appeared first on Search Engine Journal .</p>
+          <div class="card-sources">
+            
+            <span class="source-chip"><a href="https://www.searchenginejournal.com/the-science-of-what-ai-actually-rewards/570849/" target="_blank" rel="noopener" onclick="event.stopPropagation()">Search Engine Journal</a></span>
+            
+          </div>
+          
+          <a class="card-back-cta" href="https://www.searchenginejournal.com/the-science-of-what-ai-actually-rewards/570849/" target="_blank" rel="noopener" onclick="event.stopPropagation()">
+            Lire l'article complet &#8599;
+          </a>
+        </div>
+      </div>
+    </div>
+    
+    
+    
+    <div class="flip-wrap " onclick="flipCard(this)">
+      <div class="flip-inner">
+        <!-- FRONT -->
+        <div class="card-front">
+          <div class="card-img-wrap">
+            
+            <img class="card-img" src="https://cdn.searchenginejournal.com/wp-content/uploads/2026/03/cmo-what-will-you-do-next-215.jpg" alt="" loading="lazy"
+                 onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+            <div class="card-placeholder" style="background:linear-gradient(135deg, #1a1000 0%, #2d1f00 50%, #3d2c00 100%);display:none">◎</div>
+            
+          </div>
+          <div class="card-front-body">
+            <div class="card-eyebrow">
+              Search Engine Journal
+              &nbsp;·&nbsp;il y a 4h
+            </div>
+            <h3 class="card-title">So Your Traffic Tanked: What Smart CMOs Do Next</h3>
+            <div class="card-flip-hint">Appuyer pour résumé &#8594;</div>
+          </div>
+        </div>
+        <!-- BACK -->
+        <div class="card-back">
+          <div class="card-back-header">Résumé</div>
+          <div class="card-back-title">So Your Traffic Tanked: What Smart CMOs Do Next</div>
+          <p class="card-back-summary">Organic traffic is declining, but answer engines are driving higher-intent conversions. Here’s how CMOs should rethink strategy, structure, and measurement. The post So Your Traffic Tanked: What Smart CMOs Do Next appeared first on Search Engine Journal .</p>
+          <div class="card-sources">
+            
+            <span class="source-chip"><a href="https://www.searchenginejournal.com/so-your-traffic-tanked-what-smart-cmos-do-next/570708/" target="_blank" rel="noopener" onclick="event.stopPropagation()">Search Engine Journal</a></span>
+            
+          </div>
+          
+          <a class="card-back-cta" href="https://www.searchenginejournal.com/so-your-traffic-tanked-what-smart-cmos-do-next/570708/" target="_blank" rel="noopener" onclick="event.stopPropagation()">
+            Lire l'article complet &#8599;
+          </a>
+        </div>
+      </div>
+    </div>
+    
+    
+    
+    <div class="flip-wrap " onclick="flipCard(this)">
+      <div class="flip-inner">
+        <!-- FRONT -->
+        <div class="card-front">
+          <div class="card-img-wrap">
+            
+            <img class="card-img" src="https://cdn.searchenginejournal.com/wp-content/uploads/2026/03/wordpress-7-delayed-826.jpg" alt="" loading="lazy"
+                 onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+            <div class="card-placeholder" style="background:linear-gradient(135deg, #1a1000 0%, #2d1f00 50%, #3d2c00 100%);display:none">◎</div>
+            
+          </div>
+          <div class="card-front-body">
+            <div class="card-eyebrow">
+              Search Engine Journal
+              &nbsp;·&nbsp;il y a 6h
+            </div>
+            <h3 class="card-title">WordPress Delays Release Of Version 7.0 To Focus On Stability via @sejournal, @martinibuster</h3>
+            <div class="card-flip-hint">Appuyer pour résumé &#8594;</div>
+          </div>
+        </div>
+        <!-- BACK -->
+        <div class="card-back">
+          <div class="card-back-header">Résumé</div>
+          <div class="card-back-title">WordPress Delays Release Of Version 7.0 To Focus On Stability via @sejournal, @martinibuster</div>
+          <p class="card-back-summary">Delay in release of WordPress 7.0 stems from concerns over the real-time collaboration feature. The focus is on targeting &#34;extreme stability.&#34; The post WordPress Delays Release Of Version 7.0 To Focus On Stability appeared first on Search Engine Journal .</p>
+          <div class="card-sources">
+            
+            <span class="source-chip"><a href="https://www.searchenginejournal.com/wordpress-delays-release-of-version-7-0-to-focus-on-stability/570944/" target="_blank" rel="noopener" onclick="event.stopPropagation()">Search Engine Journal</a></span>
+            
+          </div>
+          
+          <a class="card-back-cta" href="https://www.searchenginejournal.com/wordpress-delays-release-of-version-7-0-to-focus-on-stability/570944/" target="_blank" rel="noopener" onclick="event.stopPropagation()">
+            Lire l'article complet &#8599;
+          </a>
+        </div>
+      </div>
+    </div>
+    
+    
+    
+    <div class="flip-wrap " onclick="flipCard(this)">
+      <div class="flip-inner">
+        <!-- FRONT -->
+        <div class="card-front">
+          <div class="card-img-wrap">
+            
+            <img class="card-img" src="https://cdn.searchenginejournal.com/wp-content/uploads/2026/03/callrail-webinar-041426-llm-conversion-rates-768.png" alt="" loading="lazy"
+                 onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+            <div class="card-placeholder" style="background:linear-gradient(135deg, #1a1000 0%, #2d1f00 50%, #3d2c00 100%);display:none">◎</div>
+            
+          </div>
+          <div class="card-front-body">
+            <div class="card-eyebrow">
+              Search Engine Journal
+              &nbsp;·&nbsp;il y a 9h
+            </div>
+            <h3 class="card-title">How To Identify Which LLM Is Actually Working For You [Webinar] via @sejournal, @hethr_campbell</h3>
+            <div class="card-flip-hint">Appuyer pour résumé &#8594;</div>
+          </div>
+        </div>
+        <!-- BACK -->
+        <div class="card-back">
+          <div class="card-back-header">Résumé</div>
+          <div class="card-back-title">How To Identify Which LLM Is Actually Working For You [Webinar] via @sejournal, @hethr_campbell</div>
+          <p class="card-back-summary">Learn how different LLMs impact conversions in your industry. Do not miss our expert panel webinar for practical advice. The post How To Identify Which LLM Is Actually Working For You [Webinar] appeared first on Search Engine Journal .</p>
+          <div class="card-sources">
+            
+            <span class="source-chip"><a href="https://www.searchenginejournal.com/how-to-identify-which-llm-is-actually-working-for-your-or-your-clients-brand-webinar/570019/" target="_blank" rel="noopener" onclick="event.stopPropagation()">Search Engine Journal</a></span>
+            
+          </div>
+          
+          <a class="card-back-cta" href="https://www.searchenginejournal.com/how-to-identify-which-llm-is-actually-working-for-your-or-your-clients-brand-webinar/570019/" target="_blank" rel="noopener" onclick="event.stopPropagation()">
+            Lire l'article complet &#8599;
+          </a>
+        </div>
+      </div>
+    </div>
+    
+    
+    
+    <div class="flip-wrap " onclick="flipCard(this)">
+      <div class="flip-inner">
+        <!-- FRONT -->
+        <div class="card-front">
+          <div class="card-img-wrap">
+            
+            <img class="card-img" src="https://no-cache.hubspot.com/cta/default/53/07e52e2e-2c66-4776-81a2-d2fc00199367.png" alt="" loading="lazy"
+                 onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+            <div class="card-placeholder" style="background:linear-gradient(135deg, #1a1000 0%, #2d1f00 50%, #3d2c00 100%);display:none">◎</div>
+            
+          </div>
+          <div class="card-front-body">
+            <div class="card-eyebrow">
+              HubSpot Marketing
+              &nbsp;·&nbsp;il y a 6h
+            </div>
+            <h3 class="card-title">Page Authority: How to Build Pages That Rank</h3>
+            <div class="card-flip-hint">Appuyer pour résumé &#8594;</div>
+          </div>
+        </div>
+        <!-- BACK -->
+        <div class="card-back">
+          <div class="card-back-header">Résumé</div>
+          <div class="card-back-title">Page Authority: How to Build Pages That Rank</div>
+          <p class="card-back-summary">When I first started working in content and weaving SEO into my strategy, I treated Page Authority like a report card: the higher the score, the better I was doing. It took a few humbling ranking losses to a competitor with a lower PA score to make me reconsider.</p>
+          <div class="card-sources">
+            
+            <span class="source-chip"><a href="https://blog.hubspot.com/marketing/page-authority" target="_blank" rel="noopener" onclick="event.stopPropagation()">HubSpot Marketing</a></span>
+            
+          </div>
+          
+          <a class="card-back-cta" href="https://blog.hubspot.com/marketing/page-authority" target="_blank" rel="noopener" onclick="event.stopPropagation()">
+            Lire l'article complet &#8599;
+          </a>
+        </div>
+      </div>
+    </div>
+    
+    
+    
+    <div class="flip-wrap " onclick="flipCard(this)">
+      <div class="flip-inner">
+        <!-- FRONT -->
+        <div class="card-front">
+          <div class="card-img-wrap">
+            
+            <img class="card-img" src="https://no-cache.hubspot.com/cta/default/53/76520ae5-1a3b-4055-9e8e-95e150b90965.png" alt="" loading="lazy"
+                 onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+            <div class="card-placeholder" style="background:linear-gradient(135deg, #1a1000 0%, #2d1f00 50%, #3d2c00 100%);display:none">◎</div>
+            
+          </div>
+          <div class="card-front-body">
+            <div class="card-eyebrow">
+              HubSpot Marketing
+              &nbsp;·&nbsp;hier
+            </div>
+            <h3 class="card-title">Brand optimization: What it is and why your AI visibility depends on it</h3>
+            <div class="card-flip-hint">Appuyer pour résumé &#8594;</div>
+          </div>
+        </div>
+        <!-- BACK -->
+        <div class="card-back">
+          <div class="card-back-header">Résumé</div>
+          <div class="card-back-title">Brand optimization: What it is and why your AI visibility depends on it</div>
+          <p class="card-back-summary">Consistency is key to achieving any goal. Want to learn to play the piano? Practice consistently. Trying to get in shape for a sibling&#39;s wedding? Exercise and eat healthily consistently. Want your brand to be seen and positioned as the premier choice in its industry by both your target audience and AI? Enter brand optimization.</p>
+          <div class="card-sources">
+            
+            <span class="source-chip"><a href="https://blog.hubspot.com/marketing/brand-optimization" target="_blank" rel="noopener" onclick="event.stopPropagation()">HubSpot Marketing</a></span>
+            
+          </div>
+          
+          <a class="card-back-cta" href="https://blog.hubspot.com/marketing/brand-optimization" target="_blank" rel="noopener" onclick="event.stopPropagation()">
+            Lire l'article complet &#8599;
+          </a>
+        </div>
+      </div>
+    </div>
+    
+    
+    
+    <div class="flip-wrap " onclick="flipCard(this)">
+      <div class="flip-inner">
+        <!-- FRONT -->
+        <div class="card-front">
+          <div class="card-img-wrap">
+            
+            <img class="card-img" src="https://no-cache.hubspot.com/cta/default/53/b72f2b25-8cc9-4642-9a1b-1e675d3d273b.png" alt="" loading="lazy"
+                 onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+            <div class="card-placeholder" style="background:linear-gradient(135deg, #1a1000 0%, #2d1f00 50%, #3d2c00 100%);display:none">◎</div>
+            
+          </div>
+          <div class="card-front-body">
+            <div class="card-eyebrow">
+              HubSpot Marketing
+              &nbsp;·&nbsp;hier
+            </div>
+            <h3 class="card-title">AI content optimization: How to get found in Google and AI search in 2026</h3>
+            <div class="card-flip-hint">Appuyer pour résumé &#8594;</div>
+          </div>
+        </div>
+        <!-- BACK -->
+        <div class="card-back">
+          <div class="card-back-header">Résumé</div>
+          <div class="card-back-title">AI content optimization: How to get found in Google and AI search in 2026</div>
+          <p class="card-back-summary">I&#39;ve spent most of the last 10 years writing, managing, and improving content to reach internet audiences. But even for an ol&#39; marketer like me, AI content optimization was hard at first. Thankfully, I’ve done a lot of the work, so it doesn&#39;t have to be for you.</p>
+          <div class="card-sources">
+            
+            <span class="source-chip"><a href="https://blog.hubspot.com/marketing/ai-content-optimization" target="_blank" rel="noopener" onclick="event.stopPropagation()">HubSpot Marketing</a></span>
+            
+          </div>
+          
+          <a class="card-back-cta" href="https://blog.hubspot.com/marketing/ai-content-optimization" target="_blank" rel="noopener" onclick="event.stopPropagation()">
+            Lire l'article complet &#8599;
+          </a>
+        </div>
+      </div>
+    </div>
+    
+    
+    
+    <div class="flip-wrap " onclick="flipCard(this)">
+      <div class="flip-inner">
+        <!-- FRONT -->
+        <div class="card-front">
+          <div class="card-img-wrap">
+            
+            <img class="card-img" src="https://www.journalduweb.org/wp-content/uploads/2025/12/ps6.png" alt="" loading="lazy"
+                 onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+            <div class="card-placeholder" style="background:linear-gradient(135deg, #1a1000 0%, #2d1f00 50%, #3d2c00 100%);display:none">◎</div>
+            
+          </div>
+          <div class="card-front-body">
+            <div class="card-eyebrow">
+              Journal du Web
+              &nbsp;·&nbsp;il y a 4h
+            </div>
+            <h3 class="card-title">PS6 : vers une console à 999 dollars ? Le prix qui menace déjà la prochaine génération</h3>
+            <div class="card-flip-hint">Appuyer pour résumé &#8594;</div>
+          </div>
+        </div>
+        <!-- BACK -->
+        <div class="card-back">
+          <div class="card-back-header">Résumé</div>
+          <div class="card-back-title">PS6 : vers une console à 999 dollars ? Le prix qui menace déjà la prochaine génération</div>
+          <p class="card-back-summary">Sony a relevé le prix de la PS5 et la PS6 entre, déjà, dans une zone de danger où le ticket d’entrée pourrait grimper jusqu’à 999 dollars, soit un niveau qui ferait de la console un produit de luxe bien plus qu’un objet de salon. D’après GamesRadar, Dr. Serkan Toto, patron du cabinet Kantan Games, […] L&#39;article PS6 : vers une console à 999 dollars ? Le prix qui menace déjà la prochaine génération est apparu en premier sur JDW .</p>
+          <div class="card-sources">
+            
+            <span class="source-chip"><a href="https://www.journalduweb.org/ps6-vers-une-console-a-999-dollars-le-prix-qui-menace-deja-la-prochaine-generation/" target="_blank" rel="noopener" onclick="event.stopPropagation()">Journal du Web</a></span>
+            
+          </div>
+          
+          <a class="card-back-cta" href="https://www.journalduweb.org/ps6-vers-une-console-a-999-dollars-le-prix-qui-menace-deja-la-prochaine-generation/" target="_blank" rel="noopener" onclick="event.stopPropagation()">
+            Lire l'article complet &#8599;
+          </a>
+        </div>
+      </div>
+    </div>
+    
+    
+    
+    <div class="flip-wrap " onclick="flipCard(this)">
+      <div class="flip-inner">
+        <!-- FRONT -->
+        <div class="card-front">
+          <div class="card-img-wrap">
+            
+            <img class="card-img" src="https://www.journalduweb.org/wp-content/uploads/2025/07/gta-6.png" alt="" loading="lazy"
+                 onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+            <div class="card-placeholder" style="background:linear-gradient(135deg, #1a1000 0%, #2d1f00 50%, #3d2c00 100%);display:none">◎</div>
+            
+          </div>
+          <div class="card-front-body">
+            <div class="card-eyebrow">
+              Journal du Web
+              &nbsp;·&nbsp;hier
+            </div>
+            <h3 class="card-title">GTA 6 promet des PNJ d’une densité narrative folle</h3>
+            <div class="card-flip-hint">Appuyer pour résumé &#8594;</div>
+          </div>
+        </div>
+        <!-- BACK -->
+        <div class="card-back">
+          <div class="card-back-header">Résumé</div>
+          <div class="card-back-title">GTA 6 promet des PNJ d’une densité narrative folle</div>
+          <p class="card-back-summary">29 mars 2026, un nouveau leak relayé sur X affirme que GTA 6 embarquera « des centaines de milliers de lignes enregistrées » pour ses PNJ, et pas pour les héros ou les missions principales, ce qui revient à dire que Rockstar dépense une énergie démente sur les silhouettes qu’on croise au coin d’une rue. Là […] L&#39;article GTA 6 promet des PNJ d’une densité narrative folle est apparu en premier sur JDW .</p>
+          <div class="card-sources">
+            
+            <span class="source-chip"><a href="https://www.journalduweb.org/gta-6-promet-des-pnj-dune-densite-narrative-folle/" target="_blank" rel="noopener" onclick="event.stopPropagation()">Journal du Web</a></span>
+            
+          </div>
+          
+          <a class="card-back-cta" href="https://www.journalduweb.org/gta-6-promet-des-pnj-dune-densite-narrative-folle/" target="_blank" rel="noopener" onclick="event.stopPropagation()">
+            Lire l'article complet &#8599;
+          </a>
+        </div>
+      </div>
+    </div>
+    
+    
+    
+    <div class="flip-wrap " onclick="flipCard(this)">
+      <div class="flip-inner">
+        <!-- FRONT -->
+        <div class="card-front">
+          <div class="card-img-wrap">
+            
+            <img class="card-img" src="https://www.journalduweb.org/wp-content/uploads/2026/03/loana.jpg" alt="" loading="lazy"
+                 onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+            <div class="card-placeholder" style="background:linear-gradient(135deg, #1a1000 0%, #2d1f00 50%, #3d2c00 100%);display:none">◎</div>
+            
+          </div>
+          <div class="card-front-body">
+            <div class="card-eyebrow">
+              Journal du Web
+              &nbsp;·&nbsp;hier
+            </div>
+            <h3 class="card-title">Loana retrouvée morte à Nice à 48 ans, la fin d’une chute publique</h3>
+            <div class="card-flip-hint">Appuyer pour résumé &#8594;</div>
+          </div>
+        </div>
+        <!-- BACK -->
+        <div class="card-back">
+          <div class="card-back-header">Résumé</div>
+          <div class="card-back-title">Loana retrouvée morte à Nice à 48 ans, la fin d’une chute publique</div>
+          <p class="card-back-summary">Loana a été retrouvée morte le 25 mars 2026 dans son appartement de Nice, à 48 ans, plusieurs jours après son décès selon le parquet, ce qui dit déjà beaucoup d’une existence qui s’était rétrécie jusqu’au silence, loin des plateaux qui l’avaient fabriquée puis regardée s’abîmer. Révélée en 2001 par « Loft Story », qu’elle […] L&#39;article Loana retrouvée morte à Nice à 48 ans, la fin d’une chute publique est apparu en premier sur JDW .</p>
+          <div class="card-sources">
+            
+            <span class="source-chip"><a href="https://www.journalduweb.org/loana-retrouvee-morte-a-nice-a-48-ans-la-fin-dune-chute-publique/" target="_blank" rel="noopener" onclick="event.stopPropagation()">Journal du Web</a></span>
+            
+          </div>
+          
+          <a class="card-back-cta" href="https://www.journalduweb.org/loana-retrouvee-morte-a-nice-a-48-ans-la-fin-dune-chute-publique/" target="_blank" rel="noopener" onclick="event.stopPropagation()">
+            Lire l'article complet &#8599;
+          </a>
+        </div>
+      </div>
+    </div>
+    
+    
+    
+    <div class="flip-wrap " onclick="flipCard(this)">
+      <div class="flip-inner">
+        <!-- FRONT -->
+        <div class="card-front">
+          <div class="card-img-wrap">
+            
+            <img class="card-img" src="https://www.journalduweb.org/wp-content/uploads/2026/03/crimson-desert.jpg" alt="" loading="lazy"
+                 onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+            <div class="card-placeholder" style="background:linear-gradient(135deg, #1a1000 0%, #2d1f00 50%, #3d2c00 100%);display:none">◎</div>
+            
+          </div>
+          <div class="card-front-body">
+            <div class="card-eyebrow">
+              Journal du Web
+              &nbsp;·&nbsp;hier
+            </div>
+            <h3 class="card-title">Crimson Desert corrige vite, frappe fort, et montre enfin de quel bois il se chauffe</h3>
+            <div class="card-flip-hint">Appuyer pour résumé &#8594;</div>
+          </div>
+        </div>
+        <!-- BACK -->
+        <div class="card-back">
+          <div class="card-back-header">Résumé</div>
+          <div class="card-back-title">Crimson Desert corrige vite, frappe fort, et montre enfin de quel bois il se chauffe</div>
+          <p class="card-back-summary">Crimson Desert n’avait pas besoin d’être sauvé. Il avait besoin d’être repris en main, secoué, retaillé là où ça coinçait, là où l’ambition débordait parfois sur le confort de jeu. C’est exactement ce que Pearl Abyss est en train de faire, patch après patch, à un rythme presque insolent. Trois grosses mises à jour en […] L&#39;article Crimson Desert corrige vite, frappe fort, et montre enfin de quel bois il se chauffe est apparu en premier sur JDW .</p>
+          <div class="card-sources">
+            
+            <span class="source-chip"><a href="https://www.journalduweb.org/crimson-desert-corrige-vite-frappe-fort-et-montre-enfin-de-quel-bois-il-se-chauffe/" target="_blank" rel="noopener" onclick="event.stopPropagation()">Journal du Web</a></span>
+            
+          </div>
+          
+          <a class="card-back-cta" href="https://www.journalduweb.org/crimson-desert-corrige-vite-frappe-fort-et-montre-enfin-de-quel-bois-il-se-chauffe/" target="_blank" rel="noopener" onclick="event.stopPropagation()">
+            Lire l'article complet &#8599;
+          </a>
+        </div>
+      </div>
+    </div>
+    
   </div>
 </section>
 
@@ -768,7 +2053,7 @@
       <h2 class="section-title" style="color:#ff3b30">Vidéo</h2>
     </div>
     <div style="display:flex;align-items:center;gap:1rem">
-      <span class="section-count">5 articles</span>
+      <span class="section-count">9 articles</span>
       <div class="section-arrows">
         <button class="arrow-btn" onclick="scrollRow('video', -1)" aria-label="Précédent">&#8592;</button>
         <button class="arrow-btn" onclick="scrollRow('video', 1)" aria-label="Suivant">&#8594;</button>
@@ -785,6 +2070,46 @@
         <div class="card-front">
           <div class="card-img-wrap">
             
+            <img class="card-img" src="https://petapixel.com/assets/uploads/2026/03/Annie-Leibovitz.jpg" alt="" loading="lazy"
+                 onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+            <div class="card-placeholder" style="background:linear-gradient(135deg, #1a1a1a 0%, #2d1515 50%, #4a0000 100%);display:none">▶</div>
+            
+          </div>
+          <div class="card-front-body">
+            <div class="card-eyebrow">
+              PetaPixel
+              &nbsp;·&nbsp;à l&#39;instant
+            </div>
+            <h3 class="card-title">Annie Leibovitz Attends USMNT Training Camp, But Coach Warns of Distractions</h3>
+            <div class="card-flip-hint">Appuyer pour résumé &#8594;</div>
+          </div>
+        </div>
+        <!-- BACK -->
+        <div class="card-back">
+          <div class="card-back-header">Résumé</div>
+          <div class="card-back-title">Annie Leibovitz Attends USMNT Training Camp, But Coach Warns of Distractions</div>
+          <p class="card-back-summary">The most famous photographer in the world, Annie Leibovitz, is cooking up something with the United States men&#39;s national soccer team (USMNT) ahead of the 2026 FIFA World Cup. [&lt;a href=&#34;https://petapixel.com/2026/03/31/annie-leibovitz-attends-usmnt</p>
+          <div class="card-sources">
+            
+            <span class="source-chip"><a href="https://petapixel.com/2026/03/31/annie-leibovitz-attends-usmnt-training-camp-but-coach-warns-of-distractions/" target="_blank" rel="noopener" onclick="event.stopPropagation()">PetaPixel</a></span>
+            
+          </div>
+          
+          <a class="card-back-cta" href="https://petapixel.com/2026/03/31/annie-leibovitz-attends-usmnt-training-camp-but-coach-warns-of-distractions/" target="_blank" rel="noopener" onclick="event.stopPropagation()">
+            Lire l'article complet &#8599;
+          </a>
+        </div>
+      </div>
+    </div>
+    
+    
+    
+    <div class="flip-wrap " onclick="flipCard(this)">
+      <div class="flip-inner">
+        <!-- FRONT -->
+        <div class="card-front">
+          <div class="card-img-wrap">
+            
             <img class="card-img" src="https://petapixel.com/assets/uploads/2026/03/World-Backup-Day-Featured-PetaPixel-Cover.jpg" alt="" loading="lazy"
                  onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
             <div class="card-placeholder" style="background:linear-gradient(135deg, #1a1a1a 0%, #2d1515 50%, #4a0000 100%);display:none">▶</div>
@@ -793,7 +2118,7 @@
           <div class="card-front-body">
             <div class="card-eyebrow">
               PetaPixel
-              &nbsp;·&nbsp;il y a 1h
+              &nbsp;·&nbsp;il y a 2h
             </div>
             <h3 class="card-title">Today Only: 20 World Backup Day Deals on Storage and Memory Cards</h3>
             <div class="card-flip-hint">Appuyer pour résumé &#8594;</div>
@@ -833,7 +2158,7 @@
           <div class="card-front-body">
             <div class="card-eyebrow">
               PetaPixel
-              &nbsp;·&nbsp;il y a 1h
+              &nbsp;·&nbsp;il y a 2h
             </div>
             <h3 class="card-title">Photographer Captures First-Ever Images of Adorable Ross Seal Swimming in Antarctica</h3>
             <div class="card-flip-hint">Appuyer pour résumé &#8594;</div>
@@ -873,7 +2198,7 @@
           <div class="card-front-body">
             <div class="card-eyebrow">
               PetaPixel
-              &nbsp;·&nbsp;il y a 4h
+              &nbsp;·&nbsp;il y a 5h
             </div>
             <h3 class="card-title">AOC Photographer Loses Copyright Case Over Image Used in Illegal Parking Story</h3>
             <div class="card-flip-hint">Appuyer pour résumé &#8594;</div>
@@ -946,33 +2271,154 @@
         <div class="card-front">
           <div class="card-img-wrap">
             
-            <img class="card-img" src="https://petapixel.com/assets/uploads/2026/03/Cyclone-Australia.jpg" alt="" loading="lazy"
+            <img class="card-img" src="https://cdn.fstoppers.com/styles/16_9_max_650/s3/lead/2026/03/thumbnail_117.jpg.webp?itok=hBKtqKbw" alt="" loading="lazy"
                  onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
             <div class="card-placeholder" style="background:linear-gradient(135deg, #1a1a1a 0%, #2d1515 50%, #4a0000 100%);display:none">▶</div>
             
           </div>
           <div class="card-front-body">
             <div class="card-eyebrow">
-              PetaPixel
-              &nbsp;·&nbsp;il y a 6h
+              Fstoppers
+              &nbsp;·&nbsp;il y a 2h
             </div>
-            <h3 class="card-title">Apocalyptic Scenes in Australia as the Sky Turns Red</h3>
+            <h3 class="card-title">Canon RF 16-28mm f/2.8 STM: Is the Distortion a Dealbreaker?</h3>
             <div class="card-flip-hint">Appuyer pour résumé &#8594;</div>
           </div>
         </div>
         <!-- BACK -->
         <div class="card-back">
           <div class="card-back-header">Résumé</div>
-          <div class="card-back-title">Apocalyptic Scenes in Australia as the Sky Turns Red</div>
-          <p class="card-back-summary">Photographers are always looking for the best light, but what about bright red? It happened this week in Western Australia.
-[Read More]</p>
+          <div class="card-back-title">Canon RF 16-28mm f/2.8 STM: Is the Distortion a Dealbreaker?</div>
+          <p class="card-back-summary">The Canon RF 16-28mm f/2.8 STM is one of the more interesting ultra-wide angle zoom lenses Canon has released in recent years, sitting at a price point that&#39;s hard to categorize. It&#39;s not cheap, but it&#39;s marketed as the budget option in Canon&#39;s lineup, which raises an obvious question: what exactly are you giving up? [&lt;a href=&#34;https://fstoppers.com/reviews/canon-rf-16-28mm-f28-stm-distortion-dealbreaker-901317?utm_source=fstoppers&amp;utm_medium=RSS&amp;a</p>
           <div class="card-sources">
             
-            <span class="source-chip"><a href="https://petapixel.com/2026/03/31/apocalyptic-scenes-in-australia-as-the-sky-turn-red/" target="_blank" rel="noopener" onclick="event.stopPropagation()">PetaPixel</a></span>
+            <span class="source-chip"><a href="https://fstoppers.com/reviews/canon-rf-16-28mm-f28-stm-distortion-dealbreaker-901317?utm_source=fstoppers&amp;utm_medium=RSS&amp;utm_campaign=rss_feed_articles" target="_blank" rel="noopener" onclick="event.stopPropagation()">Fstoppers</a></span>
             
           </div>
           
-          <a class="card-back-cta" href="https://petapixel.com/2026/03/31/apocalyptic-scenes-in-australia-as-the-sky-turn-red/" target="_blank" rel="noopener" onclick="event.stopPropagation()">
+          <a class="card-back-cta" href="https://fstoppers.com/reviews/canon-rf-16-28mm-f28-stm-distortion-dealbreaker-901317?utm_source=fstoppers&amp;utm_medium=RSS&amp;utm_campaign=rss_feed_articles" target="_blank" rel="noopener" onclick="event.stopPropagation()">
+            Lire l'article complet &#8599;
+          </a>
+        </div>
+      </div>
+    </div>
+    
+    
+    
+    <div class="flip-wrap " onclick="flipCard(this)">
+      <div class="flip-inner">
+        <!-- FRONT -->
+        <div class="card-front">
+          <div class="card-img-wrap">
+            
+            <img class="card-img" src="https://cdn.fstoppers.com/styles/16_9_max_650/s3/lead/2026/03/thumbnail_116.jpg.webp?itok=HdzGwXRu" alt="" loading="lazy"
+                 onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+            <div class="card-placeholder" style="background:linear-gradient(135deg, #1a1a1a 0%, #2d1515 50%, #4a0000 100%);display:none">▶</div>
+            
+          </div>
+          <div class="card-front-body">
+            <div class="card-eyebrow">
+              Fstoppers
+              &nbsp;·&nbsp;il y a 4h
+            </div>
+            <h3 class="card-title">Why the Best Portrait Photographers Specialize in One Thing and Ignore Everything Else</h3>
+            <div class="card-flip-hint">Appuyer pour résumé &#8594;</div>
+          </div>
+        </div>
+        <!-- BACK -->
+        <div class="card-back">
+          <div class="card-back-header">Résumé</div>
+          <div class="card-back-title">Why the Best Portrait Photographers Specialize in One Thing and Ignore Everything Else</div>
+          <p class="card-back-summary">Choosing a specialty in portrait photography isn&#39;t just a stylistic preference. It&#39;s a business decision. The photographers who build sustainable careers aren&#39;t necessarily the most technically gifted; they&#39;re the ones who commit to a recognizable style and understand the world around their images, not just the camera settings. [&lt;a href=&#34;https://fstoppers.com/portraits/why-best-portrait-photographers-specialize-one-th</p>
+          <div class="card-sources">
+            
+            <span class="source-chip"><a href="https://fstoppers.com/portraits/why-best-portrait-photographers-specialize-one-thing-and-ignore-everything-else-901316?utm_source=fstoppers&amp;utm_medium=RSS&amp;utm_campaign=rss_feed_articles" target="_blank" rel="noopener" onclick="event.stopPropagation()">Fstoppers</a></span>
+            
+          </div>
+          
+          <a class="card-back-cta" href="https://fstoppers.com/portraits/why-best-portrait-photographers-specialize-one-thing-and-ignore-everything-else-901316?utm_source=fstoppers&amp;utm_medium=RSS&amp;utm_campaign=rss_feed_articles" target="_blank" rel="noopener" onclick="event.stopPropagation()">
+            Lire l'article complet &#8599;
+          </a>
+        </div>
+      </div>
+    </div>
+    
+    
+    
+    <div class="flip-wrap " onclick="flipCard(this)">
+      <div class="flip-inner">
+        <!-- FRONT -->
+        <div class="card-front">
+          <div class="card-img-wrap">
+            
+            <img class="card-img" src="https://cdn.fstoppers.com/styles/16_9_max_650/s3/lead/2026/03/thumbnail_115.jpg.webp?itok=MxH-Uls-" alt="" loading="lazy"
+                 onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+            <div class="card-placeholder" style="background:linear-gradient(135deg, #1a1a1a 0%, #2d1515 50%, #4a0000 100%);display:none">▶</div>
+            
+          </div>
+          <div class="card-front-body">
+            <div class="card-eyebrow">
+              Fstoppers
+              &nbsp;·&nbsp;il y a 6h
+            </div>
+            <h3 class="card-title">AI Fake Real Estate Photos Are Fooling Buyers and Breaking California Law</h3>
+            <div class="card-flip-hint">Appuyer pour résumé &#8594;</div>
+          </div>
+        </div>
+        <!-- BACK -->
+        <div class="card-back">
+          <div class="card-back-header">Résumé</div>
+          <div class="card-back-title">AI Fake Real Estate Photos Are Fooling Buyers and Breaking California Law</div>
+          <p class="card-back-summary">AI-generated real estate listing photos are showing up on major property websites, and buyers have no way to tell they&#39;re fake. In California, a law requiring disclosure already exists, and agents are still ignoring it.&amp;nbsp; 
+[&lt;a href=&#34;https://fstoppers.com/artificial-intelligence/ai-fake-real-estate-photos-are-fooling-buyers-and-breaking-california-law-901315?utm_source=fstoppers&amp;amp;utm_medium=RSS&amp;amp;utm_campaign</p>
+          <div class="card-sources">
+            
+            <span class="source-chip"><a href="https://fstoppers.com/artificial-intelligence/ai-fake-real-estate-photos-are-fooling-buyers-and-breaking-california-law-901315?utm_source=fstoppers&amp;utm_medium=RSS&amp;utm_campaign=rss_feed_articles" target="_blank" rel="noopener" onclick="event.stopPropagation()">Fstoppers</a></span>
+            
+          </div>
+          
+          <a class="card-back-cta" href="https://fstoppers.com/artificial-intelligence/ai-fake-real-estate-photos-are-fooling-buyers-and-breaking-california-law-901315?utm_source=fstoppers&amp;utm_medium=RSS&amp;utm_campaign=rss_feed_articles" target="_blank" rel="noopener" onclick="event.stopPropagation()">
+            Lire l'article complet &#8599;
+          </a>
+        </div>
+      </div>
+    </div>
+    
+    
+    
+    <div class="flip-wrap " onclick="flipCard(this)">
+      <div class="flip-inner">
+        <!-- FRONT -->
+        <div class="card-front">
+          <div class="card-img-wrap">
+            
+            <img class="card-img" src="https://cdn.fstoppers.com/styles/16_9_max_650/s3/lead/2026/03/thumbnail_114.jpg.webp?itok=T58hIcrm" alt="" loading="lazy"
+                 onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+            <div class="card-placeholder" style="background:linear-gradient(135deg, #1a1a1a 0%, #2d1515 50%, #4a0000 100%);display:none">▶</div>
+            
+          </div>
+          <div class="card-front-body">
+            <div class="card-eyebrow">
+              Fstoppers
+              &nbsp;·&nbsp;il y a 8h
+            </div>
+            <h3 class="card-title">Old School vs. New School: How Generations Actually Differ as Photographers</h3>
+            <div class="card-flip-hint">Appuyer pour résumé &#8594;</div>
+          </div>
+        </div>
+        <!-- BACK -->
+        <div class="card-back">
+          <div class="card-back-header">Résumé</div>
+          <div class="card-back-title">Old School vs. New School: How Generations Actually Differ as Photographers</div>
+          <p class="card-back-summary">Shooting film in an era of instant digital feedback isn&#39;t a step backward; it&#39;s a deliberate choice that exposes real differences in how generations approach the craft. Understanding those differences can sharpen how you think about your own photography, regardless of which tools you use.&amp;nbsp; 
+[&lt;a href=&#34;https://fstoppers.com/historical/old-school-vs-new-school-how-generations-actually-differ-photographers-901314?utm_source=fstoppe</p>
+          <div class="card-sources">
+            
+            <span class="source-chip"><a href="https://fstoppers.com/historical/old-school-vs-new-school-how-generations-actually-differ-photographers-901314?utm_source=fstoppers&amp;utm_medium=RSS&amp;utm_campaign=rss_feed_articles" target="_blank" rel="noopener" onclick="event.stopPropagation()">Fstoppers</a></span>
+            
+          </div>
+          
+          <a class="card-back-cta" href="https://fstoppers.com/historical/old-school-vs-new-school-how-generations-actually-differ-photographers-901314?utm_source=fstoppers&amp;utm_medium=RSS&amp;utm_campaign=rss_feed_articles" target="_blank" rel="noopener" onclick="event.stopPropagation()">
             Lire l'article complet &#8599;
           </a>
         </div>
@@ -1096,7 +2542,7 @@ Visit https://podnews.net/update/vox-media-versant-rumour for the story links in
       <h2 class="section-title" style="color:#30d158">Social Media</h2>
     </div>
     <div style="display:flex;align-items:center;gap:1rem">
-      <span class="section-count">5 articles</span>
+      <span class="section-count">6 articles</span>
       <div class="section-arrows">
         <button class="arrow-btn" onclick="scrollRow('social-media', -1)" aria-label="Précédent">&#8592;</button>
         <button class="arrow-btn" onclick="scrollRow('social-media', 1)" aria-label="Suivant">&#8594;</button>
@@ -1161,7 +2607,7 @@ Visit https://podnews.net/update/vox-media-versant-rumour for the story links in
           <div class="card-front-body">
             <div class="card-eyebrow">
               Social Media Examiner
-              &nbsp;·&nbsp;il y a 6h
+              &nbsp;·&nbsp;il y a 7h
             </div>
             <h3 class="card-title">How to Gain Superpowers With AI</h3>
             <div class="card-flip-hint">Appuyer pour résumé &#8594;</div>
@@ -1297,6 +2743,46 @@ The post What are the latest Hootsuite product features? [Feb 2026] appeared fir
           </div>
           
           <a class="card-back-cta" href="https://blog.hootsuite.com/new-features-feb-2026/" target="_blank" rel="noopener" onclick="event.stopPropagation()">
+            Lire l'article complet &#8599;
+          </a>
+        </div>
+      </div>
+    </div>
+    
+    
+    
+    <div class="flip-wrap " onclick="flipCard(this)">
+      <div class="flip-inner">
+        <!-- FRONT -->
+        <div class="card-front">
+          <div class="card-img-wrap">
+            
+            <img class="card-img" src="https://wearesocial.com/wp-content/uploads/2026/03/Monday-mashup-banner-767-375x188.jpg" alt="" loading="lazy"
+                 onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+            <div class="card-placeholder" style="background:linear-gradient(135deg, #0a1a0f 0%, #0d2b16 50%, #0f3d1e 100%);display:none">◈</div>
+            
+          </div>
+          <div class="card-front-body">
+            <div class="card-eyebrow">
+              We Are Social
+              &nbsp;·&nbsp;hier
+            </div>
+            <h3 class="card-title">We Are Social’s Monday Mashup #767</h3>
+            <div class="card-flip-hint">Appuyer pour résumé &#8594;</div>
+          </div>
+        </div>
+        <!-- BACK -->
+        <div class="card-back">
+          <div class="card-back-header">Résumé</div>
+          <div class="card-back-title">We Are Social’s Monday Mashup #767</div>
+          <p class="card-back-summary">This week, TikTok and Snapchat add AI video updates while Reddit tries to combat AI bots in its platform. And, Instagram is finally letting users rearrange their carousel posts. The post We Are Social’s Monday Mashup #767 appeared first on We Are Social Global .</p>
+          <div class="card-sources">
+            
+            <span class="source-chip"><a href="https://wearesocial.com/blog/2026/03/we-are-socials-monday-mashup-767/" target="_blank" rel="noopener" onclick="event.stopPropagation()">We Are Social</a></span>
+            
+          </div>
+          
+          <a class="card-back-cta" href="https://wearesocial.com/blog/2026/03/we-are-socials-monday-mashup-767/" target="_blank" rel="noopener" onclick="event.stopPropagation()">
             Lire l'article complet &#8599;
           </a>
         </div>
@@ -1604,7 +3090,7 @@ The post What are the latest Hootsuite product features? [Feb 2026] appeared fir
           <div class="card-front-body">
             <div class="card-eyebrow">
               WAN-IFRA
-              &nbsp;·&nbsp;il y a 21h
+              &nbsp;·&nbsp;il y a 22h
             </div>
             <h3 class="card-title">Print and distribution events unite: WAN-IFRA announces historic co-location of World Printers Summit and DistriPress Congress in Rotterdam</h3>
             <div class="card-flip-hint">Appuyer pour résumé &#8594;</div>
@@ -1877,7 +3363,7 @@ The post Panasonic shrinks a 15x zoom camera down to pocket size appeared first 
           <div class="card-front-body">
             <div class="card-eyebrow">
               Videomaker
-              &nbsp;·&nbsp;il y a 15h
+              &nbsp;·&nbsp;il y a 16h
             </div>
             <h3 class="card-title">Protected: How Adobe Stock AI Studio solves the common issues with stock media</h3>
             <div class="card-flip-hint">Appuyer pour résumé &#8594;</div>
@@ -1916,7 +3402,7 @@ The post Protected: How Adobe Stock AI Studio solves the common issues with stoc
           <div class="card-front-body">
             <div class="card-eyebrow">
               Videomaker
-              &nbsp;·&nbsp;il y a 15h
+              &nbsp;·&nbsp;il y a 16h
             </div>
             <h3 class="card-title">Protected: AI Studio makes Adobe Stock more than just a video stock library</h3>
             <div class="card-flip-hint">Appuyer pour résumé &#8594;</div>
@@ -1955,7 +3441,7 @@ The post Protected: AI Studio makes Adobe Stock more than just a video stock lib
           <div class="card-front-body">
             <div class="card-eyebrow">
               Videomaker
-              &nbsp;·&nbsp;il y a 15h
+              &nbsp;·&nbsp;il y a 16h
             </div>
             <h3 class="card-title">Protected: Adobe Stock’s AI Studio photo features pioneer a new era for creative workflows</h3>
             <div class="card-flip-hint">Appuyer pour résumé &#8594;</div>
@@ -1994,7 +3480,7 @@ The post Protected: Adobe Stock&amp;#8217;s AI Studio photo features pioneer a n
           <div class="card-front-body">
             <div class="card-eyebrow">
               Fstoppers
-              &nbsp;·&nbsp;il y a 19h
+              &nbsp;·&nbsp;il y a 20h
             </div>
             <h3 class="card-title">Behind Every Choice Is a Compromise — and Creativity Pays the Price</h3>
             <div class="card-flip-hint">Appuyer pour résumé &#8594;</div>
@@ -2024,7 +3510,7 @@ The post Protected: Adobe Stock&amp;#8217;s AI Studio photo features pioneer a n
 
 </main>
 
-<footer>Veille Éditoriale &mdash; 124 articles analysés &mdash; 31/03/2026 à 16h46</footer>
+<footer>Veille Éditoriale &mdash; 126 articles analysés &mdash; 31/03/2026 à 17h04</footer>
 
 <script>
 function flipCard(el) {
