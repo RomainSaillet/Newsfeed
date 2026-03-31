@@ -268,46 +268,48 @@ def _call(client: anthropic.Anthropic, model: str, prompt: str, max_tokens: int)
 
 # ─── Claude AI processing ────────────────────────────────────────────────────
 
-def translate_and_score(client: anthropic.Anthropic, articles: list[Article]) -> None:
-    """Haiku — traduit et score tous les nouveaux articles en un seul appel."""
-    if not articles:
-        return
-
-    lines = []
-    for i, a in enumerate(articles):
-        lines.append(
-            f"[{i}] {a.title}\n"
-            f"    {a.summary[:250] if a.summary else ''}"
-        )
-
-    prompt = f"""Veille éditoriale pour directeur de contenu. {len(articles)} articles RSS.
+def _translate_batch(client: anthropic.Anthropic, batch: list[Article]) -> None:
+    """Traduit un lot de max 20 articles (anglais, français, chinois → français)."""
+    lines = [
+        f"[{i}] {a.title}\n    {a.summary[:200] if a.summary else ''}"
+        for i, a in enumerate(batch)
+    ]
+    prompt = f"""Veille éditoriale. {len(batch)} articles (anglais, français, chinois).
+Traduis TOUT en français, y compris le contenu chinois.
 
 {chr(10).join(lines)}
 
-Pour chaque [N] retourne un JSON :
+Pour chaque [N] :
 - "i": N
-- "t": titre traduit en français (naturel, percutant)
-- "r": résumé 2 phrases en français
-- "s": score 1-10 (importance stratégique pour un pro du contenu)
+- "t": titre en français (percutant, naturel)
+- "r": résumé 2-3 phrases en français, informatif
+- "s": score 1-10 (valeur stratégique pour un directeur de contenu)
 
-JSON uniquement, tableau, pas de markdown.
+JSON uniquement, tableau.
 [{{"i":0,"t":"...","r":"...","s":7}}]"""
-
     try:
-        raw  = _call(client, MODEL_CHEAP, prompt, max_tokens=6000)
+        raw  = _call(client, MODEL_CHEAP, prompt, max_tokens=4000)
         data = json.loads(_clean_json(raw))
         for item in data:
             idx = item.get("i", -1)
-            if 0 <= idx < len(articles):
-                articles[idx].translated_title   = item.get("t", articles[idx].title)
-                articles[idx].translated_summary = item.get("r", articles[idx].summary)
-                articles[idx].importance_score   = float(item.get("s", 5))
+            if 0 <= idx < len(batch):
+                batch[idx].translated_title   = item.get("t", batch[idx].title)
+                batch[idx].translated_summary = item.get("r", batch[idx].summary)
+                batch[idx].importance_score   = float(item.get("s", 5))
     except Exception as e:
-        log.error(f"Traduction Haiku: {e}")
-        for a in articles:
+        log.error(f"Traduction batch: {e}")
+        for a in batch:
             a.translated_title   = a.title
             a.translated_summary = a.summary
             a.importance_score   = 5.0
+
+
+def translate_and_score(client: anthropic.Anthropic, articles: list[Article]) -> None:
+    """Haiku — traduit par lots de 20 pour éviter la troncature JSON."""
+    if not articles:
+        return
+    for start in range(0, len(articles), 20):
+        _translate_batch(client, articles[start:start + 20])
 
 
 def cluster_articles(client: anthropic.Anthropic, articles: list[Article]) -> list[dict]:
@@ -447,19 +449,19 @@ HTML_TEMPLATE = """<!DOCTYPE html>
   <title>Veille Éditoriale</title>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
     :root {
-      --bg:      #f5f5f7;
-      --card:    #ffffff;
-      --text:    #1d1d1f;
-      --text-2:  #6e6e73;
-      --text-3:  #86868b;
-      --border:  rgba(0,0,0,0.08);
-      --accent:  #0071e3;
-      --radius:  16px;
-      --font:    -apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", Arial, sans-serif;
+      --bg:     #f5f5f7;
+      --card:   #ffffff;
+      --text:   #1d1d1f;
+      --text-2: #6e6e73;
+      --text-3: #86868b;
+      --border: rgba(0,0,0,0.08);
+      --accent: #0071e3;
+      --radius: 16px;
+      --card-w: 280px;
+      --card-h: 400px;
+      --font:   -apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", Arial, sans-serif;
     }
-
     body {
       font-family: var(--font);
       background: var(--bg);
@@ -477,7 +479,7 @@ HTML_TEMPLATE = """<!DOCTYPE html>
       border-bottom: 1px solid var(--border);
     }
     .header-inner {
-      max-width: 1280px; margin: 0 auto; padding: 0 2rem;
+      max-width: 1400px; margin: 0 auto; padding: 0 2rem;
       height: 52px; display: flex; align-items: center; justify-content: space-between;
     }
     .logo { font-size: 1rem; font-weight: 600; letter-spacing: -0.01em; color: var(--text); }
@@ -491,7 +493,7 @@ HTML_TEMPLATE = """<!DOCTYPE html>
       border-bottom: 1px solid var(--border);
     }
     .nav-inner {
-      max-width: 1280px; margin: 0 auto; padding: 0 2rem;
+      max-width: 1400px; margin: 0 auto; padding: 0 2rem;
       display: flex; overflow-x: auto; scrollbar-width: none;
     }
     .nav-inner::-webkit-scrollbar { display: none; }
@@ -507,7 +509,7 @@ HTML_TEMPLATE = """<!DOCTYPE html>
     /* ── Ticker ── */
     .ticker { background: #1d1d1f; }
     .ticker-inner {
-      max-width: 1280px; margin: 0 auto; padding: 0.65rem 2rem;
+      max-width: 1400px; margin: 0 auto; padding: 0.65rem 2rem;
       display: flex; align-items: center; gap: 1.5rem;
     }
     .ticker-label {
@@ -526,104 +528,170 @@ HTML_TEMPLATE = """<!DOCTYPE html>
     .ticker-score { font-size: 0.62rem; font-weight: 600; color: rgba(255,255,255,0.3); }
 
     /* ── Main ── */
-    main { max-width: 1280px; margin: 0 auto; padding: 3rem 2rem 5rem; }
+    main { max-width: 1400px; margin: 0 auto; padding: 3rem 0 5rem; }
 
     /* ── Section ── */
-    .section { margin-bottom: 4.5rem; }
+    .section { margin-bottom: 4rem; }
     .section-header {
-      display: flex; align-items: baseline; justify-content: space-between;
-      margin-bottom: 1.5rem;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 2rem; margin-bottom: 1.25rem;
     }
-    .section-title { font-size: 1.4rem; font-weight: 700; letter-spacing: -0.03em; }
+    .section-title-wrap { display: flex; align-items: center; gap: 0.6rem; }
+    .section-icon { font-size: 1.1rem; }
+    .section-title { font-size: 1.3rem; font-weight: 700; letter-spacing: -0.03em; }
     .section-count { font-size: 0.75rem; color: var(--text-3); }
-
-    /* ── Grid ── */
-    .cards-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 1.25rem;
+    .section-arrows { display: flex; gap: 0.4rem; }
+    .arrow-btn {
+      width: 32px; height: 32px; border-radius: 50%;
+      background: var(--card); border: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; font-size: 0.9rem; color: var(--text-2);
+      transition: background 0.15s, color 0.15s;
     }
-    .card-featured { grid-column: span 2; }
-    .card-featured .card-img-wrap { aspect-ratio: 16/8; }
-    .card-featured .card-title { font-size: 1.3rem; -webkit-line-clamp: 2; }
-    .card-featured .card-summary { -webkit-line-clamp: 4; }
+    .arrow-btn:hover { background: var(--accent); color: white; border-color: var(--accent); }
 
-    /* ── Card ── */
-    .card {
-      background: var(--card); border-radius: var(--radius);
-      overflow: hidden; display: flex; flex-direction: column;
-      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    /* ── Cards row (horizontal scroll) ── */
+    .cards-row {
+      display: flex; gap: 1rem;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      scroll-behavior: smooth;
+      scrollbar-width: none;
+      padding: 0.5rem 2rem 1.5rem;
+      -webkit-overflow-scrolling: touch;
     }
-    .card:hover { transform: translateY(-3px); box-shadow: 0 12px 40px rgba(0,0,0,0.11); }
+    .cards-row::-webkit-scrollbar { display: none; }
 
+    /* ── Flip card ── */
+    .flip-wrap {
+      flex: 0 0 var(--card-w);
+      height: var(--card-h);
+      perspective: 1200px;
+      cursor: pointer;
+      scroll-snap-align: start;
+    }
+    .flip-wrap.wide { flex: 0 0 calc(var(--card-w) * 1.45); }
+
+    .flip-inner {
+      width: 100%; height: 100%;
+      position: relative;
+      transform-style: preserve-3d;
+      transition: transform 0.55s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .flip-wrap.flipped .flip-inner { transform: rotateY(180deg); }
+
+    .card-front, .card-back {
+      position: absolute; inset: 0;
+      backface-visibility: hidden;
+      -webkit-backface-visibility: hidden;
+      border-radius: var(--radius);
+      overflow: hidden;
+    }
+    .card-front {
+      background: var(--card);
+      display: flex; flex-direction: column;
+      box-shadow: 0 2px 16px rgba(0,0,0,0.07);
+      transition: box-shadow 0.2s;
+    }
+    .flip-wrap:hover .card-front { box-shadow: 0 8px 32px rgba(0,0,0,0.13); }
+    .card-back {
+      transform: rotateY(180deg);
+      background: var(--card);
+      display: flex; flex-direction: column;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.13);
+      padding: 1.25rem;
+    }
+
+    /* ── Front face ── */
     .card-img-wrap {
-      width: 100%; aspect-ratio: 16/9; overflow: hidden; flex-shrink: 0; position: relative;
+      width: 100%; flex: 0 0 55%; overflow: hidden; position: relative;
     }
+    .flip-wrap.wide .card-img-wrap { flex: 0 0 60%; }
     .card-img {
       width: 100%; height: 100%; object-fit: cover;
       transition: transform 0.4s ease;
     }
-    .card:hover .card-img { transform: scale(1.04); }
+    .flip-wrap:hover .card-img { transform: scale(1.04); }
     .card-placeholder {
       width: 100%; height: 100%;
       display: flex; align-items: center; justify-content: center;
-      font-size: 2.2rem; opacity: 0.5;
+      font-size: 2.4rem; opacity: 0.6;
     }
-
-    .card-body {
-      padding: 1.1rem 1.25rem 1.35rem;
-      flex: 1; display: flex; flex-direction: column; gap: 0.4rem;
+    .card-front-body {
+      flex: 1; padding: 0.9rem 1rem 1rem;
+      display: flex; flex-direction: column; gap: 0.3rem; overflow: hidden;
     }
     .card-eyebrow {
-      font-size: 0.68rem; font-weight: 600;
-      letter-spacing: 0.05em; text-transform: uppercase; color: var(--accent);
+      font-size: 0.65rem; font-weight: 600; letter-spacing: 0.05em;
+      text-transform: uppercase; color: var(--accent);
     }
     .card-title {
-      font-size: 1rem; font-weight: 600; line-height: 1.35;
+      font-size: 0.92rem; font-weight: 600; line-height: 1.35;
       letter-spacing: -0.015em; color: var(--text);
       display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;
     }
-    .card-summary {
-      font-size: 0.82rem; color: var(--text-2); line-height: 1.6; margin-top: 0.1rem;
-      display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;
+    .flip-wrap.wide .card-title { font-size: 1.1rem; -webkit-line-clamp: 4; }
+    .card-flip-hint {
+      margin-top: auto; font-size: 0.65rem; color: var(--text-3);
+    }
+
+    /* ── Back face ── */
+    .card-back-header {
+      font-size: 0.7rem; font-weight: 700; letter-spacing: 0.06em;
+      text-transform: uppercase; color: var(--accent); margin-bottom: 0.4rem;
+    }
+    .card-back-title {
+      font-size: 0.88rem; font-weight: 600; line-height: 1.3;
+      letter-spacing: -0.01em; margin-bottom: 0.6rem;
+      display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+    }
+    .card-back-summary {
+      font-size: 0.79rem; color: var(--text-2); line-height: 1.6;
+      flex: 1; overflow: hidden;
+      display: -webkit-box; -webkit-line-clamp: 6; -webkit-box-orient: vertical;
     }
     .card-sources {
-      display: flex; flex-wrap: wrap; gap: 0.3rem; margin-top: auto; padding-top: 0.85rem;
+      display: flex; flex-wrap: wrap; gap: 0.3rem; margin-top: 0.7rem;
     }
     .source-chip {
-      font-size: 0.68rem; font-weight: 500; background: var(--bg);
-      border-radius: 20px; padding: 0.2rem 0.65rem; color: var(--text-2);
+      font-size: 0.65rem; font-weight: 500; background: var(--bg);
+      border-radius: 20px; padding: 0.18rem 0.55rem; color: var(--text-2);
     }
     .source-chip a { color: inherit; text-decoration: none; }
     .source-chip a:hover { color: var(--accent); }
+    .card-back-cta {
+      margin-top: 0.65rem;
+      font-size: 0.75rem; font-weight: 600; color: var(--accent);
+      text-decoration: none; display: inline-flex; align-items: center; gap: 0.2rem;
+    }
+    .card-back-cta:hover { text-decoration: underline; }
 
     .contradiction {
-      margin-top: 0.75rem; background: #fff8ed;
-      border-left: 2px solid #f5a623; border-radius: 0 8px 8px 0;
-      padding: 0.55rem 0.75rem;
+      margin-top: 0.6rem; background: #fff8ed;
+      border-left: 2px solid #f5a623; border-radius: 0 6px 6px 0;
+      padding: 0.45rem 0.6rem;
     }
     .contradiction-label {
-      font-size: 0.6rem; font-weight: 700; text-transform: uppercase;
-      letter-spacing: 0.08em; color: #c17f00; margin-bottom: 0.2rem;
+      font-size: 0.58rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.08em; color: #c17f00; margin-bottom: 0.15rem;
     }
-    .contradiction-text { font-size: 0.78rem; color: #7a5200; line-height: 1.5; }
+    .contradiction-text {
+      font-size: 0.72rem; color: #7a5200; line-height: 1.5;
+      display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;
+    }
 
     /* ── Footer ── */
     footer {
-      border-top: 1px solid var(--border); padding: 2.5rem 2rem;
+      border-top: 1px solid var(--border); padding: 2rem;
       text-align: center; color: var(--text-3); font-size: 0.75rem;
-      max-width: 1280px; margin: 0 auto;
+      max-width: 1400px; margin: 0 auto;
     }
 
-    @media (max-width: 960px) {
-      .cards-grid { grid-template-columns: repeat(2, 1fr); }
-      .card-featured { grid-column: span 2; }
-    }
     @media (max-width: 600px) {
-      .cards-grid { grid-template-columns: 1fr; }
-      .card-featured { grid-column: span 1; }
-      main { padding: 2rem 1rem; }
+      :root { --card-w: 240px; --card-h: 370px; }
+      .section-header, .cards-row { padding-left: 1rem; padding-right: 1rem; }
       .header-inner, .nav-inner, .ticker-inner { padding: 0 1rem; }
+      main { padding-top: 2rem; }
     }
   </style>
 </head>
@@ -666,43 +734,64 @@ HTML_TEMPLATE = """<!DOCTYPE html>
 {% if cat_data.clusters %}
 <section class="section" id="{{ category | slugify }}">
   <div class="section-header">
-    <h2 class="section-title">{{ category }}</h2>
-    <span class="section-count">{{ cat_data.clusters | length }} sujet{% if cat_data.clusters | length > 1 %}s{% endif %}</span>
+    <div class="section-title-wrap">
+      <span class="section-icon">{{ cat_data.icon }}</span>
+      <h2 class="section-title" style="color:{{ cat_data.color }}">{{ category }}</h2>
+    </div>
+    <div style="display:flex;align-items:center;gap:1rem">
+      <span class="section-count">{{ cat_data.clusters | length }} article{% if cat_data.clusters | length > 1 %}s{% endif %}</span>
+      <div class="section-arrows">
+        <button class="arrow-btn" onclick="scrollRow('{{ category | slugify }}', -1)" aria-label="Précédent">&#8592;</button>
+        <button class="arrow-btn" onclick="scrollRow('{{ category | slugify }}', 1)" aria-label="Suivant">&#8594;</button>
+      </div>
+    </div>
   </div>
-  <div class="cards-grid">
+  <div class="cards-row" id="row-{{ category | slugify }}">
     {% for cluster in cat_data.clusters %}
     {% set best_img = namespace(url='') %}
     {% for a in cluster.articles %}{% if a.image_url and not best_img.url %}{% set best_img.url = a.image_url %}{% endif %}{% endfor %}
-    <div class="card {% if loop.first %}card-featured{% endif %}">
-      <div class="card-img-wrap">
-        {% if best_img.url %}
-        <img class="card-img" src="{{ best_img.url }}" alt="" loading="lazy"
-             onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
-        <div class="card-placeholder" style="background:{{ cat_data.gradient }};display:none">{{ cat_data.icon }}</div>
-        {% else %}
-        <div class="card-placeholder" style="background:{{ cat_data.gradient }}">{{ cat_data.icon }}</div>
-        {% endif %}
-      </div>
-      <div class="card-body">
-        <div class="card-eyebrow">
-          {% if cluster.articles | length == 1 %}{{ cluster.articles[0].source }}{% else %}{{ cluster.articles | length }} sources{% endif %}
-          &nbsp;·&nbsp;{{ cluster.articles[0].published | timeago }}
+    <div class="flip-wrap {% if loop.first %}wide{% endif %}" onclick="flipCard(this)">
+      <div class="flip-inner">
+        <!-- FRONT -->
+        <div class="card-front">
+          <div class="card-img-wrap">
+            {% if best_img.url %}
+            <img class="card-img" src="{{ best_img.url }}" alt="" loading="lazy"
+                 onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+            <div class="card-placeholder" style="background:{{ cat_data.gradient }};display:none">{{ cat_data.icon }}</div>
+            {% else %}
+            <div class="card-placeholder" style="background:{{ cat_data.gradient }}">{{ cat_data.icon }}</div>
+            {% endif %}
+          </div>
+          <div class="card-front-body">
+            <div class="card-eyebrow">
+              {% if cluster.articles | length == 1 %}{{ cluster.articles[0].source }}{% else %}{{ cluster.articles | length }} sources{% endif %}
+              &nbsp;·&nbsp;{{ cluster.articles[0].published | timeago }}
+            </div>
+            <h3 class="card-title">{{ cluster.theme_fr }}</h3>
+            <div class="card-flip-hint">Appuyer pour résumé &#8594;</div>
+          </div>
         </div>
-        <h3 class="card-title">{{ cluster.theme_fr }}</h3>
-        {% if cluster.summary_fr %}<p class="card-summary">{{ cluster.summary_fr }}</p>{% endif %}
-        {% if cluster.articles | length > 1 %}
-        <div class="card-sources">
-          {% for a in cluster.articles %}
-          <span class="source-chip"><a href="{{ a.url }}" target="_blank" rel="noopener">{{ a.source }}</a></span>
-          {% endfor %}
+        <!-- BACK -->
+        <div class="card-back">
+          <div class="card-back-header">Résumé</div>
+          <div class="card-back-title">{{ cluster.theme_fr }}</div>
+          <p class="card-back-summary">{{ cluster.summary_fr if cluster.summary_fr else (cluster.articles[0].translated_summary if cluster.articles[0].translated_summary else cluster.articles[0].summary) }}</p>
+          <div class="card-sources">
+            {% for a in cluster.articles %}
+            <span class="source-chip"><a href="{{ a.url }}" target="_blank" rel="noopener" onclick="event.stopPropagation()">{{ a.source }}</a></span>
+            {% endfor %}
+          </div>
+          {% if cluster.contradictions %}
+          <div class="contradiction">
+            <div class="contradiction-label">Points de vue divergents</div>
+            <p class="contradiction-text">{{ cluster.contradictions }}</p>
+          </div>
+          {% endif %}
+          <a class="card-back-cta" href="{{ cluster.articles[0].url }}" target="_blank" rel="noopener" onclick="event.stopPropagation()">
+            Lire l'article complet &#8599;
+          </a>
         </div>
-        {% endif %}
-        {% if cluster.contradictions %}
-        <div class="contradiction">
-          <div class="contradiction-label">Points de vue divergents</div>
-          <p class="contradiction-text">{{ cluster.contradictions }}</p>
-        </div>
-        {% endif %}
       </div>
     </div>
     {% endfor %}
@@ -714,6 +803,23 @@ HTML_TEMPLATE = """<!DOCTYPE html>
 
 <footer>Veille Éditoriale &mdash; {{ total_articles }} articles analysés &mdash; {{ generated_at }}</footer>
 
+<script>
+function flipCard(el) {
+  const row = el.closest('.cards-row');
+  if (row) {
+    row.querySelectorAll('.flip-wrap.flipped').forEach(function(c) {
+      if (c !== el) c.classList.remove('flipped');
+    });
+  }
+  el.classList.toggle('flipped');
+}
+function scrollRow(id, dir) {
+  var row = document.getElementById('row-' + id);
+  if (!row) return;
+  var cardW = (row.querySelector('.flip-wrap') || {offsetWidth: 290}).offsetWidth;
+  row.scrollBy({ left: dir * (cardW + 16) * 3, behavior: 'smooth' });
+}
+</script>
 </body>
 </html>"""
 
@@ -741,8 +847,10 @@ def _slugify(s: str) -> str:
 
 def generate_html(clusters: list[Cluster], top_articles: list[Article], config: dict) -> str:
     categories_with_clusters = {}
+    top_n = config.get("settings", {}).get("top_stories_count", 10)
     for cat_name, cat_data in config["categories"].items():
         cat_clusters = [c for c in clusters if c.category == cat_name]
+        cat_clusters = sorted(cat_clusters, key=lambda c: c.importance_score, reverse=True)[:top_n]
         if cat_clusters:
             categories_with_clusters[cat_name] = {
                 "clusters":  cat_clusters,
