@@ -30,7 +30,9 @@
         {"name": "Think with Google",        "url": "https://www.thinkwithgoogle.com/rss/"},
         {"name": "Econsultancy",             "url": "https://www.econsultancy.com/blog/rss"},
         {"name": "Le Blog du Communicant",   "url": "https://www.leblogducommunicant2-0.com/feed/"},
-        {"name": "Brian Solis",              "url": "https://briansolis.com/feed/"}
+        {"name": "Brian Solis",              "url": "https://briansolis.com/feed/"},
+        {"name": "36Kr (36氪)",              "url": "https://36kr.com/feed"},
+        {"name": "Woshipm (人人都是产品经理)", "url": "https://www.woshipm.com/feed"}
       ]
     },
     "Marketing Digital & SEO": {
