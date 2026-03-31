@@ -355,10 +355,10 @@ def _cluster_batch(client: anthropic.Anthropic, batch: list[Article], offset: in
 
 Regroupe par THÈME éditorial (même sujet = 1 cluster, toutes langues confondues).
 Articles sans lien clair = cluster de 1.
-"tf" = titre français accrocheur. Indices globaux (commencent à {offset}).
+"tf" = titre OBLIGATOIREMENT en français, accrocheur, naturel. Indices globaux (commencent à {offset}).
 
 JSON uniquement :
-[{{"tf":"Titre français","te":"english theme","idx":[{offset}],"imp":8}}]"""
+[{{"tf":"Titre en français","te":"english theme","idx":[{offset}],"imp":8}}]"""
     try:
         raw = _call(client, MODEL_CHEAP, prompt, max_tokens=4000)
         return json.loads(_clean_json(raw))
@@ -644,7 +644,7 @@ HTML_TEMPLATE = """<!DOCTYPE html>
       overflow: hidden; cursor: pointer; background: #2a2a2d;
     }
     .hero-flip-wrap.hero-card--featured { grid-row: span 2; min-height: 460px; }
-    .hero-flip-wrap.hero-card--small { min-height: 200px; }
+    .hero-flip-wrap.hero-card--small { min-height: 320px; }
     /* Élément 3D rotatif */
     .hero-flip-inner {
       width: 100%; height: 100%; min-height: inherit;
@@ -728,7 +728,7 @@ HTML_TEMPLATE = """<!DOCTYPE html>
     @media (max-width: 700px) {
       .hero-grid { grid-template-columns: 1fr; }
       .hero-flip-wrap.hero-card--featured { min-height: 300px; grid-row: span 1; }
-      .hero-flip-wrap.hero-card--small { min-height: 150px; }
+      .hero-flip-wrap.hero-card--small { min-height: 220px; }
     }
 
     /* ── Main ── */
@@ -939,14 +939,14 @@ HTML_TEMPLATE = """<!DOCTYPE html>
                 {% if cluster.articles | length == 1 %}{{ cluster.articles[0].source }}{% else %}{{ cluster.articles | length }} sources{% endif %}
                 <span class="hero-card-score">{{ cluster.importance_score | int }}/10</span>
               </div>
-              <div class="hero-card-title">{{ cluster.theme_fr }}</div>
+              <div class="hero-card-title">{% if cluster.articles | length == 1 and cluster.articles[0].translated_title %}{{ cluster.articles[0].translated_title }}{% else %}{{ cluster.theme_fr }}{% endif %}</div>
               <div class="hero-flip-hint">Appuyer pour résumé &#8594;</div>
             </div>
           </div>
           <!-- BACK -->
           <div class="hero-card-back">
             <div class="hero-back-header">Analyse</div>
-            <div class="hero-back-title">{{ cluster.theme_fr }}</div>
+            <div class="hero-back-title">{% if cluster.articles | length == 1 and cluster.articles[0].translated_title %}{{ cluster.articles[0].translated_title }}{% else %}{{ cluster.theme_fr }}{% endif %}</div>
             <div class="hero-back-summary">{{ cluster.hero_summary if cluster.hero_summary else cluster.summary_fr }}</div>
             <div class="hero-back-sources">
               {% for a in cluster.articles %}
@@ -1004,14 +1004,14 @@ HTML_TEMPLATE = """<!DOCTYPE html>
               {% if cluster.articles | length == 1 %}{{ cluster.articles[0].source }}{% else %}{{ cluster.articles | length }} sources{% endif %}
               &nbsp;·&nbsp;{{ cluster.articles[0].published | timeago }}
             </div>
-            <h3 class="card-title">{{ cluster.theme_fr }}</h3>
+            <h3 class="card-title">{% if cluster.articles | length == 1 and cluster.articles[0].translated_title %}{{ cluster.articles[0].translated_title }}{% else %}{{ cluster.theme_fr }}{% endif %}</h3>
             <div class="card-flip-hint">Appuyer pour résumé &#8594;</div>
           </div>
         </div>
         <!-- BACK -->
         <div class="card-back">
           <div class="card-back-header">Résumé</div>
-          <div class="card-back-title">{{ cluster.theme_fr }}</div>
+          <div class="card-back-title">{% if cluster.articles | length == 1 and cluster.articles[0].translated_title %}{{ cluster.articles[0].translated_title }}{% else %}{{ cluster.theme_fr }}{% endif %}</div>
           <p class="card-back-summary">{{ cluster.summary_fr if cluster.summary_fr else (cluster.articles[0].translated_summary if cluster.articles[0].translated_summary else cluster.articles[0].summary) }}</p>
           <div class="card-sources">
             {% for a in cluster.articles %}
