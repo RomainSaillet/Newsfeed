@@ -11,6 +11,7 @@ import sys
 import time
 import hashlib
 import logging
+import html as html_mod
 from collections import Counter
 from datetime import datetime, timezone, timedelta
 from pathlib import Path
@@ -137,7 +138,9 @@ def fetch_feed(feed_config: dict, category: str, max_age_hours: int) -> list[Art
                 if hasattr(entry, attr):
                     raw_summary = getattr(entry, attr)[:800]
                     break
-            raw_summary = re.sub(r"<[^>]+>", "", raw_summary).strip()
+            raw_summary = re.sub(r"<[^>]+>", " ", raw_summary)   # strip HTML tags
+            raw_summary = html_mod.unescape(raw_summary)           # &amp; → & etc.
+            raw_summary = re.sub(r"\s+", " ", raw_summary).strip() # espaces multiples
 
             image_url = ""
             # 1. media:content
@@ -208,21 +211,34 @@ def fetch_all_feeds(config: dict, cache: dict) -> tuple[list[Article], list[Arti
 
     log.info(f"\nTotal : {len(new_articles)} nouveaux | {len(cached_articles)} depuis le cache")
 
-    # Enrichir les nouveaux articles sans image via og:image
+    # Enrichir les nouveaux articles sans image via og:image / twitter:image
     without = [a for a in new_articles if not a.image_url and a.url]
     if without:
         log.info(f"  Recherche og:image pour {len(without)} articles sans photo...")
-        headers = {"User-Agent": "Mozilla/5.0 (compatible; VeilleEdito/1.0)"}
+        ua_list = [
+            "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+            "Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)",
+            "facebookexternalhit/1.1 (+http://www.facebook.com/externalhit_uatext.php)",
+        ]
+        patterns = [
+            r'<meta[^>]+property=["\']og:image["\'][^>]+content=["\']([^"\']+)["\']',
+            r'<meta[^>]+content=["\']([^"\']+)["\'][^>]+property=["\']og:image["\']',
+            r'<meta[^>]+name=["\']twitter:image["\'][^>]+content=["\']([^"\']+)["\']',
+            r'<meta[^>]+content=["\']([^"\']+)["\'][^>]+name=["\']twitter:image["\']',
+        ]
         for a in without:
-            try:
-                r = requests.get(a.url, headers=headers, timeout=8, allow_redirects=True)
-                m = re.search(r'<meta[^>]+property=["\']og:image["\'][^>]+content=["\']([^"\']+)["\']', r.text)
-                if not m:
-                    m = re.search(r'<meta[^>]+content=["\']([^"\']+)["\'][^>]+property=["\']og:image["\']', r.text)
-                if m and m.group(1).startswith("http"):
-                    a.image_url = m.group(1)
-            except Exception:
-                pass
+            for ua in ua_list:
+                try:
+                    r = requests.get(a.url, headers={"User-Agent": ua}, timeout=8, allow_redirects=True)
+                    for pat in patterns:
+                        m = re.search(pat, r.text)
+                        if m and m.group(1).startswith("http"):
+                            a.image_url = m.group(1)
+                            break
+                    if a.image_url:
+                        break
+                except Exception:
+                    continue
 
     return new_articles, cached_articles
 
