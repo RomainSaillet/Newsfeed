@@ -80,40 +80,53 @@
       grid-template-rows: auto;
       gap: 0.75rem;
     }
-    .hero-card {
-      position: relative; border-radius: 14px; overflow: hidden;
+    /* Conteneur flip (perspective) */
+    .hero-flip-wrap {
+      position: relative; border-radius: 14px;
+      overflow: hidden; cursor: pointer; background: #2a2a2d;
+    }
+    .hero-flip-wrap.hero-card--featured { grid-row: span 2; min-height: 460px; }
+    .hero-flip-wrap.hero-card--small { min-height: 200px; }
+    /* Élément 3D rotatif */
+    .hero-flip-inner {
+      width: 100%; height: 100%; min-height: inherit;
+      position: relative;
+      transform-style: preserve-3d;
+      perspective: 1200px;
+      transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .hero-flip-wrap.flipped .hero-flip-inner { transform: rotateY(180deg); }
+    /* Faces avant / arrière */
+    .hero-card-front, .hero-card-back {
+      position: absolute; inset: 0; border-radius: 14px;
+      backface-visibility: hidden; -webkit-backface-visibility: hidden;
       display: flex; flex-direction: column; justify-content: flex-end;
-      text-decoration: none; background: #2a2a2d;
-      transition: transform 0.2s ease, box-shadow 0.2s ease;
     }
-    .hero-card:hover { transform: scale(1.015); box-shadow: 0 16px 48px rgba(0,0,0,0.5); }
-    .hero-card--featured {
-      grid-row: span 2;
-      min-height: 460px;
+    .hero-card-back {
+      transform: rotateY(180deg);
+      background: #141417;
+      padding: 1.75rem 2rem;
+      justify-content: flex-start;
+      overflow-y: auto;
     }
-    .hero-card--small { min-height: 200px; }
+    /* Éléments face avant */
     .hero-card-bg {
-      position: absolute; inset: 0;
+      position: absolute; inset: 0; border-radius: 14px;
       background-size: cover; background-position: center;
     }
     .hero-card-overlay {
-      position: absolute; inset: 0;
+      position: absolute; inset: 0; border-radius: 14px;
       background: linear-gradient(to top, rgba(0,0,0,0.88) 0%, rgba(0,0,0,0.3) 55%, rgba(0,0,0,0.05) 100%);
     }
-    .hero-card-body {
-      position: relative; z-index: 1;
-      padding: 1.25rem 1.35rem 1.4rem;
-    }
+    .hero-card-body { position: relative; z-index: 1; padding: 1.25rem 1.35rem 1.4rem; }
     .hero-card-eyebrow {
       font-size: 0.65rem; font-weight: 700; letter-spacing: 0.08em;
       text-transform: uppercase; color: rgba(255,255,255,0.55);
-      margin-bottom: 0.4rem;
-      display: flex; align-items: center; gap: 0.5rem;
+      margin-bottom: 0.4rem; display: flex; align-items: center; gap: 0.5rem;
     }
     .hero-card-score {
       background: rgba(255,255,255,0.12); border-radius: 20px;
-      padding: 0.1rem 0.45rem; font-size: 0.6rem;
-      color: rgba(255,255,255,0.6);
+      padding: 0.1rem 0.45rem; font-size: 0.6rem; color: rgba(255,255,255,0.6);
     }
     .hero-card--featured .hero-card-title {
       font-size: 1.35rem; font-weight: 700; line-height: 1.3;
@@ -125,11 +138,39 @@
       letter-spacing: -0.015em; color: #ffffff;
       display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
     }
+    .hero-flip-hint { font-size: 0.7rem; color: rgba(255,255,255,0.4); margin-top: 0.55rem; }
+    /* Éléments face arrière */
+    .hero-back-header {
+      font-size: 0.6rem; font-weight: 700; letter-spacing: 0.12em;
+      text-transform: uppercase; color: rgba(255,255,255,0.35); margin-bottom: 0.5rem;
+    }
+    .hero-back-title {
+      font-size: 1rem; font-weight: 700; color: #fff;
+      line-height: 1.3; margin-bottom: 1rem;
+    }
+    .hero-back-summary {
+      font-size: 0.82rem; color: rgba(255,255,255,0.72);
+      line-height: 1.65; flex: 1; overflow-y: auto; margin-bottom: 1rem;
+    }
+    .hero-back-sources { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-bottom: 0.8rem; }
+    .source-chip {
+      font-size: 0.65rem; background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.12); border-radius: 20px; padding: 0.2rem 0.6rem;
+    }
+    .source-chip a { color: rgba(255,255,255,0.55); text-decoration: none; }
+    .source-chip a:hover { color: #fff; }
+    .hero-back-cta {
+      display: inline-block; font-size: 0.75rem; font-weight: 600;
+      color: #fff; text-decoration: none;
+      background: rgba(255,255,255,0.1); border-radius: 8px; padding: 0.5rem 1rem;
+      transition: background 0.15s;
+    }
+    .hero-back-cta:hover { background: rgba(255,255,255,0.2); }
 
     @media (max-width: 700px) {
       .hero-grid { grid-template-columns: 1fr; }
-      .hero-card--featured { min-height: 300px; grid-row: span 1; }
-      .hero-card--small { min-height: 150px; }
+      .hero-flip-wrap.hero-card--featured { min-height: 300px; grid-row: span 1; }
+      .hero-flip-wrap.hero-card--small { min-height: 150px; }
     }
 
     /* ── Main ── */
@@ -306,7 +347,7 @@
 <header>
   <div class="header-inner">
     <span class="logo">Veille Éditoriale</span>
-    <span class="header-date">31/03/2026 à 20h06</span>
+    <span class="header-date">31/03/2026 à 20h28</span>
   </div>
 </header>
 
@@ -410,7 +451,7 @@
           <!-- FRONT -->
           <div class="hero-card-front">
             
-            <div class="hero-card-bg" style="background-image:url('https://static-www.adweek.com/wp-content/uploads/2026/03/speed-of-culture-patron-tequila-Roberto-Ramirez-Laverde.png?w=600&amp;h=315&amp;crop=1')"></div>
+            <div class="hero-card-bg" style="background-image:url('https://static-www.adweek.com/wp-content/uploads/2026/03/ttd-dsp-rivals-pitch-publicis-omnicom-audits-2026.png?w=600&amp;h=315&amp;crop=1')"></div>
             
             <div class="hero-card-overlay"></div>
             <div class="hero-card-body">
@@ -418,21 +459,57 @@
                 Adweek
                 <span class="hero-card-score">5/10</span>
               </div>
-              <div class="hero-card-title">Top Shelf: How Patrón Stays Premium With Craft and Conviction in a Digital World</div>
+              <div class="hero-card-title">The Trade Desk Rivals Swoop In on the Heels of Publicis, Omnicom Auditing Drama</div>
               <div class="hero-flip-hint">Appuyer pour résumé &#8594;</div>
             </div>
           </div>
           <!-- BACK -->
           <div class="hero-card-back">
             <div class="hero-back-header">Analyse</div>
-            <div class="hero-back-title">Top Shelf: How Patrón Stays Premium With Craft and Conviction in a Digital World</div>
-            <div class="hero-back-summary">Roberto Ramirez Laverde on Patrón Tequila&#39;s commitment to craftsmanship, transparency, and cultural authenticity.</div>
+            <div class="hero-back-title">The Trade Desk Rivals Swoop In on the Heels of Publicis, Omnicom Auditing Drama</div>
+            <div class="hero-back-summary">Mid-market DSPs are fishing for ad dollars that could be up for grabs after two agency holdcos announced audits of The Trade Desk.</div>
             <div class="hero-back-sources">
               
-              <span class="source-chip"><a href="https://www.adweek.com/brand-marketing/top-shelf-how-patron-stays-premium-with-craft-and-conviction-in-a-digital-world/" target="_blank" rel="noopener" onclick="event.stopPropagation()">Adweek</a></span>
+              <span class="source-chip"><a href="https://www.adweek.com/programmatic/the-trade-desk-rivals-swoop-in-on-the-heels-of-publicis-omnicom-auditing-drama/" target="_blank" rel="noopener" onclick="event.stopPropagation()">Adweek</a></span>
               
             </div>
-            <a class="hero-back-cta" href="https://www.adweek.com/brand-marketing/top-shelf-how-patron-stays-premium-with-craft-and-conviction-in-a-digital-world/" target="_blank" rel="noopener" onclick="event.stopPropagation()">
+            <a class="hero-back-cta" href="https://www.adweek.com/programmatic/the-trade-desk-rivals-swoop-in-on-the-heels-of-publicis-omnicom-auditing-drama/" target="_blank" rel="noopener" onclick="event.stopPropagation()">
+              Lire l'article complet &#8599;
+            </a>
+          </div>
+        </div>
+      </div>
+      
+      
+      
+      <div class="hero-flip-wrap hero-card--small" onclick="flipHeroCard(this)">
+        <div class="hero-flip-inner">
+          <!-- FRONT -->
+          <div class="hero-card-front">
+            
+            <div class="hero-card-bg" style="background-image:url('https://backlinko.com/app/uploads/2024/03/marketing-automation-industry-revenue-1.png')"></div>
+            
+            <div class="hero-card-overlay"></div>
+            <div class="hero-card-body">
+              <div class="hero-card-eyebrow">
+                Backlinko
+                <span class="hero-card-score">5/10</span>
+              </div>
+              <div class="hero-card-title">15 Key Marketing Automation Statistics</div>
+              <div class="hero-flip-hint">Appuyer pour résumé &#8594;</div>
+            </div>
+          </div>
+          <!-- BACK -->
+          <div class="hero-card-back">
+            <div class="hero-back-header">Analyse</div>
+            <div class="hero-back-title">15 Key Marketing Automation Statistics</div>
+            <div class="hero-back-summary">The marketing tech stack is always evolving. Marketing automation software enables improved efficiency with various features, from customer segmentation to campaign management. What’s the marketing automation industry market size? What are the adoption rates of marketing automation, and what benefits does it bring to businesses? Continue reading as we’ll cover answers to these questions with … The post 15 Key Marketing Automation Statistics appeared first on Backlinko .</div>
+            <div class="hero-back-sources">
+              
+              <span class="source-chip"><a href="https://backlinko.com/marketing-automation-stats" target="_blank" rel="noopener" onclick="event.stopPropagation()">Backlinko</a></span>
+              
+            </div>
+            <a class="hero-back-cta" href="https://backlinko.com/marketing-automation-stats" target="_blank" rel="noopener" onclick="event.stopPropagation()">
               Lire l'article complet &#8599;
             </a>
           </div>
@@ -469,42 +546,6 @@
               
             </div>
             <a class="hero-back-cta" href="https://www.cbnews.fr/conseil/albine-co-lance-son-offre-visibilite-marques-les-ia-generatives" target="_blank" rel="noopener" onclick="event.stopPropagation()">
-              Lire l'article complet &#8599;
-            </a>
-          </div>
-        </div>
-      </div>
-      
-      
-      
-      <div class="hero-flip-wrap hero-card--small" onclick="flipHeroCard(this)">
-        <div class="hero-flip-inner">
-          <!-- FRONT -->
-          <div class="hero-card-front">
-            
-            <div class="hero-card-bg" style="background-image:url('https://www.cbnews.fr/sites/cbnews.fr/files/styles/panoramic_w1200/public/2026-03/dauvel1.png?itok=4o9pLkvS')"></div>
-            
-            <div class="hero-card-overlay"></div>
-            <div class="hero-card-body">
-              <div class="hero-card-eyebrow">
-                CB News
-                <span class="hero-card-score">5/10</span>
-              </div>
-              <div class="hero-card-title">Havas Market France : Pauline Dauvel à la direction générale</div>
-              <div class="hero-flip-hint">Appuyer pour résumé &#8594;</div>
-            </div>
-          </div>
-          <!-- BACK -->
-          <div class="hero-card-back">
-            <div class="hero-back-header">Analyse</div>
-            <div class="hero-back-title">Havas Market France : Pauline Dauvel à la direction générale</div>
-            <div class="hero-back-summary">Havas Market France : Pauline Dauvel à la direction générale Havas Market France : Pauline Dauvel à la direction générale thierry.wojciak &lt;time class=&#34;datetime&#34; datetime=&#34;2026-03-31T19:30:22+</div>
-            <div class="hero-back-sources">
-              
-              <span class="source-chip"><a href="https://www.cbnews.fr/mouvements/havas-market-france-pauline-dauvel-direction-generale" target="_blank" rel="noopener" onclick="event.stopPropagation()">CB News</a></span>
-              
-            </div>
-            <a class="hero-back-cta" href="https://www.cbnews.fr/mouvements/havas-market-france-pauline-dauvel-direction-generale" target="_blank" rel="noopener" onclick="event.stopPropagation()">
               Lire l'article complet &#8599;
             </a>
           </div>
@@ -581,7 +622,7 @@
         <div class="card-front">
           <div class="card-img-wrap">
             
-            <img class="card-img" src="https://static-www.adweek.com/wp-content/uploads/2026/03/speed-of-culture-patron-tequila-Roberto-Ramirez-Laverde.png?w=600&amp;h=315&amp;crop=1" alt="" loading="lazy"
+            <img class="card-img" src="https://static-www.adweek.com/wp-content/uploads/2026/03/ttd-dsp-rivals-pitch-publicis-omnicom-audits-2026.png?w=600&amp;h=315&amp;crop=1" alt="" loading="lazy"
                  onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
             <div class="card-placeholder" style="background:linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);display:none">✦</div>
             
@@ -591,22 +632,62 @@
               Adweek
               &nbsp;·&nbsp;il y a 4h
             </div>
-            <h3 class="card-title">Top Shelf: How Patrón Stays Premium With Craft and Conviction in a Digital World</h3>
+            <h3 class="card-title">The Trade Desk Rivals Swoop In on the Heels of Publicis, Omnicom Auditing Drama</h3>
             <div class="card-flip-hint">Appuyer pour résumé &#8594;</div>
           </div>
         </div>
         <!-- BACK -->
         <div class="card-back">
           <div class="card-back-header">Résumé</div>
-          <div class="card-back-title">Top Shelf: How Patrón Stays Premium With Craft and Conviction in a Digital World</div>
-          <p class="card-back-summary">Roberto Ramirez Laverde on Patrón Tequila&#39;s commitment to craftsmanship, transparency, and cultural authenticity.</p>
+          <div class="card-back-title">The Trade Desk Rivals Swoop In on the Heels of Publicis, Omnicom Auditing Drama</div>
+          <p class="card-back-summary">Mid-market DSPs are fishing for ad dollars that could be up for grabs after two agency holdcos announced audits of The Trade Desk.</p>
           <div class="card-sources">
             
-            <span class="source-chip"><a href="https://www.adweek.com/brand-marketing/top-shelf-how-patron-stays-premium-with-craft-and-conviction-in-a-digital-world/" target="_blank" rel="noopener" onclick="event.stopPropagation()">Adweek</a></span>
+            <span class="source-chip"><a href="https://www.adweek.com/programmatic/the-trade-desk-rivals-swoop-in-on-the-heels-of-publicis-omnicom-auditing-drama/" target="_blank" rel="noopener" onclick="event.stopPropagation()">Adweek</a></span>
             
           </div>
           
-          <a class="card-back-cta" href="https://www.adweek.com/brand-marketing/top-shelf-how-patron-stays-premium-with-craft-and-conviction-in-a-digital-world/" target="_blank" rel="noopener" onclick="event.stopPropagation()">
+          <a class="card-back-cta" href="https://www.adweek.com/programmatic/the-trade-desk-rivals-swoop-in-on-the-heels-of-publicis-omnicom-auditing-drama/" target="_blank" rel="noopener" onclick="event.stopPropagation()">
+            Lire l'article complet &#8599;
+          </a>
+        </div>
+      </div>
+    </div>
+    
+    
+    
+    <div class="flip-wrap " onclick="flipCard(this)">
+      <div class="flip-inner">
+        <!-- FRONT -->
+        <div class="card-front">
+          <div class="card-img-wrap">
+            
+            <img class="card-img" src="https://backlinko.com/app/uploads/2024/03/marketing-automation-industry-revenue-1.png" alt="" loading="lazy"
+                 onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+            <div class="card-placeholder" style="background:linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);display:none">✦</div>
+            
+          </div>
+          <div class="card-front-body">
+            <div class="card-eyebrow">
+              Backlinko
+              &nbsp;·&nbsp;il y a 11h
+            </div>
+            <h3 class="card-title">15 Key Marketing Automation Statistics</h3>
+            <div class="card-flip-hint">Appuyer pour résumé &#8594;</div>
+          </div>
+        </div>
+        <!-- BACK -->
+        <div class="card-back">
+          <div class="card-back-header">Résumé</div>
+          <div class="card-back-title">15 Key Marketing Automation Statistics</div>
+          <p class="card-back-summary">The marketing tech stack is always evolving. Marketing automation software enables improved efficiency with various features, from customer segmentation to campaign management. What’s the marketing automation industry market size? What are the adoption rates of marketing automation, and what benefits does it bring to businesses? Continue reading as we’ll cover answers to these questions with … The post 15 Key Marketing Automation Statistics appeared first on Backlinko .</p>
+          <div class="card-sources">
+            
+            <span class="source-chip"><a href="https://backlinko.com/marketing-automation-stats" target="_blank" rel="noopener" onclick="event.stopPropagation()">Backlinko</a></span>
+            
+          </div>
+          
+          <a class="card-back-cta" href="https://backlinko.com/marketing-automation-stats" target="_blank" rel="noopener" onclick="event.stopPropagation()">
             Lire l'article complet &#8599;
           </a>
         </div>
@@ -821,7 +902,7 @@
         <div class="card-front">
           <div class="card-img-wrap">
             
-            <img class="card-img" src="https://static-www.adweek.com/wp-content/uploads/2026/03/brave-commerce-lego-agency-Jennifer-Berry.png?w=600&amp;h=315&amp;crop=1" alt="" loading="lazy"
+            <img class="card-img" src="https://static-www.adweek.com/wp-content/uploads/2026/03/speed-of-culture-patron-tequila-Roberto-Ramirez-Laverde.png?w=600&amp;h=315&amp;crop=1" alt="" loading="lazy"
                  onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
             <div class="card-placeholder" style="background:linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);display:none">✦</div>
             
@@ -830,6 +911,46 @@
             <div class="card-eyebrow">
               Adweek
               &nbsp;·&nbsp;il y a 4h
+            </div>
+            <h3 class="card-title">Top Shelf: How Patrón Stays Premium With Craft and Conviction in a Digital World</h3>
+            <div class="card-flip-hint">Appuyer pour résumé &#8594;</div>
+          </div>
+        </div>
+        <!-- BACK -->
+        <div class="card-back">
+          <div class="card-back-header">Résumé</div>
+          <div class="card-back-title">Top Shelf: How Patrón Stays Premium With Craft and Conviction in a Digital World</div>
+          <p class="card-back-summary">Roberto Ramirez Laverde on Patrón Tequila&#39;s commitment to craftsmanship, transparency, and cultural authenticity.</p>
+          <div class="card-sources">
+            
+            <span class="source-chip"><a href="https://www.adweek.com/brand-marketing/top-shelf-how-patron-stays-premium-with-craft-and-conviction-in-a-digital-world/" target="_blank" rel="noopener" onclick="event.stopPropagation()">Adweek</a></span>
+            
+          </div>
+          
+          <a class="card-back-cta" href="https://www.adweek.com/brand-marketing/top-shelf-how-patron-stays-premium-with-craft-and-conviction-in-a-digital-world/" target="_blank" rel="noopener" onclick="event.stopPropagation()">
+            Lire l'article complet &#8599;
+          </a>
+        </div>
+      </div>
+    </div>
+    
+    
+    
+    <div class="flip-wrap " onclick="flipCard(this)">
+      <div class="flip-inner">
+        <!-- FRONT -->
+        <div class="card-front">
+          <div class="card-img-wrap">
+            
+            <img class="card-img" src="https://static-www.adweek.com/wp-content/uploads/2026/03/brave-commerce-lego-agency-Jennifer-Berry.png?w=600&amp;h=315&amp;crop=1" alt="" loading="lazy"
+                 onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+            <div class="card-placeholder" style="background:linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);display:none">✦</div>
+            
+          </div>
+          <div class="card-front-body">
+            <div class="card-eyebrow">
+              Adweek
+              &nbsp;·&nbsp;il y a 5h
             </div>
             <h3 class="card-title">Our Lego Agency&amp;#8217;s Jennifer Berry on Building Connected Commerce Beyond Channels</h3>
             <div class="card-flip-hint">Appuyer pour résumé &#8594;</div>
@@ -909,7 +1030,7 @@
           <div class="card-front-body">
             <div class="card-eyebrow">
               Adweek
-              &nbsp;·&nbsp;il y a 8h
+              &nbsp;·&nbsp;il y a 9h
             </div>
             <h3 class="card-title">Virtual Vanguard Recap: David Sable</h3>
             <div class="card-flip-hint">Appuyer pour résumé &#8594;</div>
@@ -927,46 +1048,6 @@
           </div>
           
           <a class="card-back-cta" href="https://www.adweek.com/brand-marketing/virtual-vanguard-recap-david-sable/" target="_blank" rel="noopener" onclick="event.stopPropagation()">
-            Lire l'article complet &#8599;
-          </a>
-        </div>
-      </div>
-    </div>
-    
-    
-    
-    <div class="flip-wrap " onclick="flipCard(this)">
-      <div class="flip-inner">
-        <!-- FRONT -->
-        <div class="card-front">
-          <div class="card-img-wrap">
-            
-            <img class="card-img" src="https://static-www.adweek.com/wp-content/uploads/2026/03/yahoo-dsp-growth-performance-2026.png?w=600&amp;h=315&amp;crop=1" alt="" loading="lazy"
-                 onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
-            <div class="card-placeholder" style="background:linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);display:none">✦</div>
-            
-          </div>
-          <div class="card-front-body">
-            <div class="card-eyebrow">
-              Adweek
-              &nbsp;·&nbsp;il y a 8h
-            </div>
-            <h3 class="card-title">EXCLUSIVE: Yahoo Moves Downmarket With DSP Performance Push</h3>
-            <div class="card-flip-hint">Appuyer pour résumé &#8594;</div>
-          </div>
-        </div>
-        <!-- BACK -->
-        <div class="card-back">
-          <div class="card-back-header">Résumé</div>
-          <div class="card-back-title">EXCLUSIVE: Yahoo Moves Downmarket With DSP Performance Push</div>
-          <p class="card-back-summary">A wave of new features targets the mid-market advertisers that DSPs like DV360 and The Trade Desk have long dominated.</p>
-          <div class="card-sources">
-            
-            <span class="source-chip"><a href="https://www.adweek.com/agencies/exclusive-yahoo-moves-downmarket-with-dsp-performance-push/" target="_blank" rel="noopener" onclick="event.stopPropagation()">Adweek</a></span>
-            
-          </div>
-          
-          <a class="card-back-cta" href="https://www.adweek.com/agencies/exclusive-yahoo-moves-downmarket-with-dsp-performance-push/" target="_blank" rel="noopener" onclick="event.stopPropagation()">
             Lire l'article complet &#8599;
           </a>
         </div>
@@ -1279,45 +1360,6 @@
           </div>
           
           <a class="card-back-cta" href="https://www.danstapub.com/on-na-rien-invente-volkswagen-bbdo-paris/" target="_blank" rel="noopener" onclick="event.stopPropagation()">
-            Lire l'article complet &#8599;
-          </a>
-        </div>
-      </div>
-    </div>
-    
-    
-    
-    <div class="flip-wrap " onclick="flipCard(this)">
-      <div class="flip-inner">
-        <!-- FRONT -->
-        <div class="card-front">
-          <div class="card-img-wrap">
-            
-            <div class="card-placeholder" style="background:linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)">✦</div>
-            
-          </div>
-          <div class="card-front-body">
-            <div class="card-eyebrow">
-              Dans Ta Pub
-              &nbsp;·&nbsp;il y a 11h
-            </div>
-            <h3 class="card-title">Burger King incite les marathoniens à abandonner avec une campagne drôle et honnête</h3>
-            <div class="card-flip-hint">Appuyer pour résumé &#8594;</div>
-          </div>
-        </div>
-        <!-- BACK -->
-        <div class="card-back">
-          <div class="card-back-header">Résumé</div>
-          <div class="card-back-title">Burger King incite les marathoniens à abandonner avec une campagne drôle et honnête</div>
-          <p class="card-back-summary">Le Marathon de Gand, c&amp;#8217;est 18 000 coureurs venus de 60 pays, une ville transformée en terrain de sport et, comme toujours dans ces grandes occasions, un défilé de marques&amp;#8230;
-L’article Burger King incite les marathoniens à abandonner avec une campagne drôle et honnête est apparu en premier sur Dans Ta Pub.</p>
-          <div class="card-sources">
-            
-            <span class="source-chip"><a href="https://www.danstapub.com/burger-king-marathon-abandon-belgique/" target="_blank" rel="noopener" onclick="event.stopPropagation()">Dans Ta Pub</a></span>
-            
-          </div>
-          
-          <a class="card-back-cta" href="https://www.danstapub.com/burger-king-marathon-abandon-belgique/" target="_blank" rel="noopener" onclick="event.stopPropagation()">
             Lire l'article complet &#8599;
           </a>
         </div>
@@ -1681,7 +1723,7 @@ L’article Burger King incite les marathoniens à abandonner avec une campagne 
           <div class="card-front-body">
             <div class="card-eyebrow">
               Search Engine Journal
-              &nbsp;·&nbsp;il y a 4h
+              &nbsp;·&nbsp;il y a 5h
             </div>
             <h3 class="card-title">Google Explains Googlebot Byte Limits And Crawling Architecture via @sejournal, @MattGSouthern</h3>
             <div class="card-flip-hint">Appuyer pour résumé &#8594;</div>
@@ -2001,7 +2043,7 @@ L’article Burger King incite les marathoniens à abandonner avec une campagne 
           <div class="card-front-body">
             <div class="card-eyebrow">
               Journal du Web
-              &nbsp;·&nbsp;il y a 7h
+              &nbsp;·&nbsp;il y a 8h
             </div>
             <h3 class="card-title">PS6 : vers une console à 999 dollars ? Le prix qui menace déjà la prochaine génération</h3>
             <div class="card-flip-hint">Appuyer pour résumé &#8594;</div>
@@ -2182,7 +2224,7 @@ L’article Burger King incite les marathoniens à abandonner avec une campagne 
           <div class="card-front-body">
             <div class="card-eyebrow">
               PetaPixel
-              &nbsp;·&nbsp;il y a 1h
+              &nbsp;·&nbsp;il y a 2h
             </div>
             <h3 class="card-title">A Closer Look at the Beautiful Macro Cinematography in ‘Secrets of the Bees’</h3>
             <div class="card-flip-hint">Appuyer pour résumé &#8594;</div>
@@ -2222,7 +2264,7 @@ L’article Burger King incite les marathoniens à abandonner avec une campagne 
           <div class="card-front-body">
             <div class="card-eyebrow">
               PetaPixel
-              &nbsp;·&nbsp;il y a 1h
+              &nbsp;·&nbsp;il y a 2h
             </div>
             <h3 class="card-title">Godox Introduces Budget-Friendly Monolight for Creators</h3>
             <div class="card-flip-hint">Appuyer pour résumé &#8594;</div>
@@ -2360,6 +2402,46 @@ L’article Burger King incite les marathoniens à abandonner avec une campagne 
           </div>
           
           <a class="card-back-cta" href="https://petapixel.com/2026/03/31/photographer-captures-first-ever-images-of-adorable-ross-seal-swimming-in-antarctica/" target="_blank" rel="noopener" onclick="event.stopPropagation()">
+            Lire l'article complet &#8599;
+          </a>
+        </div>
+      </div>
+    </div>
+    
+    
+    
+    <div class="flip-wrap " onclick="flipCard(this)">
+      <div class="flip-inner">
+        <!-- FRONT -->
+        <div class="card-front">
+          <div class="card-img-wrap">
+            
+            <img class="card-img" src="https://cdn.fstoppers.com/styles/16_9_max_650/s3/lead/2026/03/fstoppers-photographer-of-the-month-march-2026.png.webp?itok=AXfqHekR" alt="" loading="lazy"
+                 onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+            <div class="card-placeholder" style="background:linear-gradient(135deg, #1a1a1a 0%, #2d1515 50%, #4a0000 100%);display:none">▶</div>
+            
+          </div>
+          <div class="card-front-body">
+            <div class="card-eyebrow">
+              Fstoppers
+              &nbsp;·&nbsp;il y a 2h
+            </div>
+            <h3 class="card-title">Fstoppers Photographer of the Month (March 2026): Igor Butskhrikidze</h3>
+            <div class="card-flip-hint">Appuyer pour résumé &#8594;</div>
+          </div>
+        </div>
+        <!-- BACK -->
+        <div class="card-back">
+          <div class="card-back-header">Résumé</div>
+          <div class="card-back-title">Fstoppers Photographer of the Month (March 2026): Igor Butskhrikidze</div>
+          <p class="card-back-summary">The Fstoppers community is brimming with creative vision and talent. Every day, we comb through your work, looking for images to feature as the Photo of the Day or simply to admire your creativity and technical prowess. In 2026, we&#39;re featuring a new photographer every month, whose portfolio represents both stellar photographic achievement and a high level of involvement within the Fstoppers community. [&lt;a href=&#34;</p>
+          <div class="card-sources">
+            
+            <span class="source-chip"><a href="https://fstoppers.com/pictures/photographer-month-march-2026-igor-butskhrikidze-901313?utm_source=fstoppers&amp;utm_medium=RSS&amp;utm_campaign=rss_feed_articles" target="_blank" rel="noopener" onclick="event.stopPropagation()">Fstoppers</a></span>
+            
+          </div>
+          
+          <a class="card-back-cta" href="https://fstoppers.com/pictures/photographer-month-march-2026-igor-butskhrikidze-901313?utm_source=fstoppers&amp;utm_medium=RSS&amp;utm_campaign=rss_feed_articles" target="_blank" rel="noopener" onclick="event.stopPropagation()">
             Lire l'article complet &#8599;
           </a>
         </div>
@@ -2535,47 +2617,6 @@ L’article Burger King incite les marathoniens à abandonner avec une campagne 
         <div class="card-front">
           <div class="card-img-wrap">
             
-            <img class="card-img" src="https://cdn.fstoppers.com/styles/16_9_max_650/s3/lead/2026/03/thumbnail_114.jpg.webp?itok=T58hIcrm" alt="" loading="lazy"
-                 onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
-            <div class="card-placeholder" style="background:linear-gradient(135deg, #1a1a1a 0%, #2d1515 50%, #4a0000 100%);display:none">▶</div>
-            
-          </div>
-          <div class="card-front-body">
-            <div class="card-eyebrow">
-              Fstoppers
-              &nbsp;·&nbsp;il y a 11h
-            </div>
-            <h3 class="card-title">Old School vs. New School: How Generations Actually Differ as Photographers</h3>
-            <div class="card-flip-hint">Appuyer pour résumé &#8594;</div>
-          </div>
-        </div>
-        <!-- BACK -->
-        <div class="card-back">
-          <div class="card-back-header">Résumé</div>
-          <div class="card-back-title">Old School vs. New School: How Generations Actually Differ as Photographers</div>
-          <p class="card-back-summary">Shooting film in an era of instant digital feedback isn&#39;t a step backward; it&#39;s a deliberate choice that exposes real differences in how generations approach the craft. Understanding those differences can sharpen how you think about your own photography, regardless of which tools you use.&amp;nbsp; 
-[&lt;a href=&#34;https://fstoppers.com/historical/old-school-vs-new-school-how-generations-actually-differ-photographers-901314?utm_source=fstoppe</p>
-          <div class="card-sources">
-            
-            <span class="source-chip"><a href="https://fstoppers.com/historical/old-school-vs-new-school-how-generations-actually-differ-photographers-901314?utm_source=fstoppers&amp;utm_medium=RSS&amp;utm_campaign=rss_feed_articles" target="_blank" rel="noopener" onclick="event.stopPropagation()">Fstoppers</a></span>
-            
-          </div>
-          
-          <a class="card-back-cta" href="https://fstoppers.com/historical/old-school-vs-new-school-how-generations-actually-differ-photographers-901314?utm_source=fstoppers&amp;utm_medium=RSS&amp;utm_campaign=rss_feed_articles" target="_blank" rel="noopener" onclick="event.stopPropagation()">
-            Lire l'article complet &#8599;
-          </a>
-        </div>
-      </div>
-    </div>
-    
-    
-    
-    <div class="flip-wrap " onclick="flipCard(this)">
-      <div class="flip-inner">
-        <!-- FRONT -->
-        <div class="card-front">
-          <div class="card-img-wrap">
-            
             <img class="card-img" src="https://i2.ytimg.com/vi/eFUB_jL_XcM/hqdefault.jpg" alt="" loading="lazy"
                  onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
             <div class="card-placeholder" style="background:linear-gradient(135deg, #1a1a1a 0%, #2d1515 50%, #4a0000 100%);display:none">▶</div>
@@ -2723,7 +2764,7 @@ L’article Burger King incite les marathoniens à abandonner avec une campagne 
           <div class="card-front-body">
             <div class="card-eyebrow">
               Podnews
-              &nbsp;·&nbsp;il y a 9h
+              &nbsp;·&nbsp;il y a 10h
             </div>
             <h3 class="card-title">Exclusive: The 30th Annual Webby Awards Podcast Nominees</h3>
             <div class="card-flip-hint">Appuyer pour résumé &#8594;</div>
@@ -3045,7 +3086,7 @@ Visit https://podnews.net/update/vox-media-versant-rumour for the story links in
       <h2 class="section-title" style="color:#30d158">Social Media</h2>
     </div>
     <div style="display:flex;align-items:center;gap:1rem">
-      <span class="section-count">3 articles</span>
+      <span class="section-count">6 articles</span>
       <div class="section-arrows">
         <button class="arrow-btn" onclick="scrollRow('social-media', -1)" aria-label="Précédent">&#8592;</button>
         <button class="arrow-btn" onclick="scrollRow('social-media', 1)" aria-label="Suivant">&#8594;</button>
@@ -3143,6 +3184,123 @@ The post How to Gain Superpowers With AI appeared first on &lt;a</p>
         <div class="card-front">
           <div class="card-img-wrap">
             
+            <div class="card-placeholder" style="background:linear-gradient(135deg, #0a1a0f 0%, #0d2b16 50%, #0f3d1e 100%)">◈</div>
+            
+          </div>
+          <div class="card-front-body">
+            <div class="card-eyebrow">
+              Hootsuite Blog
+              &nbsp;·&nbsp;hier
+            </div>
+            <h3 class="card-title">23 Instagram demographics marketers need to know in 2026</h3>
+            <div class="card-flip-hint">Appuyer pour résumé &#8594;</div>
+          </div>
+        </div>
+        <!-- BACK -->
+        <div class="card-back">
+          <div class="card-back-header">Résumé</div>
+          <div class="card-back-title">23 Instagram demographics marketers need to know in 2026</div>
+          <p class="card-back-summary">Who uses Instagram every day? Instagram demographics will help you build a strategy that works — and reach your social marketing goals.
+The post 23 Instagram demographics marketers need to know in 2026 appeared first on Social Media Marketing &amp;amp; Management Dashboard.</p>
+          <div class="card-sources">
+            
+            <span class="source-chip"><a href="https://blog.hootsuite.com/instagram-demographics/" target="_blank" rel="noopener" onclick="event.stopPropagation()">Hootsuite Blog</a></span>
+            
+          </div>
+          
+          <a class="card-back-cta" href="https://blog.hootsuite.com/instagram-demographics/" target="_blank" rel="noopener" onclick="event.stopPropagation()">
+            Lire l'article complet &#8599;
+          </a>
+        </div>
+      </div>
+    </div>
+    
+    
+    
+    <div class="flip-wrap " onclick="flipCard(this)">
+      <div class="flip-inner">
+        <!-- FRONT -->
+        <div class="card-front">
+          <div class="card-img-wrap">
+            
+            <div class="card-placeholder" style="background:linear-gradient(135deg, #0a1a0f 0%, #0d2b16 50%, #0f3d1e 100%)">◈</div>
+            
+          </div>
+          <div class="card-front-body">
+            <div class="card-eyebrow">
+              Hootsuite Blog
+              &nbsp;·&nbsp;hier
+            </div>
+            <h3 class="card-title">30 Facebook demographics marketers need to know in 2026</h3>
+            <div class="card-flip-hint">Appuyer pour résumé &#8594;</div>
+          </div>
+        </div>
+        <!-- BACK -->
+        <div class="card-back">
+          <div class="card-back-header">Résumé</div>
+          <div class="card-back-title">30 Facebook demographics marketers need to know in 2026</div>
+          <p class="card-back-summary">With 3 billion daily active users, understanding Facebook demographics is key to creating a successful social marketing strategy.
+The post 30 Facebook demographics marketers need to know in 2026 appeared first on Social Media Marketing &amp;amp; Management Dashboard.</p>
+          <div class="card-sources">
+            
+            <span class="source-chip"><a href="https://blog.hootsuite.com/facebook-demographics/" target="_blank" rel="noopener" onclick="event.stopPropagation()">Hootsuite Blog</a></span>
+            
+          </div>
+          
+          <a class="card-back-cta" href="https://blog.hootsuite.com/facebook-demographics/" target="_blank" rel="noopener" onclick="event.stopPropagation()">
+            Lire l'article complet &#8599;
+          </a>
+        </div>
+      </div>
+    </div>
+    
+    
+    
+    <div class="flip-wrap " onclick="flipCard(this)">
+      <div class="flip-inner">
+        <!-- FRONT -->
+        <div class="card-front">
+          <div class="card-img-wrap">
+            
+            <div class="card-placeholder" style="background:linear-gradient(135deg, #0a1a0f 0%, #0d2b16 50%, #0f3d1e 100%)">◈</div>
+            
+          </div>
+          <div class="card-front-body">
+            <div class="card-eyebrow">
+              Hootsuite Blog
+              &nbsp;·&nbsp;hier
+            </div>
+            <h3 class="card-title">What are the latest Hootsuite product features? [Feb 2026]</h3>
+            <div class="card-flip-hint">Appuyer pour résumé &#8594;</div>
+          </div>
+        </div>
+        <!-- BACK -->
+        <div class="card-back">
+          <div class="card-back-header">Résumé</div>
+          <div class="card-back-title">What are the latest Hootsuite product features? [Feb 2026]</div>
+          <p class="card-back-summary">Discover our Upfluence influencer marketing integration, new listening insights, and expanded analytics in February’s Hootsuite updates.
+The post What are the latest Hootsuite product features? [Feb 2026] appeared first on Social Media Marketing &amp;amp; Management Dashboard.</p>
+          <div class="card-sources">
+            
+            <span class="source-chip"><a href="https://blog.hootsuite.com/new-features-feb-2026/" target="_blank" rel="noopener" onclick="event.stopPropagation()">Hootsuite Blog</a></span>
+            
+          </div>
+          
+          <a class="card-back-cta" href="https://blog.hootsuite.com/new-features-feb-2026/" target="_blank" rel="noopener" onclick="event.stopPropagation()">
+            Lire l'article complet &#8599;
+          </a>
+        </div>
+      </div>
+    </div>
+    
+    
+    
+    <div class="flip-wrap " onclick="flipCard(this)">
+      <div class="flip-inner">
+        <!-- FRONT -->
+        <div class="card-front">
+          <div class="card-img-wrap">
+            
             <img class="card-img" src="https://wearesocial.com/wp-content/uploads/2026/03/Monday-mashup-banner-767-375x188.jpg" alt="" loading="lazy"
                  onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
             <div class="card-placeholder" style="background:linear-gradient(135deg, #0a1a0f 0%, #0d2b16 50%, #0f3d1e 100%);display:none">◈</div>
@@ -3181,7 +3339,7 @@ The post How to Gain Superpowers With AI appeared first on &lt;a</p>
 
 </main>
 
-<footer>Veille Éditoriale &mdash; 144 articles analysés &mdash; 31/03/2026 à 20h06</footer>
+<footer>Veille Éditoriale &mdash; 148 articles analysés &mdash; 31/03/2026 à 20h28</footer>
 
 <script>
 function flipCard(el) {
