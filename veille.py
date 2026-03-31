@@ -506,26 +506,74 @@ HTML_TEMPLATE = """<!DOCTYPE html>
     .nav-tab:hover { color: var(--text); }
     .nav-tab.active { color: var(--accent); border-bottom-color: var(--accent); }
 
-    /* ── Ticker ── */
-    .ticker { background: #1d1d1f; }
-    .ticker-inner {
-      max-width: 1400px; margin: 0 auto; padding: 0.65rem 2rem;
-      display: flex; align-items: center; gap: 1.5rem;
+    /* ── Hero ── */
+    .hero {
+      background: #1d1d1f;
+      padding: 2.5rem 2rem 3rem;
     }
-    .ticker-label {
-      font-size: 0.62rem; font-weight: 700; letter-spacing: 0.12em;
-      text-transform: uppercase; color: rgba(255,255,255,0.35); white-space: nowrap;
+    .hero-inner { max-width: 1400px; margin: 0 auto; }
+    .hero-label {
+      font-size: 0.62rem; font-weight: 700; letter-spacing: 0.14em;
+      text-transform: uppercase; color: rgba(255,255,255,0.35);
+      margin-bottom: 1.25rem;
     }
-    .ticker-scroll { display: flex; overflow-x: auto; scrollbar-width: none; }
-    .ticker-scroll::-webkit-scrollbar { display: none; }
-    .ticker-item {
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      grid-template-rows: auto;
+      gap: 0.75rem;
+    }
+    .hero-card {
+      position: relative; border-radius: 14px; overflow: hidden;
+      display: flex; flex-direction: column; justify-content: flex-end;
+      text-decoration: none; background: #2a2a2d;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .hero-card:hover { transform: scale(1.015); box-shadow: 0 16px 48px rgba(0,0,0,0.5); }
+    .hero-card--featured {
+      grid-row: span 2;
+      min-height: 460px;
+    }
+    .hero-card--small { min-height: 200px; }
+    .hero-card-bg {
+      position: absolute; inset: 0;
+      background-size: cover; background-position: center;
+    }
+    .hero-card-overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(to top, rgba(0,0,0,0.88) 0%, rgba(0,0,0,0.3) 55%, rgba(0,0,0,0.05) 100%);
+    }
+    .hero-card-body {
+      position: relative; z-index: 1;
+      padding: 1.25rem 1.35rem 1.4rem;
+    }
+    .hero-card-eyebrow {
+      font-size: 0.65rem; font-weight: 700; letter-spacing: 0.08em;
+      text-transform: uppercase; color: rgba(255,255,255,0.55);
+      margin-bottom: 0.4rem;
       display: flex; align-items: center; gap: 0.5rem;
-      padding: 0 1rem; border-right: 1px solid rgba(255,255,255,0.08); white-space: nowrap;
     }
-    .ticker-item:last-child { border-right: none; }
-    .ticker-item a { font-size: 0.78rem; color: rgba(255,255,255,0.75); text-decoration: none; }
-    .ticker-item a:hover { color: white; }
-    .ticker-score { font-size: 0.62rem; font-weight: 600; color: rgba(255,255,255,0.3); }
+    .hero-card-score {
+      background: rgba(255,255,255,0.12); border-radius: 20px;
+      padding: 0.1rem 0.45rem; font-size: 0.6rem;
+      color: rgba(255,255,255,0.6);
+    }
+    .hero-card--featured .hero-card-title {
+      font-size: 1.35rem; font-weight: 700; line-height: 1.3;
+      letter-spacing: -0.025em; color: #ffffff;
+      display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;
+    }
+    .hero-card--small .hero-card-title {
+      font-size: 0.92rem; font-weight: 600; line-height: 1.35;
+      letter-spacing: -0.015em; color: #ffffff;
+      display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+    }
+
+    @media (max-width: 700px) {
+      .hero-grid { grid-template-columns: 1fr; }
+      .hero-card--featured { min-height: 300px; grid-row: span 1; }
+      .hero-card--small { min-height: 150px; }
+    }
 
     /* ── Main ── */
     main { max-width: 1400px; margin: 0 auto; padding: 3rem 0 5rem; }
@@ -690,7 +738,8 @@ HTML_TEMPLATE = """<!DOCTYPE html>
     @media (max-width: 600px) {
       :root { --card-w: 240px; --card-h: 370px; }
       .section-header, .cards-row { padding-left: 1rem; padding-right: 1rem; }
-      .header-inner, .nav-inner, .ticker-inner { padding: 0 1rem; }
+      .header-inner, .nav-inner { padding: 0 1rem; }
+      .hero { padding: 1.5rem 1rem 2rem; }
       main { padding-top: 2rem; }
     }
   </style>
@@ -714,15 +763,25 @@ HTML_TEMPLATE = """<!DOCTYPE html>
 </nav>
 
 {% if top_articles %}
-<div class="ticker">
-  <div class="ticker-inner">
-    <span class="ticker-label">À la une</span>
-    <div class="ticker-scroll">
-      {% for a in top_articles %}
-      <div class="ticker-item">
-        <span class="ticker-score">{{ a.importance_score | int }}/10</span>
-        <a href="{{ a.url }}" target="_blank" rel="noopener">{{ a.translated_title | truncate(65) }}</a>
-      </div>
+<div class="hero">
+  <div class="hero-inner">
+    <div class="hero-label">À la une</div>
+    <div class="hero-grid">
+      {% for a in top_articles[:5] %}
+      <a class="hero-card {% if loop.first %}hero-card--featured{% else %}hero-card--small{% endif %}"
+         href="{{ a.url }}" target="_blank" rel="noopener">
+        {% if a.image_url %}
+        <div class="hero-card-bg" style="background-image:url('{{ a.image_url }}')"></div>
+        {% endif %}
+        <div class="hero-card-overlay"></div>
+        <div class="hero-card-body">
+          <div class="hero-card-eyebrow">
+            {{ a.source }}
+            <span class="hero-card-score">{{ a.importance_score | int }}/10</span>
+          </div>
+          <div class="hero-card-title">{{ a.translated_title }}</div>
+        </div>
+      </a>
       {% endfor %}
     </div>
   </div>

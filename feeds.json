@@ -104,6 +104,6 @@
     "max_age_hours": 48,
     "language_output": "fr",
     "min_articles_for_cluster": 2,
-    "top_stories_count": 5
+    "top_stories_count": 20
   }
 }
