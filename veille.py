@@ -23,7 +23,7 @@ import requests
 from dotenv import load_dotenv
 from jinja2 import Environment, select_autoescape
 
-load_dotenv()
+load_dotenv(override=True)
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
 log = logging.getLogger(__name__)
@@ -638,40 +638,53 @@ HTML_TEMPLATE = """<!DOCTYPE html>
       grid-template-rows: auto;
       gap: 0.75rem;
     }
-    .hero-card {
-      position: relative; border-radius: 14px; overflow: hidden;
+    /* Conteneur flip (perspective) */
+    .hero-flip-wrap {
+      position: relative; border-radius: 14px;
+      overflow: hidden; cursor: pointer; background: #2a2a2d;
+    }
+    .hero-flip-wrap.hero-card--featured { grid-row: span 2; min-height: 460px; }
+    .hero-flip-wrap.hero-card--small { min-height: 200px; }
+    /* Élément 3D rotatif */
+    .hero-flip-inner {
+      width: 100%; height: 100%; min-height: inherit;
+      position: relative;
+      transform-style: preserve-3d;
+      perspective: 1200px;
+      transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .hero-flip-wrap.flipped .hero-flip-inner { transform: rotateY(180deg); }
+    /* Faces avant / arrière */
+    .hero-card-front, .hero-card-back {
+      position: absolute; inset: 0; border-radius: 14px;
+      backface-visibility: hidden; -webkit-backface-visibility: hidden;
       display: flex; flex-direction: column; justify-content: flex-end;
-      text-decoration: none; background: #2a2a2d;
-      transition: transform 0.2s ease, box-shadow 0.2s ease;
     }
-    .hero-card:hover { transform: scale(1.015); box-shadow: 0 16px 48px rgba(0,0,0,0.5); }
-    .hero-card--featured {
-      grid-row: span 2;
-      min-height: 460px;
+    .hero-card-back {
+      transform: rotateY(180deg);
+      background: #141417;
+      padding: 1.75rem 2rem;
+      justify-content: flex-start;
+      overflow-y: auto;
     }
-    .hero-card--small { min-height: 200px; }
+    /* Éléments face avant */
     .hero-card-bg {
-      position: absolute; inset: 0;
+      position: absolute; inset: 0; border-radius: 14px;
       background-size: cover; background-position: center;
     }
     .hero-card-overlay {
-      position: absolute; inset: 0;
+      position: absolute; inset: 0; border-radius: 14px;
       background: linear-gradient(to top, rgba(0,0,0,0.88) 0%, rgba(0,0,0,0.3) 55%, rgba(0,0,0,0.05) 100%);
     }
-    .hero-card-body {
-      position: relative; z-index: 1;
-      padding: 1.25rem 1.35rem 1.4rem;
-    }
+    .hero-card-body { position: relative; z-index: 1; padding: 1.25rem 1.35rem 1.4rem; }
     .hero-card-eyebrow {
       font-size: 0.65rem; font-weight: 700; letter-spacing: 0.08em;
       text-transform: uppercase; color: rgba(255,255,255,0.55);
-      margin-bottom: 0.4rem;
-      display: flex; align-items: center; gap: 0.5rem;
+      margin-bottom: 0.4rem; display: flex; align-items: center; gap: 0.5rem;
     }
     .hero-card-score {
       background: rgba(255,255,255,0.12); border-radius: 20px;
-      padding: 0.1rem 0.45rem; font-size: 0.6rem;
-      color: rgba(255,255,255,0.6);
+      padding: 0.1rem 0.45rem; font-size: 0.6rem; color: rgba(255,255,255,0.6);
     }
     .hero-card--featured .hero-card-title {
       font-size: 1.35rem; font-weight: 700; line-height: 1.3;
@@ -683,11 +696,39 @@ HTML_TEMPLATE = """<!DOCTYPE html>
       letter-spacing: -0.015em; color: #ffffff;
       display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
     }
+    .hero-flip-hint { font-size: 0.7rem; color: rgba(255,255,255,0.4); margin-top: 0.55rem; }
+    /* Éléments face arrière */
+    .hero-back-header {
+      font-size: 0.6rem; font-weight: 700; letter-spacing: 0.12em;
+      text-transform: uppercase; color: rgba(255,255,255,0.35); margin-bottom: 0.5rem;
+    }
+    .hero-back-title {
+      font-size: 1rem; font-weight: 700; color: #fff;
+      line-height: 1.3; margin-bottom: 1rem;
+    }
+    .hero-back-summary {
+      font-size: 0.82rem; color: rgba(255,255,255,0.72);
+      line-height: 1.65; flex: 1; overflow-y: auto; margin-bottom: 1rem;
+    }
+    .hero-back-sources { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-bottom: 0.8rem; }
+    .source-chip {
+      font-size: 0.65rem; background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.12); border-radius: 20px; padding: 0.2rem 0.6rem;
+    }
+    .source-chip a { color: rgba(255,255,255,0.55); text-decoration: none; }
+    .source-chip a:hover { color: #fff; }
+    .hero-back-cta {
+      display: inline-block; font-size: 0.75rem; font-weight: 600;
+      color: #fff; text-decoration: none;
+      background: rgba(255,255,255,0.1); border-radius: 8px; padding: 0.5rem 1rem;
+      transition: background 0.15s;
+    }
+    .hero-back-cta:hover { background: rgba(255,255,255,0.2); }
 
     @media (max-width: 700px) {
       .hero-grid { grid-template-columns: 1fr; }
-      .hero-card--featured { min-height: 300px; grid-row: span 1; }
-      .hero-card--small { min-height: 150px; }
+      .hero-flip-wrap.hero-card--featured { min-height: 300px; grid-row: span 1; }
+      .hero-flip-wrap.hero-card--small { min-height: 150px; }
     }
 
     /* ── Main ── */
