@@ -5,23 +5,59 @@
       "icon": "✦",
       "gradient": "linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)",
       "feeds": [
-        {"name": "Stratégies (Google Alertes)", "url": "https://www.google.fr/alerts/feeds/14662107373171854684/5638817258983396205"},
-        {"name": "CB News",              "url": "https://www.cbnews.fr/rss.xml"},
-        {"name": "Adweek",               "url": "https://www.adweek.com/feed/"},
-        {"name": "PR Week",              "url": "https://www.prweek.co.uk/rss"},
-        {"name": "Digiday",              "url": "https://digiday.com/feed/"},
-        {"name": "Dans Ta Pub",          "url": "https://www.danstapub.com/feed/"},
-        {"name": "J'ai un pote dans la", "url": "https://jai-un-pote-dans-la.com/feed/"},
-        {"name": "Creapills",            "url": "https://creapills.com/feed/"},
-        {"name": "Nieman Lab",           "url": "https://www.niemanlab.org/feed/"},
-        {"name": "CJR",                  "url": "https://www.cjr.org/feed"},
-        {"name": "Shorenstein Center",   "url": "https://shorensteincenter.org/feed/"},
-        {"name": "Reuters Institute",    "url": "https://reutersinstitute.politics.ox.ac.uk/rss.xml"},
-        {"name": "WAN-IFRA",             "url": "https://wan-ifra.org/feed/"},
-        {"name": "Press Gazette",        "url": "https://pressgazette.co.uk/feed/"},
-        {"name": "36Kr",                 "url": "https://36kr.com/feed"},
-        {"name": "Publishing Perspectives", "url": "https://publishingperspectives.com/feed/"},
-        {"name": "FIPP",                 "url": "https://www.fipp.com/feed/"}
+        {"name": "CB News",                  "url": "https://www.cbnews.fr/rss.xml"},
+        {"name": "Stratégies (Google Alert)","url": "https://www.google.fr/alerts/feeds/14662107373171854684/5638817258983396205"},
+        {"name": "Adweek",                   "url": "https://www.adweek.com/feed/"},
+        {"name": "PR Week",                  "url": "https://www.prweek.co.uk/rss"},
+        {"name": "Digiday",                  "url": "https://digiday.com/feed/"},
+        {"name": "Dans Ta Pub",              "url": "https://www.danstapub.com/feed/"},
+        {"name": "J'ai un pote dans la com", "url": "https://jai-un-pote-dans-la.com/feed/"},
+        {"name": "Creapills",                "url": "https://creapills.com/feed/"},
+        {"name": "Nieman Lab",               "url": "https://www.niemanlab.org/feed/"},
+        {"name": "CJR",                      "url": "https://www.cjr.org/feed"},
+        {"name": "Reuters Institute",        "url": "https://reutersinstitute.politics.ox.ac.uk/rss.xml"},
+        {"name": "WAN-IFRA",                 "url": "https://wan-ifra.org/feed/"},
+        {"name": "Press Gazette",            "url": "https://pressgazette.co.uk/feed/"},
+        {"name": "Publishing Perspectives",  "url": "https://publishingperspectives.com/feed/"},
+        {"name": "FIPP",                     "url": "https://www.fipp.com/feed/"},
+        {"name": "L'ADN",                    "url": "https://www.ladn.eu/feed/"},
+        {"name": "Siècle Digital",           "url": "https://siecledigital.fr/feed/"},
+        {"name": "La Réclame",               "url": "https://lareclame.fr/feed"},
+        {"name": "Blog du Modérateur",       "url": "https://www.blogdumoderateur.com/feed/"},
+        {"name": "Journal du CM",            "url": "https://www.journalducm.com/feed/"},
+        {"name": "E-Marketing.fr",           "url": "https://www.e-marketing.fr/rss/"},
+        {"name": "Usbek & Rica",             "url": "https://usbeketrica.com/fr/rss"},
+        {"name": "Think with Google",        "url": "https://www.thinkwithgoogle.com/rss/"},
+        {"name": "Econsultancy",             "url": "https://www.econsultancy.com/blog/rss"},
+        {"name": "Le Blog du Communicant",   "url": "https://www.leblogducommunicant2-0.com/feed/"},
+        {"name": "Brian Solis",              "url": "https://briansolis.com/feed/"}
+      ]
+    },
+    "Marketing Digital & SEO": {
+      "color": "#ff9f0a",
+      "icon": "◎",
+      "gradient": "linear-gradient(135deg, #1a1000 0%, #2d1f00 50%, #3d2c00 100%)",
+      "feeds": [
+        {"name": "Neil Patel",               "url": "https://neilpatel.com/blog/feed/"},
+        {"name": "Occam's Razor (Kaushik)",  "url": "https://www.kaushik.net/avinash/feed/"},
+        {"name": "Copyblogger",              "url": "https://copyblogger.com/feed/"},
+        {"name": "Moz Blog",                 "url": "https://moz.com/blog/feed"},
+        {"name": "Contently",                "url": "https://contently.com/strategist/feed/"},
+        {"name": "Arkenea",                  "url": "https://arkenea.com/blog/feed/"},
+        {"name": "Seth Godin",               "url": "https://seths.blog/feed/"},
+        {"name": "Search Engine Watch",      "url": "https://www.searchenginewatch.com/feed/"},
+        {"name": "Top Rank Marketing",       "url": "https://www.toprankblog.com/feed/"},
+        {"name": "Blogging Wizard",          "url": "https://bloggingwizard.com/feed/"},
+        {"name": "Lewis Howes",              "url": "https://lewishowes.com/feed/"},
+        {"name": "Ahrefs Blog",              "url": "https://ahrefs.com/blog/rss"},
+        {"name": "SEMrush Blog",             "url": "https://www.semrush.com/blog/feed/"},
+        {"name": "Search Engine Journal",    "url": "https://www.searchenginejournal.com/feed/"},
+        {"name": "Search Engine Land",       "url": "https://searchengineland.com/feed/"},
+        {"name": "Backlinko",                "url": "https://backlinko.com/blog/rss"},
+        {"name": "HubSpot Marketing",        "url": "https://blog.hubspot.com/marketing/rss.xml"},
+        {"name": "Content Marketing Inst.",  "url": "https://contentmarketinginstitute.com/feed/"},
+        {"name": "Journal du Web",           "url": "https://www.journalduweb.org/feed/"},
+        {"name": "Webmarketing-com",         "url": "https://www.webmarketing-com.com/feed"}
       ]
     },
     "Vidéo": {
@@ -32,7 +68,8 @@
         {"name": "No Film School",  "url": "https://nofilmschool.com/rss.xml"},
         {"name": "Videomaker",      "url": "https://www.videomaker.com/feed/"},
         {"name": "PetaPixel",       "url": "https://petapixel.com/feed/"},
-        {"name": "Fstoppers",       "url": "https://fstoppers.com/feed"}
+        {"name": "Fstoppers",       "url": "https://fstoppers.com/feed"},
+        {"name": "Tubics",          "url": "https://www.tubics.com/blog/rss"}
       ]
     },
     "Podcast": {
@@ -41,7 +78,8 @@
       "gradient": "linear-gradient(135deg, #1a0a2e 0%, #2d1b4e 50%, #3d1f6e 100%)",
       "feeds": [
         {"name": "Podnews",           "url": "https://podnews.net/rss"},
-        {"name": "Sounds Profitable", "url": "https://soundsprofitable.com/feed/"}
+        {"name": "Sounds Profitable", "url": "https://soundsprofitable.com/feed/"},
+        {"name": "Podcast Insights",  "url": "https://www.podcastinsights.com/feed/"}
       ]
     },
     "Social Media": {
@@ -51,7 +89,9 @@
       "feeds": [
         {"name": "Social Media Examiner", "url": "https://www.socialmediaexaminer.com/feed/"},
         {"name": "Hootsuite Blog",         "url": "https://blog.hootsuite.com/feed/"},
-        {"name": "Buffer Blog",            "url": "https://buffer.com/resources/rss/"}
+        {"name": "Buffer Blog",            "url": "https://buffer.com/resources/rss/"},
+        {"name": "Sprout Social",          "url": "https://sproutsocial.com/insights/feed/"},
+        {"name": "We Are Social",          "url": "https://wearesocial.com/feed/"}
       ]
     }
   },
