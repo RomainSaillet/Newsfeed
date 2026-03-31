@@ -471,7 +471,12 @@ def process_with_claude(new_articles: list[Article], cached_articles: list[Artic
         log.info(f"\nHaiku — scoring/classification de {len(new_articles)} nouveaux articles...")
         score_and_classify(client, new_articles, categories)
 
-    # Appliquer une catégorie par défaut aux articles du cache sans catégorie valide
+    # Classifier aussi les articles en cache sans catégorie valide
+    uncategorized_cached = [a for a in cached_articles if a.category not in categories]
+    if uncategorized_cached:
+        log.info(f"Haiku — classification de {len(uncategorized_cached)} articles en cache sans catégorie...")
+        score_and_classify(client, uncategorized_cached, categories)
+    # Fallback si toujours sans catégorie après classification
     for a in cached_articles:
         if a.category not in categories:
             a.category = categories[0]
@@ -1158,9 +1163,12 @@ def main():
     log.info(f"\nTraitement IA...")
     clusters, top_clusters = process_with_claude(new_articles, cached_articles, config)
 
-    # Mettre à jour le cache avec les nouveaux articles traduits
+    # Mettre à jour le cache : nouveaux articles + articles re-classifiés
     for a in new_articles:
         cache[a.id] = article_to_cache(a)
+    for a in cached_articles:
+        if a.id in cache:
+            cache[a.id]["category"] = a.category  # persist la catégorie mise à jour
     save_cache(cache)
     log.info(f"Cache mis à jour : {len(cache)} articles")
 
